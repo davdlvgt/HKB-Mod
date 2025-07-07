@@ -5,9 +5,11 @@ import de.davidvogt.hkbmod.item.ModItems;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.DropExperienceBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraftforge.eventbus.api.bus.BusGroup;
@@ -29,7 +31,17 @@ public class ModBlocks {
     public static final RegistryObject<Block> RAW_ALEXANDRITE_BLOCK = registerBlock("raw_alexandrite_block",
             () -> new Block(BlockBehaviour.Properties.of()
                     .strength(3f).requiresCorrectToolForDrops()
-                    .setId(ResourceKey.create(Registries.BLOCK, ResourceLocation.parse("hkbmod:alexandrite_block")))));
+                    .setId(ResourceKey.create(Registries.BLOCK, ResourceLocation.parse("hkbmod:raw_alexandrite_block")))));
+
+    public static final RegistryObject<Block> ALEXANDRITE_ORE = registerBlock("alexandrite_ore",
+            () -> new DropExperienceBlock(UniformInt.of(2, 4), BlockBehaviour.Properties.of()
+                    .strength(4f).requiresCorrectToolForDrops()
+                    .setId(ResourceKey.create(Registries.BLOCK, ResourceLocation.parse("hkbmod:alexandrite_ore")))));
+
+    public static final RegistryObject<Block> ALEXANDRITE_DEEPSLATE_ORE = registerBlock("alexandrite_deepslate_ore",
+            () -> new DropExperienceBlock(UniformInt.of(3, 5), BlockBehaviour.Properties.of()
+                    .strength(5f).requiresCorrectToolForDrops().sound(SoundType.DEEPSLATE)
+                    .setId(ResourceKey.create(Registries.BLOCK, ResourceLocation.parse("hkbmod:alexandrite_deepslate_ore")))));
 
 
     private static <T extends Block> RegistryObject<T> registerBlock(String name, Supplier<T> block) {
