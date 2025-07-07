@@ -2,6 +2,7 @@ package de.davidvogt.hkbmod.item;
 
 import de.davidvogt.hkbmod.HkbMod;
 import de.davidvogt.hkbmod.item.custom.ChiselItem;
+import de.davidvogt.hkbmod.item.custom.FuelItem;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -27,6 +28,13 @@ public class ModItems {
             () -> new ChiselItem(new Item.Properties().durability(32)
                     .setId(ResourceKey.create(Registries.ITEM, ResourceLocation.parse("hkbmod:chisel")))));
 
+    public static final RegistryObject<Item> KOHLRABI = ITEMS.register("kohlrabi",
+            () -> new Item(new Item.Properties().food(ModFoodProperties.KOHLRABI, ModFoodProperties.KOHLRABI_EFFECT)
+                    .setId(ResourceKey.create(Registries.ITEM, ResourceLocation.parse("hkbmod:kohlrabi")))));
+
+    public static final RegistryObject<Item> AURORA_ASHES = ITEMS.register("aurora_ashes",
+            () -> new FuelItem(new Item.Properties()
+                    .setId(ResourceKey.create(Registries.ITEM, ResourceLocation.parse("hkbmod:aurora_ashes"))), 1200));
 
     public static final RegistryObject<Item> MYSTICAL_WAND = ITEMS.register("mystical_wand",
             () -> new Item(new Item.Properties()

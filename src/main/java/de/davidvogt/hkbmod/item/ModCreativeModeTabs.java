@@ -23,6 +23,10 @@ public class ModCreativeModeTabs {
                         output.accept(ModItems.RAW_ALEXANDRITE.get());
 
                         output.accept(ModItems.CHISEL.get());
+
+                        output.accept(ModItems.KOHLRABI.get());
+
+                        output.accept(ModItems.AURORA_ASHES.get());
                     }).build());
 
     public static final RegistryObject<CreativeModeTab> ALEXANDRITE_BLOCKS_TAB = CREATIVE_MODE_TABS.register("alexandrite_blocks_tab",
@@ -35,6 +39,8 @@ public class ModCreativeModeTabs {
 
                         output.accept(ModBlocks.ALEXANDRITE_ORE.get());
                         output.accept(ModBlocks.ALEXANDRITE_DEEPSLATE_ORE.get());
+
+                        output.accept(ModBlocks.MAGIC_BLOCK.get());
                     }).build());
 
     public static void register(BusGroup busGroup) {

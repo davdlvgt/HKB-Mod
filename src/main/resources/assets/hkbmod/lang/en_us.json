@@ -3,11 +3,13 @@
   "item.hkbmod.raw_alexandrite": "Raw Alexandrite",
   "item.hkbmod.mystical_wand": "Mystical Wand",
   "item.hkbmod.chisel": "Chisel",
-
   "item.hkbmod.alexandrite_block": "Block of Alexandrite",
   "item.hkbmod.raw_alexandrite_block": "Block of Raw Alexandrite",
   "item.hkbmod.alexandrite_ore": "Alexandrite Ore",
   "item.hkbmod.alexandrite_deepslate_ore": "Alexandrite Deepslate Ore",
+  "item.hkbmod.magic_block": "Magic Block",
+  "item.hkbmod.kohlrabi": "Kohlrabi",
+  "item.hkbmod.aurora_ashes": "Aurora Ashes",
 
   "creativetab.hkbmod.alexandrite_items": "Alexandrite Items",
   "creativetab.hkbmod.alexandrite_blocks": "Alexandrite Blocks"

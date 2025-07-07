@@ -1,6 +1,7 @@
 package de.davidvogt.hkbmod.block;
 
 import de.davidvogt.hkbmod.HkbMod;
+import de.davidvogt.hkbmod.block.custom.MagicBlock;
 import de.davidvogt.hkbmod.item.ModItems;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
@@ -42,6 +43,11 @@ public class ModBlocks {
             () -> new DropExperienceBlock(UniformInt.of(3, 5), BlockBehaviour.Properties.of()
                     .strength(5f).requiresCorrectToolForDrops().sound(SoundType.DEEPSLATE)
                     .setId(ResourceKey.create(Registries.BLOCK, ResourceLocation.parse("hkbmod:alexandrite_deepslate_ore")))));
+
+    public static final RegistryObject<Block> MAGIC_BLOCK = registerBlock("magic_block",
+            () -> new MagicBlock(BlockBehaviour.Properties.of()
+                    .strength(2f).requiresCorrectToolForDrops()
+                    .setId(ResourceKey.create(Registries.BLOCK, ResourceLocation.parse("hkbmod:magic_block")))));
 
 
     private static <T extends Block> RegistryObject<T> registerBlock(String name, Supplier<T> block) {
