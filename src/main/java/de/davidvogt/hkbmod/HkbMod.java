@@ -1,6 +1,10 @@
 package de.davidvogt.hkbmod;
 
 import com.mojang.logging.LogUtils;
+import de.davidvogt.hkbmod.block.ModBlocks;
+import de.davidvogt.hkbmod.item.ModCreativeModeTabs;
+import de.davidvogt.hkbmod.item.ModItems;
+import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.eventbus.api.listener.SubscribeEvent;
@@ -22,6 +26,10 @@ public final class HkbMod {
         var modBusGroup = context.getModBusGroup();
         FMLCommonSetupEvent.getBus(modBusGroup).addListener(this::commonSetup);
 
+        ModItems.register(modBusGroup);
+        ModBlocks.register(modBusGroup);
+        ModCreativeModeTabs.register(modBusGroup);
+
         BuildCreativeModeTabContentsEvent.getBus(modBusGroup).addListener(HkbMod::addCreative);
         context.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
     }
@@ -32,7 +40,19 @@ public final class HkbMod {
 
     // Add the example block item to the building blocks tab
     private static void addCreative(BuildCreativeModeTabContentsEvent event) {
+        if (event.getTabKey() == CreativeModeTabs.INGREDIENTS) {
+            event.accept(ModItems.ALEXANDRITE);
+            event.accept(ModItems.RAW_ALEXANDRITE);
+        }
 
+        if (event.getTabKey() == CreativeModeTabs.COMBAT) {
+            event.accept(ModItems.MYSTICAL_WAND);
+        }
+
+        if (event.getTabKey() == CreativeModeTabs.BUILDING_BLOCKS) {
+            event.accept(ModBlocks.ALEXANDRITE_BLOCK);
+            event.accept(ModBlocks.RAW_ALEXANDRITE_BLOCK);
+        }
     }
 
     // You can use EventBusSubscriber to automatically register all static methods in the class annotated with @SubscribeEvent
