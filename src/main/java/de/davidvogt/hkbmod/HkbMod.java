@@ -47,6 +47,7 @@ public final class HkbMod {
 
         if (event.getTabKey() == CreativeModeTabs.COMBAT) {
             event.accept(ModItems.MYSTICAL_WAND);
+            event.accept(ModItems.CHISEL);
         }
 
         if (event.getTabKey() == CreativeModeTabs.BUILDING_BLOCKS) {

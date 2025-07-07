@@ -1,6 +1,7 @@
 package de.davidvogt.hkbmod.item;
 
 import de.davidvogt.hkbmod.HkbMod;
+import de.davidvogt.hkbmod.item.custom.ChiselItem;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -15,17 +16,21 @@ public class ModItems {
             DeferredRegister.create(ForgeRegistries.ITEMS, HkbMod.MOD_ID);
 
     public static final RegistryObject<Item> ALEXANDRITE = ITEMS.register("alexandrite",
-            () -> new Item(new Item.Properties().useItemDescriptionPrefix()
+            () -> new Item(new Item.Properties()
                     .setId(ResourceKey.create(Registries.ITEM, ResourceLocation.parse("hkbmod:alexandrite")))));
 
     public static final RegistryObject<Item> RAW_ALEXANDRITE = ITEMS.register("raw_alexandrite",
-            () -> new Item(new Item.Properties().useItemDescriptionPrefix()
+            () -> new Item(new Item.Properties()
                     .setId(ResourceKey.create(Registries.ITEM, ResourceLocation.parse("hkbmod:raw_alexandrite")))));
+
+    public static final RegistryObject<Item> CHISEL = ITEMS.register("chisel",
+            () -> new ChiselItem(new Item.Properties().durability(32)
+                    .setId(ResourceKey.create(Registries.ITEM, ResourceLocation.parse("hkbmod:chisel")))));
+
 
     public static final RegistryObject<Item> MYSTICAL_WAND = ITEMS.register("mystical_wand",
             () -> new Item(new Item.Properties()
                     .durability(64).stacksTo(1)
-                    .useItemDescriptionPrefix()
                     .setId(ResourceKey.create(Registries.ITEM, ResourceLocation.parse("hkbmod:mystical_wand")))));
 
     public static void register(BusGroup busGroup) {
