@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "I": "minecraft:stick",
+    "#": "hkbmod:alexandrite"
+  },
+  "pattern": [
+    "#",
+    "I",
+    "I"
+  ],
+  "result": {
+    "count": 1,
+    "id": "hkbmod:chisel"
+  }
+}
