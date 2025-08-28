@@ -46,7 +46,7 @@ public class ModBlocks {
 
     public static final RegistryObject<Block> MAGIC_BLOCK = registerBlock("magic_block",
             () -> new MagicBlock(BlockBehaviour.Properties.of()
-                    .strength(2f).requiresCorrectToolForDrops()
+                    .strength(2f).requiresCorrectToolForDrops().noLootTable()
                     .setId(ResourceKey.create(Registries.BLOCK, ResourceLocation.parse("hkbmod:magic_block")))));
 
 

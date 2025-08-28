@@ -1,0 +1,100 @@
+package de.davidvogt.hkbmod.datagen;
+
+import de.davidvogt.hkbmod.HkbMod;
+import de.davidvogt.hkbmod.block.ModBlocks;
+import de.davidvogt.hkbmod.item.ModItems;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.data.PackOutput;
+import net.minecraft.data.recipes.RecipeCategory;
+import net.minecraft.data.recipes.RecipeOutput;
+import net.minecraft.data.recipes.RecipeProvider;
+import net.minecraft.data.recipes.SimpleCookingRecipeBuilder;
+import net.minecraft.world.item.crafting.*;
+import net.minecraft.world.level.ItemLike;
+import net.minecraftforge.common.crafting.conditions.IConditionBuilder;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+
+/**
+ * Class that provides recipes for the mod.
+ */
+
+public class ModRecipeProvider extends RecipeProvider implements IConditionBuilder {
+    public ModRecipeProvider(HolderLookup.Provider pProvider, RecipeOutput pOutput) {
+        super(pProvider, pOutput);
+    }
+
+    @Override
+    protected void buildRecipes() {
+        List<ItemLike> ALEXANDRITE_SMELTABLES = List.of(ModItems.RAW_ALEXANDRITE.get(),
+                ModBlocks.ALEXANDRITE_ORE.get(), ModBlocks.ALEXANDRITE_DEEPSLATE_ORE.get());
+
+        this.shaped(RecipeCategory.MISC, ModBlocks.ALEXANDRITE_BLOCK.get(), 1)
+                .pattern("AAA")
+                .pattern("AAA")
+                .pattern("AAA")
+                .define('A', ModItems.ALEXANDRITE.get())
+                .unlockedBy(getHasName(ModItems.ALEXANDRITE.get()), has(ModItems.ALEXANDRITE.get())).save(this.output);
+
+        this.shapeless(RecipeCategory.MISC, ModItems.ALEXANDRITE.get(), 9)
+                .requires(ModBlocks.ALEXANDRITE_BLOCK.get())
+                .unlockedBy(getHasName(ModBlocks.ALEXANDRITE_BLOCK.get()), has(ModBlocks.ALEXANDRITE_BLOCK.get())).save(this.output);
+
+        this.shapeless(RecipeCategory.MISC, ModItems.ALEXANDRITE.get(), 32)
+                .requires(ModBlocks.MAGIC_BLOCK.get())
+                .unlockedBy(getHasName(ModBlocks.ALEXANDRITE_BLOCK.get()), has(ModBlocks.ALEXANDRITE_BLOCK.get()))
+                .save(this.output, HkbMod.MOD_ID + ":alexandrite_from_magic_block");
+
+        oreSmelting(this.output, ALEXANDRITE_SMELTABLES, RecipeCategory.MISC, ModItems.ALEXANDRITE.get(), 0.25f, 200, "alexandrite");
+        oreBlasting(this.output, ALEXANDRITE_SMELTABLES, RecipeCategory.MISC, ModItems.ALEXANDRITE.get(), 0.25f, 100, "alexandrite");
+
+    }
+
+    protected void oreSmelting(RecipeOutput recipeOutput, List<ItemLike> pIngredients, RecipeCategory pCategory, ItemLike pResult,
+                               float pExperience, int pCookingTIme, String pGroup) {
+        oreCooking(recipeOutput, RecipeSerializer.SMELTING_RECIPE, SmeltingRecipe::new, pIngredients, pCategory, pResult,
+                pExperience, pCookingTIme, pGroup, "_from_smelting");
+    }
+
+    protected void oreBlasting(RecipeOutput recipeOutput, List<ItemLike> pIngredients, RecipeCategory pCategory, ItemLike pResult,
+                               float pExperience, int pCookingTime, String pGroup) {
+        oreCooking(recipeOutput, RecipeSerializer.BLASTING_RECIPE, BlastingRecipe::new, pIngredients, pCategory, pResult,
+                pExperience, pCookingTime, pGroup, "_from_blasting");
+    }
+
+    protected <T extends AbstractCookingRecipe> void oreCooking(
+            RecipeOutput recipeOutput,
+            RecipeSerializer<T> pCookingSerializer,
+            AbstractCookingRecipe.Factory<T> factory,
+            List<ItemLike> pIngredients,
+            RecipeCategory pCategory,
+            ItemLike pResult,
+            float pExperience,
+            int pCookingTime,
+            String pGroup,
+            String pRecipeName
+    ) {
+        for (ItemLike itemlike : pIngredients) {
+            SimpleCookingRecipeBuilder.generic(Ingredient.of(itemlike), pCategory, pResult, pExperience, pCookingTime, pCookingSerializer, factory).group(pGroup).unlockedBy(getHasName(itemlike), has(itemlike))
+                    .save(recipeOutput, HkbMod.MOD_ID + ":" + getItemName(pResult) + pRecipeName + "_" + getItemName(itemlike));
+        }
+    }
+
+    public static class Generator extends RecipeProvider.Runner {
+        public Generator(PackOutput output, CompletableFuture<HolderLookup.Provider> registries) {
+            super(output, registries);
+        }
+
+        @Override
+        protected @NotNull RecipeProvider createRecipeProvider(HolderLookup.@NotNull Provider registries, @NotNull RecipeOutput output) {
+            return new ModRecipeProvider(registries, output);
+        }
+
+        @Override
+        public @NotNull String getName() {
+            return "";
+        }
+    }
+}
