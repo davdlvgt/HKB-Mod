@@ -2,8 +2,10 @@ package de.davidvogt.hkbmod;
 
 import com.mojang.logging.LogUtils;
 import de.davidvogt.hkbmod.block.ModBlocks;
+import de.davidvogt.hkbmod.entities.ModEntityTypes;
 import de.davidvogt.hkbmod.item.ModCreativeModeTabs;
 import de.davidvogt.hkbmod.item.ModItems;
+import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
@@ -28,6 +30,7 @@ public final class HkbMod {
 
         ModItems.register(modBusGroup);
         ModBlocks.register(modBusGroup);
+        ModEntityTypes.register(modBusGroup);
         ModCreativeModeTabs.register(modBusGroup);
 
         BuildCreativeModeTabContentsEvent.getBus(modBusGroup).addListener(HkbMod::addCreative);
@@ -49,6 +52,7 @@ public final class HkbMod {
             event.accept(ModItems.MYSTICAL_WAND);
             event.accept(ModItems.CHISEL);
             event.accept(ModItems.FEATHER_WINGS);
+            event.accept(ModItems.THROWING_KNIFE);
         }
 
         if (event.getTabKey() == CreativeModeTabs.BUILDING_BLOCKS) {
@@ -64,7 +68,7 @@ public final class HkbMod {
     public static class ClientModEvents {
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event) {
-
+            
         }
     }
 }

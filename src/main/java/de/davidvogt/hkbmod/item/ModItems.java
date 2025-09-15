@@ -1,10 +1,7 @@
 package de.davidvogt.hkbmod.item;
 
 import de.davidvogt.hkbmod.HkbMod;
-import de.davidvogt.hkbmod.item.custom.ChiselItem;
-import de.davidvogt.hkbmod.item.custom.FeatherWingsItem;
-import de.davidvogt.hkbmod.item.custom.FuelItem;
-import de.davidvogt.hkbmod.item.custom.MysticalWandItem;
+import de.davidvogt.hkbmod.item.custom.*;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -46,6 +43,11 @@ public class ModItems {
     public static final RegistryObject<Item> FEATHER_WINGS = ITEMS.register("feather_wings",
             () -> new FeatherWingsItem(new Item.Properties()
                     .setId(ResourceKey.create(Registries.ITEM, ResourceLocation.parse("hkbmod:feather_wings")))));
+
+    public static final RegistryObject<Item> THROWING_KNIFE = ITEMS.register("throwing_knife",
+            () -> new ThrowingKnifeItem(new Item.Properties()
+                    .stacksTo(16)
+                    .setId(ResourceKey.create(Registries.ITEM, ResourceLocation.parse("hkbmod:throwing_knife")))));
 
     public static void register(BusGroup busGroup) {
         ITEMS.register(busGroup);
