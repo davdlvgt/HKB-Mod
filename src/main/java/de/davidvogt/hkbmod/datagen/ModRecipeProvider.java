@@ -9,6 +9,7 @@ import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.data.recipes.SimpleCookingRecipeBuilder;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.ItemLike;
 import net.minecraftforge.common.crafting.conditions.IConditionBuilder;
@@ -37,6 +38,34 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                 .pattern("AAA")
                 .define('A', ModItems.ALEXANDRITE.get())
                 .unlockedBy(getHasName(ModItems.ALEXANDRITE.get()), has(ModItems.ALEXANDRITE.get())).save(this.output);
+
+        this.shaped(RecipeCategory.MISC, ModBlocks.STRING_BLOCK.get(), 1)
+                .pattern("AAA")
+                .pattern("AAA")
+                .pattern("AAA")
+                .define('A', Items.STRING)
+                .unlockedBy(getHasName(Items.STRING), has(Items.STRING)).save(this.output);
+
+        this.shaped(RecipeCategory.MISC, ModBlocks.JUMP_BLOCK.get(), 1)
+                .pattern("AAA")
+                .pattern("AAA")
+                .pattern("AAA")
+                .define('A', ModBlocks.STRING_BLOCK.get())
+                .unlockedBy(getHasName(ModBlocks.STRING_BLOCK.get()), has(ModBlocks.STRING_BLOCK.get())).save(this.output);
+
+        this.shaped(RecipeCategory.MISC, ModBlocks.FEATHER_BLOCK.get(), 1)
+                .pattern("AAA")
+                .pattern("AAA")
+                .pattern("AAA")
+                .define('A', Items.FEATHER)
+                .unlockedBy(getHasName(Items.FEATHER), has(Items.FEATHER)).save(this.output);
+
+        this.shaped(RecipeCategory.MISC, ModItems.FEATHER_WINGS.get(), 1)
+                .pattern("AAA")
+                .pattern("AAA")
+                .pattern(" A ")
+                .define('A', ModBlocks.FEATHER_BLOCK.get())
+                .unlockedBy(getHasName(ModBlocks.FEATHER_BLOCK.get()), has(ModBlocks.FEATHER_BLOCK.get())).save(this.output);
 
         this.shapeless(RecipeCategory.MISC, ModItems.ALEXANDRITE.get(), 9)
                 .requires(ModBlocks.ALEXANDRITE_BLOCK.get())

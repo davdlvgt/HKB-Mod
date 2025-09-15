@@ -41,6 +41,9 @@ public class ModCreativeModeTabs {
                         output.accept(ModBlocks.ALEXANDRITE_DEEPSLATE_ORE.get());
 
                         output.accept(ModBlocks.MAGIC_BLOCK.get());
+                        output.accept(ModBlocks.JUMP_BLOCK.get());
+                        output.accept(ModBlocks.STRING_BLOCK.get());
+                        output.accept(ModBlocks.FEATHER_BLOCK.get());
                     }).build());
 
     public static void register(BusGroup busGroup) {

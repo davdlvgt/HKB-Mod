@@ -2,7 +2,9 @@ package de.davidvogt.hkbmod.item;
 
 import de.davidvogt.hkbmod.HkbMod;
 import de.davidvogt.hkbmod.item.custom.ChiselItem;
+import de.davidvogt.hkbmod.item.custom.FeatherWingsItem;
 import de.davidvogt.hkbmod.item.custom.FuelItem;
+import de.davidvogt.hkbmod.item.custom.MysticalWandItem;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -37,9 +39,13 @@ public class ModItems {
                     .setId(ResourceKey.create(Registries.ITEM, ResourceLocation.parse("hkbmod:aurora_ashes"))), 1200));
 
     public static final RegistryObject<Item> MYSTICAL_WAND = ITEMS.register("mystical_wand",
-            () -> new Item(new Item.Properties()
+            () -> new MysticalWandItem(new Item.Properties()
                     .durability(64).stacksTo(1)
                     .setId(ResourceKey.create(Registries.ITEM, ResourceLocation.parse("hkbmod:mystical_wand")))));
+
+    public static final RegistryObject<Item> FEATHER_WINGS = ITEMS.register("feather_wings",
+            () -> new FeatherWingsItem(new Item.Properties()
+                    .setId(ResourceKey.create(Registries.ITEM, ResourceLocation.parse("hkbmod:feather_wings")))));
 
     public static void register(BusGroup busGroup) {
         ITEMS.register(busGroup);

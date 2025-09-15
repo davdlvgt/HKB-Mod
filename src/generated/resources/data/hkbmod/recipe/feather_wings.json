@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": "hkbmod:feather_block"
+  },
+  "pattern": [
+    "AAA",
+    "AAA",
+    " A "
+  ],
+  "result": {
+    "count": 1,
+    "id": "hkbmod:feather_wings"
+  }
+}

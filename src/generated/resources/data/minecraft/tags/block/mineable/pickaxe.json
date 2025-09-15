@@ -4,6 +4,9 @@
     "hkbmod:raw_alexandrite_block",
     "hkbmod:alexandrite_ore",
     "hkbmod:alexandrite_deepslate_ore",
-    "hkbmod:magic_block"
+    "hkbmod:magic_block",
+    "hkbmod:string_block",
+    "hkbmod:jump_block",
+    "hkbmod:feather_block"
   ]
 }

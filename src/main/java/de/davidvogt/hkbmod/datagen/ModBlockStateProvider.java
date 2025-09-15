@@ -12,6 +12,7 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.level.block.Block;
+import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.stream.Stream;
@@ -41,6 +42,9 @@ public class ModBlockStateProvider extends ModelProvider {
                 cubeAll(ModBlocks.ALEXANDRITE_ORE.get());
                 cubeAll(ModBlocks.ALEXANDRITE_DEEPSLATE_ORE.get());
                 cubeAll(ModBlocks.MAGIC_BLOCK.get());
+                cubeAll(ModBlocks.JUMP_BLOCK.get());
+                cubeAll(ModBlocks.STRING_BLOCK.get());
+                cubeAll(ModBlocks.FEATHER_BLOCK.get());
             }
 
             private void cubeAll(Block block) {
@@ -72,7 +76,10 @@ public class ModBlockStateProvider extends ModelProvider {
                 ModBlocks.RAW_ALEXANDRITE_BLOCK.get(),
                 ModBlocks.ALEXANDRITE_ORE.get(),
                 ModBlocks.ALEXANDRITE_DEEPSLATE_ORE.get(),
-                ModBlocks.MAGIC_BLOCK.get()
+                ModBlocks.MAGIC_BLOCK.get(),
+                ModBlocks.JUMP_BLOCK.get(),
+                ModBlocks.STRING_BLOCK.get(),
+                ModBlocks.FEATHER_BLOCK.get()
         );
     }
 

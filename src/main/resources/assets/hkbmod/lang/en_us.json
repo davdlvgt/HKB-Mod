@@ -8,8 +8,12 @@
   "item.hkbmod.alexandrite_ore": "Alexandrite Ore",
   "item.hkbmod.alexandrite_deepslate_ore": "Alexandrite Deepslate Ore",
   "item.hkbmod.magic_block": "Magic Block",
+  "item.hkbmod.string_block": "String Block",
+  "item.hkbmod.jump_block": "Jump Block",
+  "item.hkbmod.feather_block": "Feather Block",
   "item.hkbmod.kohlrabi": "Kohlrabi",
   "item.hkbmod.aurora_ashes": "Aurora Ashes",
+    "item.hkbmod.feather_wings": "Feather Wings",
 
   "creativetab.hkbmod.alexandrite_items": "Alexandrite Items",
   "creativetab.hkbmod.alexandrite_blocks": "Alexandrite Blocks"

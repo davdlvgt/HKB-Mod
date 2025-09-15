@@ -1,7 +1,10 @@
 package de.davidvogt.hkbmod.block;
 
 import de.davidvogt.hkbmod.HkbMod;
+import de.davidvogt.hkbmod.block.custom.FeatherBlock;
+import de.davidvogt.hkbmod.block.custom.JumpBlock;
 import de.davidvogt.hkbmod.block.custom.MagicBlock;
+import de.davidvogt.hkbmod.block.custom.StringBlock;
 import de.davidvogt.hkbmod.item.ModItems;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
@@ -46,9 +49,23 @@ public class ModBlocks {
 
     public static final RegistryObject<Block> MAGIC_BLOCK = registerBlock("magic_block",
             () -> new MagicBlock(BlockBehaviour.Properties.of()
-                    .strength(2f).requiresCorrectToolForDrops().noLootTable()
+                    .strength(2f).requiresCorrectToolForDrops().sound(SoundType.AMETHYST)
                     .setId(ResourceKey.create(Registries.BLOCK, ResourceLocation.parse("hkbmod:magic_block")))));
 
+    public static final RegistryObject<Block> JUMP_BLOCK = registerBlock("jump_block",
+            () -> new JumpBlock(BlockBehaviour.Properties.of()
+                    .strength(2f).requiresCorrectToolForDrops().sound(SoundType.AMETHYST)
+                    .setId(ResourceKey.create(Registries.BLOCK, ResourceLocation.parse("hkbmod:jump_block")))));
+
+    public static final RegistryObject<Block> STRING_BLOCK = registerBlock("string_block",
+            () -> new StringBlock(BlockBehaviour.Properties.of()
+                    .strength(0.5f).requiresCorrectToolForDrops().sound(SoundType.WOOL)
+                    .setId(ResourceKey.create(Registries.BLOCK, ResourceLocation.parse("hkbmod:string_block")))));
+
+    public static final RegistryObject<Block> FEATHER_BLOCK = registerBlock("feather_block",
+            () -> new FeatherBlock(BlockBehaviour.Properties.of()
+                    .strength(0.5f).requiresCorrectToolForDrops().sound(SoundType.WOOL)
+                    .setId(ResourceKey.create(Registries.BLOCK, ResourceLocation.parse("hkbmod:feather_block")))));
 
     private static <T extends Block> RegistryObject<T> registerBlock(String name, Supplier<T> block) {
         RegistryObject<T> toReturn = BLOCKS.register(name, block);
