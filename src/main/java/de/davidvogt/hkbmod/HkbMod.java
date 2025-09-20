@@ -53,6 +53,11 @@ public final class HkbMod {
             event.accept(ModItems.CHISEL);
             event.accept(ModItems.FEATHER_WINGS);
             event.accept(ModItems.THROWING_KNIFE);
+            event.accept(ModItems.THROWING_KNIFE_EXPLOSIVE);
+            event.accept(ModItems.THROWING_KNIFE_SLOWNESS);
+            event.accept(ModItems.THROWING_KNIFE_INSTANT_DAMAGE);
+            event.accept(ModItems.LIGHTNING_AXE);
+            event.accept(ModItems.LIGHTNING_WAND);
         }
 
         if (event.getTabKey() == CreativeModeTabs.BUILDING_BLOCKS) {

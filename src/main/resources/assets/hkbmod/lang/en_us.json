@@ -14,7 +14,12 @@
   "item.hkbmod.kohlrabi": "Kohlrabi",
   "item.hkbmod.aurora_ashes": "Aurora Ashes",
   "item.hkbmod.feather_wings": "Feather Wings",
-    "item.hkbmod.throwing_knife": "Throwing Knife",
+  "item.hkbmod.throwing_knife": "Throwing Knife",
+  "item.hkbmod.throwing_knife_explosive": "Explosive Throwing Knife",
+  "item.hkbmod.throwing_knife_slowness": "Slowness Throwing Knife",
+  "item.hkbmod.throwing_knife_instant_damage": "Instant Damage Throwing Knife",
+  "item.hkbmod.lightning_axe": "Lightning Axe",
+  "item.hkbmod.lightning_wand": "Lightning Wand",
 
   "creativetab.hkbmod.alexandrite_items": "Alexandrite Items",
   "creativetab.hkbmod.alexandrite_blocks": "Alexandrite Blocks"

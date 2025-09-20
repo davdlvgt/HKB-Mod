@@ -1,9 +1,12 @@
 package de.davidvogt.hkbmod.item.custom;
 
+import com.electronwill.nightconfig.core.serde.annotations.SerdeAssert;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.SmallFireball;
 import net.minecraft.world.entity.projectile.Snowball;
@@ -41,6 +44,10 @@ public class MysticalWandItem extends Item {
 
                 level.addFreshEntity(snowball);
 
+                if (level instanceof ServerLevel serverLevel) {
+                    player.hurtServer(serverLevel, player.damageSources().magic(), 1.0F);
+                }
+
                 level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.SNOWBALL_THROW, SoundSource.PLAYERS, 1.0F, 1.0F);
 
                 // if snowball hits fire the fire is extinguished
@@ -62,6 +69,10 @@ public class MysticalWandItem extends Item {
             );
 
             level.addFreshEntity(fireball);
+
+            if (level instanceof ServerLevel serverLevel) {
+                player.hurtServer(serverLevel, player.damageSources().magic(), 2.0F);
+            }
 
             level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.BLAZE_SHOOT, SoundSource.PLAYERS, 1.0F, 1.0F);
         }

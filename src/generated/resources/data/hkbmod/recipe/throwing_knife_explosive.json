@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    "hkbmod:throwing_knife",
+    "minecraft:tnt"
+  ],
+  "result": {
+    "count": 1,
+    "id": "hkbmod:throwing_knife_explosive"
+  }
+}

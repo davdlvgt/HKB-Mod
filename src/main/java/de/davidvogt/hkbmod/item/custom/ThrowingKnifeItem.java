@@ -1,62 +1,86 @@
 package de.davidvogt.hkbmod.item.custom;
 
 import de.davidvogt.hkbmod.entities.ThrowingKnifeEntity;
-import net.minecraft.world.InteractionResult;
+import de.davidvogt.hkbmod.item.custom.abstracts.AbstractThrowingKnifeItem;
+import net.minecraft.core.Holder;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.item.alchemy.Potion;
+import net.minecraft.world.item.alchemy.Potions;
+import net.minecraft.world.item.component.CustomData;
 
-public class ThrowingKnifeItem extends Item {
+import javax.annotation.Nullable;
+
+public class ThrowingKnifeItem extends AbstractThrowingKnifeItem {
 
     public ThrowingKnifeItem(Properties properties) {
         super(properties);
     }
 
     @Override
-    public InteractionResult use(Level level, Player player, InteractionHand hand) {
-        ItemStack itemStack = player.getItemInHand(hand);
+    protected void configureProjectile(ThrowingKnifeEntity projectile, ItemStack itemStack, Player player) {
+        // Setze den Schaden basierend auf dem Item
+        projectile.setBaseDamage(getDamage());
 
-        // Debug-Nachricht
-        System.out.println("Wurfmesser use() aufgerufen! ClientSide: " + level.isClientSide);
-
-        if (!level.isClientSide) {
-            // Erstelle das Wurfmesser-Projektil
-            ThrowingKnifeEntity throwingKnife = new ThrowingKnifeEntity(level, player);
-
-            // Setze die Position des Wurfmessers
-            throwingKnife.setPos(player.getX(), player.getY() + player.getEyeHeight(), player.getZ());
-
-            // Setze die Bewegungsrichtung und Geschwindigkeit des Wurfmessers
-            Vec3 direction = player.getLookAngle();
-            throwingKnife.setDeltaMovement(direction.x * 1.5, direction.y * 1.5, direction.z * 1.5);
-
-            // Debug-Nachricht
-            System.out.println("Wurfmesser Richtung: " + direction);
-            System.out.println("Wurfmesser Position: " + throwingKnife.position());
-
-            // Füge das Wurfmesser der Welt hinzu
-            level.addFreshEntity(throwingKnife);
-
-            // Spiele den Wurf-Sound ab
-            level.playSound(null, player.getX(), player.getY(), player.getZ(),
-                    SoundEvents.SNOWBALL_THROW, SoundSource.NEUTRAL,
-                    0.5F, 0.4F / (level.getRandom().nextFloat() * 0.4F + 0.8F));
-
-            System.out.println("Wurfmesser Entity erstellt und hinzugefügt!");
+        // Übertrage getränkte Tränke auf das Projektil
+        Holder<Potion> imbuedPotion = getImbuedPotion(itemStack);
+        if (!imbuedPotion.equals(Potions.WATER)) {
+            projectile.setImbuedPotion(imbuedPotion);
         }
-
-        // Verbrauche das Item
-        if (!player.getAbilities().instabuild) {
-            itemStack.shrink(1);
-        }
-
-        return InteractionResult.SUCCESS;
     }
 
+    // Statische Utility-Methoden für Trank-Tränkung
+    public static void imbueWithPotion(ItemStack stack, Holder<Potion> potion) {
+        CompoundTag tag = stack.getOrDefault(DataComponents.BLOCK_ENTITY_DATA, CustomData.EMPTY).copyTag();
+        tag.putString("ImbuedPotion", BuiltInRegistries.POTION.getKey(potion.value()).toString());
+        stack.set(DataComponents.BLOCK_ENTITY_DATA, CustomData.of(tag));
+    }
 
+    @Nullable
+    public static Holder<Potion> getImbuedPotion(ItemStack stack) {
+        CompoundTag tag = stack.getOrDefault(DataComponents.BLOCK_ENTITY_DATA, CustomData.EMPTY).copyTag();
+        if (tag.contains("ImbuedPotion")) {
+            String potionString = String.valueOf(tag.getString("ImbuedPotion"));
+
+            // Bekannte Tränke direkt zurückgeben
+            return switch (potionString) {
+                case "minecraft:poison" -> Potions.POISON;
+                case "minecraft:healing" -> Potions.HEALING;
+                case "minecraft:harming" -> Potions.HARMING;
+                case "minecraft:swiftness" -> Potions.SWIFTNESS;
+                case "minecraft:slowness" -> Potions.SLOWNESS;
+                case "minecraft:strength" -> Potions.STRENGTH;
+                case "minecraft:weakness" -> Potions.WEAKNESS;
+                case "minecraft:regeneration" -> Potions.REGENERATION;
+                case "minecraft:fire_resistance" -> Potions.FIRE_RESISTANCE;
+                case "minecraft:night_vision" -> Potions.NIGHT_VISION;
+                case "minecraft:invisibility" -> Potions.INVISIBILITY;
+                case "minecraft:leaping" -> Potions.LEAPING;
+                case "minecraft:water_breathing" -> Potions.WATER_BREATHING;
+                case "minecraft:long_night_vision" -> Potions.LONG_NIGHT_VISION;
+                case "minecraft:long_invisibility" -> Potions.LONG_INVISIBILITY;
+                case "minecraft:long_leaping" -> Potions.LONG_LEAPING;
+                case "minecraft:long_fire_resistance" -> Potions.LONG_FIRE_RESISTANCE;
+                case "minecraft:long_swiftness" -> Potions.LONG_SWIFTNESS;
+                case "minecraft:long_slowness" -> Potions.LONG_SLOWNESS;
+                case "minecraft:long_strength" -> Potions.LONG_STRENGTH;
+                case "minecraft:long_weakness" -> Potions.LONG_WEAKNESS;
+                case "minecraft:long_regeneration" -> Potions.LONG_REGENERATION;
+                case "minecraft:long_water_breathing" -> Potions.LONG_WATER_BREATHING;
+                case "minecraft:strong_healing" -> Potions.STRONG_HEALING;
+                case "minecraft:strong_harming" -> Potions.STRONG_HARMING;
+                case "minecraft:strong_swiftness" -> Potions.STRONG_SWIFTNESS;
+                case "minecraft:strong_slowness" -> Potions.STRONG_SLOWNESS;
+                case "minecraft:strong_strength" -> Potions.STRONG_STRENGTH;
+                case "minecraft:strong_leaping" -> Potions.STRONG_LEAPING;
+                case "minecraft:strong_regeneration" -> Potions.STRONG_REGENERATION;
+                case "minecraft:strong_poison" -> Potions.STRONG_POISON;
+                default -> Potions.WATER; // Fallback
+            };
+        }
+        return Potions.WATER;
+    }
 }

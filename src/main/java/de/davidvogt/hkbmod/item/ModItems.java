@@ -49,6 +49,32 @@ public class ModItems {
                     .stacksTo(16)
                     .setId(ResourceKey.create(Registries.ITEM, ResourceLocation.parse("hkbmod:throwing_knife")))));
 
+    public static final RegistryObject<Item> THROWING_KNIFE_EXPLOSIVE = ITEMS.register("throwing_knife_explosive",
+            () -> new ThrowingKnifeExplosiveItem(new Item.Properties()
+                    .stacksTo(8)
+                    .setId(ResourceKey.create(Registries.ITEM, ResourceLocation.parse("hkbmod:throwing_knife_explosive")))));
+
+    public static final RegistryObject<Item> THROWING_KNIFE_SLOWNESS = ITEMS.register("throwing_knife_slowness",
+            () -> new ThrowingKnifeSlownessItem(new Item.Properties()
+                    .stacksTo(12)
+                    .setId(ResourceKey.create(Registries.ITEM, ResourceLocation.parse("hkbmod:throwing_knife_slowness")))));
+
+    public static final RegistryObject<Item> THROWING_KNIFE_INSTANT_DAMAGE = ITEMS.register("throwing_knife_instant_damage",
+            () -> new ThrowingKnifeInstantDamageItem(new Item.Properties()
+                    .stacksTo(6)
+                    .setId(ResourceKey.create(Registries.ITEM, ResourceLocation.parse("hkbmod:throwing_knife_instant_damage")))));
+
+    public static final RegistryObject<Item> LIGHTNING_AXE = ITEMS.register("lightning_axe",
+            () -> new LightningAxeItem(new Item.Properties()
+                    .stacksTo(1)
+                    .setId(ResourceKey.create(Registries.ITEM, ResourceLocation.parse("hkbmod:lightning_axe")))));
+
+    public static final RegistryObject<Item> LIGHTNING_WAND = ITEMS.register("lightning_wand",
+            () -> new LightningWandItem(new Item.Properties()
+                    .stacksTo(1)
+                    .durability(100)
+                    .setId(ResourceKey.create(Registries.ITEM, ResourceLocation.parse("hkbmod:lightning_wand")))));
+
     public static void register(BusGroup busGroup) {
         ITEMS.register(busGroup);
     }

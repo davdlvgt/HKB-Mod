@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "hkbmod:throwing_knife_explosive"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    },
+    "has_throwing_knife": {
+      "conditions": {
+        "items": [
+          {
+            "items": "hkbmod:throwing_knife"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_throwing_knife"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "hkbmod:throwing_knife_explosive"
+    ]
+  }
+}

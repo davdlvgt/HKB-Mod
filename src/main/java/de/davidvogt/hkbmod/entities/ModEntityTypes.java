@@ -13,7 +13,7 @@ import net.minecraftforge.registries.RegistryObject;
 
 public class ModEntityTypes {
     public static final DeferredRegister<EntityType<?>> ENTITY_TYPES =
-            DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, "yourmodid"); // Ersetze "yourmodid"
+            DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, HkbMod.MOD_ID);
 
     public static final RegistryObject<EntityType<ThrowingKnifeEntity>> THROWING_KNIFE =
             ENTITY_TYPES.register("throwing_knife", () -> EntityType.Builder.<ThrowingKnifeEntity>of(

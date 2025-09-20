@@ -67,7 +67,7 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                 .define('A', ModBlocks.FEATHER_BLOCK.get())
                 .unlockedBy(getHasName(ModBlocks.FEATHER_BLOCK.get()), has(ModBlocks.FEATHER_BLOCK.get())).save(this.output);
 
-        this.shaped(RecipeCategory.MISC, ModItems.THROWING_KNIFE.get(), 1)
+        this.shaped(RecipeCategory.COMBAT, ModItems.THROWING_KNIFE.get(), 1)
                 .pattern(" N ")
                 .pattern(" I ")
                 .pattern(" A ")
@@ -75,6 +75,11 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                 .define('I', Items.IRON_INGOT)
                 .define('A', Items.STICK)
                 .unlockedBy(getHasName(Items.IRON_INGOT), has(Items.IRON_INGOT)).save(this.output);
+
+        this.shapeless(RecipeCategory.COMBAT, ModItems.THROWING_KNIFE_EXPLOSIVE.get(), 1)
+                .requires(ModItems.THROWING_KNIFE.get())
+                .requires(Items.TNT)
+                .unlockedBy(getHasName(ModItems.THROWING_KNIFE.get()), has(ModItems.THROWING_KNIFE.get())).save(this.output);
 
         this.shapeless(RecipeCategory.MISC, ModItems.ALEXANDRITE.get(), 9)
                 .requires(ModBlocks.ALEXANDRITE_BLOCK.get())
