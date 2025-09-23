@@ -503,5 +503,6 @@ Security reports: 30 days
 - **Insights Tab**: Track repository activity
 
 ---
+*Created by Claude CLI (23.09.2025)*
 
 *This documentation should be updated when workflows are modified or new actions are added.*
