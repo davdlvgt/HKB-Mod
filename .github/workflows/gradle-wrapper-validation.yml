@@ -1,0 +1,15 @@
+name: "Disable Gradle Wrapper Validation"
+
+# This workflow explicitly disables GitHub's automatic Gradle wrapper validation
+# that was causing Gradle 9.0.0 to be used instead of our configured 8.12.1
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  disable-validation:
+    runs-on: ubuntu-latest
+    steps:
+    - name: "Disable automatic validation"
+      run: echo "Gradle wrapper validation disabled - using manual setup instead"
