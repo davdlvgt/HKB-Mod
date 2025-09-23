@@ -6,6 +6,7 @@ import de.davidvogt.hkbmod.entities.ModEntityTypes;
 import de.davidvogt.hkbmod.item.ModCreativeModeTabs;
 import de.davidvogt.hkbmod.item.ModItems;
 import net.minecraft.client.renderer.entity.EntityRenderers;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
@@ -27,6 +28,7 @@ public final class HkbMod {
     public HkbMod(FMLJavaModLoadingContext context) {
         var modBusGroup = context.getModBusGroup();
         FMLCommonSetupEvent.getBus(modBusGroup).addListener(this::commonSetup);
+        FMLClientSetupEvent.getBus(modBusGroup).addListener(this::clientSetup);
 
         ModItems.register(modBusGroup);
         ModBlocks.register(modBusGroup);
@@ -40,6 +42,11 @@ public final class HkbMod {
     private void commonSetup(final FMLCommonSetupEvent event) {
 
     }
+
+    private void clientSetup(final FMLClientSetupEvent event) {
+
+    }
+
 
     // Add the example block item to the building blocks tab
     private static void addCreative(BuildCreativeModeTabContentsEvent event) {
@@ -58,6 +65,7 @@ public final class HkbMod {
             event.accept(ModItems.THROWING_KNIFE_INSTANT_DAMAGE);
             event.accept(ModItems.LIGHTNING_AXE);
             event.accept(ModItems.LIGHTNING_WAND);
+            event.accept(ModItems.GROWTH_ACCELERATOR_WAND);
         }
 
         if (event.getTabKey() == CreativeModeTabs.BUILDING_BLOCKS) {

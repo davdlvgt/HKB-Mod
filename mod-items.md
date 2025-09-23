@@ -17,6 +17,7 @@ This table contains all items included in the HKB Mod with their properties and 
 | **Throwing Knife (Instant Damage)** | Projectile Weapon | 6 | - | Throwable projectile with instant damage effect | Throwing knife that deals instant damage, lowest stack size |
 | **Lightning Axe** | Magic Tool/Axe | 1 | Variable | Axe functionality + Lightning strike ability (5s cooldown, 8 block radius, 20 strikes) | Enchantable axe that can summon lightning strikes around the player |
 | **Lightning Wand** | Magic Tool | 1 | 100 | Lightning-based magic weapon | Magical wand with lightning-based abilities |
+| **Growth Accelerator Wand** | Magic Tool | 1 | 128 | Key sequence challenge system for plant growth acceleration | Interactive magic wand that requires completing a 5-key sequence challenge to accelerate plant growth |
 
 ## Item Categories
 
@@ -35,6 +36,7 @@ This table contains all items included in the HKB Mod with their properties and 
 ### Magic Items
 - Mystical Wand (fireball/snowball shooter)
 - Lightning Wand (lightning magic)
+- Growth Accelerator Wand (plant growth acceleration)
 - Feather Wings (special functionality)
 
 ### Projectile Weapons
@@ -42,6 +44,46 @@ This table contains all items included in the HKB Mod with their properties and 
 - Throwing Knife (Explosive)
 - Throwing Knife (Slowness)
 - Throwing Knife (Instant Damage)
+
+## How to Use the Growth Accelerator Wand
+
+The **Growth Accelerator Wand** is a unique magic tool that uses an interactive key sequence challenge system:
+
+### Usage Steps:
+1. **Target Selection**: Right-click on any growable plant or block
+   - Supports: Crops (wheat, carrots, etc.), saplings, bamboo, sugar cane, cactus, chorus plants, nether wart, cocoa, sweet berry bushes
+   - Can target farmland with crops above it
+   - Can target the plant directly
+
+2. **Key Sequence Challenge**: After right-clicking, a challenge UI appears above the hotbar showing:
+   - **Title**: "Key Sequence Challenge"
+   - **Key Sequence**: 5 random keys from the set {K, L, O, P, M}
+   - **Progress Bar**: Shows time remaining (10 seconds total)
+   - **Current Progress**: Displays completed vs total keys (e.g., "2/5")
+
+3. **Visual Feedback**: Each key in the sequence has different colors:
+   - **Green**: Correctly entered key
+   - **Pulsing Yellow**: Current key to press
+   - **Gray**: Future keys
+   - **Red**: Incorrectly entered key (sequence resets)
+
+4. **Key Input**: Press the displayed keys in the correct order using K, L, O, P, M keys
+   - **Correct Key**: Plays a pleasant sound and advances progress
+   - **Wrong Key**: Plays error sound and resets the sequence
+   - **Timeout**: If 10 seconds pass, the challenge fails
+
+5. **Success**: When all 5 keys are entered correctly:
+   - Plays success sound
+   - Shows "Sequence Complete! Growth Accelerated!" message
+   - The targeted plant instantly grows to full maturity
+   - Wand loses 1 durability point
+
+### Key Features:
+- **Interactive Challenge**: Requires skill and timing, not just clicking
+- **Visual Feedback**: Clear UI shows progress and remaining time
+- **Audio Cues**: Different sounds for success, failure, and progress
+- **Fail-Safe**: Wrong keys reset the sequence rather than failing completely
+- **Durability Cost**: Only consumes durability on successful growth acceleration
 
 ## Notes
 - All throwing knives are based on the `AbstractThrowingKnifeItem` class

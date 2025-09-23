@@ -75,6 +75,12 @@ public class ModItems {
                     .durability(100)
                     .setId(ResourceKey.create(Registries.ITEM, ResourceLocation.parse("hkbmod:lightning_wand")))));
 
+    public static final RegistryObject<Item> GROWTH_ACCELERATOR_WAND = ITEMS.register("growth_accelerator_wand",
+            () -> new GrowthAcceleratorWandItem(new Item.Properties()
+                    .stacksTo(1)
+                    .durability(128)
+                    .setId(ResourceKey.create(Registries.ITEM, ResourceLocation.parse("hkbmod:growth_accelerator_wand")))));
+
     public static void register(BusGroup busGroup) {
         ITEMS.register(busGroup);
     }

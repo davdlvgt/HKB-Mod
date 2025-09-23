@@ -31,6 +31,15 @@ public class ModItemModelProvider extends ModelProvider {
                 basicItem(ModItems.CHISEL.get());
                 basicItem(ModItems.KOHLRABI.get());
                 basicItem(ModItems.AURORA_ASHES.get());
+                basicItem(ModItems.MYSTICAL_WAND.get());
+                basicItem(ModItems.FEATHER_WINGS.get());
+                basicItem(ModItems.GROWTH_ACCELERATOR_WAND.get());
+                basicItem(ModItems.THROWING_KNIFE.get());
+                basicItem(ModItems.THROWING_KNIFE_EXPLOSIVE.get());
+                basicItem(ModItems.THROWING_KNIFE_SLOWNESS.get());
+                basicItem(ModItems.THROWING_KNIFE_INSTANT_DAMAGE.get());
+                basicItem(ModItems.LIGHTNING_AXE.get());
+                basicItem(ModItems.LIGHTNING_WAND.get());
             }
 
             private void basicItem(Item item) {
@@ -47,7 +56,16 @@ public class ModItemModelProvider extends ModelProvider {
                 ModItems.RAW_ALEXANDRITE.get(),
                 ModItems.CHISEL.get(),
                 ModItems.KOHLRABI.get(),
-                ModItems.AURORA_ASHES.get()
+                ModItems.AURORA_ASHES.get(),
+                ModItems.MYSTICAL_WAND.get(),
+                ModItems.FEATHER_WINGS.get(),
+                ModItems.GROWTH_ACCELERATOR_WAND.get(),
+                ModItems.THROWING_KNIFE.get(),
+                ModItems.THROWING_KNIFE_EXPLOSIVE.get(),
+                ModItems.THROWING_KNIFE_SLOWNESS.get(),
+                ModItems.THROWING_KNIFE_INSTANT_DAMAGE.get(),
+                ModItems.LIGHTNING_AXE.get(),
+                ModItems.LIGHTNING_WAND.get()
         );
     }
 

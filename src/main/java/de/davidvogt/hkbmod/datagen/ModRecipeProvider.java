@@ -81,6 +81,15 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                 .requires(Items.TNT)
                 .unlockedBy(getHasName(ModItems.THROWING_KNIFE.get()), has(ModItems.THROWING_KNIFE.get())).save(this.output);
 
+        this.shaped(RecipeCategory.TOOLS, ModItems.GROWTH_ACCELERATOR_WAND.get(), 1)
+                .pattern(" AB")
+                .pattern(" CA")
+                .pattern("C  ")
+                .define('A', ModItems.ALEXANDRITE.get())
+                .define('B', Items.BONE_MEAL)
+                .define('C', Items.STICK)
+                .unlockedBy(getHasName(ModItems.ALEXANDRITE.get()), has(ModItems.ALEXANDRITE.get())).save(this.output);
+
         this.shapeless(RecipeCategory.MISC, ModItems.ALEXANDRITE.get(), 9)
                 .requires(ModBlocks.ALEXANDRITE_BLOCK.get())
                 .unlockedBy(getHasName(ModBlocks.ALEXANDRITE_BLOCK.get()), has(ModBlocks.ALEXANDRITE_BLOCK.get())).save(this.output);
