@@ -91,20 +91,31 @@ jobs:
         # Remove any system Gradle installations that might interfere
         sudo rm -rf /opt/gradle* || true
         sudo rm -rf /usr/share/gradle* || true
-        which gradle && sudo rm -f $(which gradle) || true
 
-        # Download Gradle 8.12.1 directly
+        # Find and remove all gradle binaries
+        sudo find /usr -name "gradle" -type f -delete 2>/dev/null || true
+        sudo find /bin -name "gradle" -type f -delete 2>/dev/null || true
+        sudo find /usr/local -name "gradle" -type f -delete 2>/dev/null || true
+
+        # Download Gradle 8.12.1 directly to unique location
         echo "Downloading Gradle 8.12.1..."
+        rm -rf /tmp/gradle-8.12.1 || true
+        rm -rf /tmp/gradle.zip || true
         wget -q https://services.gradle.org/distributions/gradle-8.12.1-bin.zip -O /tmp/gradle.zip
-        unzip -q /tmp/gradle.zip -d /tmp/
+        unzip -qq /tmp/gradle.zip -d /tmp/
 
         # Set up environment to use our Gradle exclusively
         export GRADLE_HOME=/tmp/gradle-8.12.1
         export PATH=$GRADLE_HOME/bin:$PATH
 
+        # Create system-wide gradle symlink to our version
+        sudo ln -sf /tmp/gradle-8.12.1/bin/gradle /usr/local/bin/gradle
+        sudo chmod +x /usr/local/bin/gradle
+
         # Verify we have the right version
         echo "=== Gradle Version Check ==="
         /tmp/gradle-8.12.1/bin/gradle --version
+        gradle --version
 
         # Fix wrapper permissions
         chmod +x gradlew || true
@@ -234,20 +245,31 @@ jobs:
         # Remove any system Gradle installations that might interfere
         sudo rm -rf /opt/gradle* || true
         sudo rm -rf /usr/share/gradle* || true
-        which gradle && sudo rm -f $(which gradle) || true
 
-        # Download Gradle 8.12.1 directly
+        # Find and remove all gradle binaries
+        sudo find /usr -name "gradle" -type f -delete 2>/dev/null || true
+        sudo find /bin -name "gradle" -type f -delete 2>/dev/null || true
+        sudo find /usr/local -name "gradle" -type f -delete 2>/dev/null || true
+
+        # Download Gradle 8.12.1 directly to unique location
         echo "Downloading Gradle 8.12.1..."
+        rm -rf /tmp/gradle-8.12.1 || true
+        rm -rf /tmp/gradle.zip || true
         wget -q https://services.gradle.org/distributions/gradle-8.12.1-bin.zip -O /tmp/gradle.zip
-        unzip -q /tmp/gradle.zip -d /tmp/
+        unzip -qq /tmp/gradle.zip -d /tmp/
 
         # Set up environment to use our Gradle exclusively
         export GRADLE_HOME=/tmp/gradle-8.12.1
         export PATH=$GRADLE_HOME/bin:$PATH
 
+        # Create system-wide gradle symlink to our version
+        sudo ln -sf /tmp/gradle-8.12.1/bin/gradle /usr/local/bin/gradle
+        sudo chmod +x /usr/local/bin/gradle
+
         # Verify we have the right version
         echo "=== Gradle Version Check ==="
         /tmp/gradle-8.12.1/bin/gradle --version
+        gradle --version
 
         # Fix wrapper permissions
         chmod +x gradlew || true
@@ -280,9 +302,11 @@ jobs:
 
     - name: Build JAR
       run: |
-        # Download Gradle 8.12.1 directly
+        # Download Gradle 8.12.1 directly to unique location
+        rm -rf /tmp/gradle-8.12.1 || true
+        rm -rf /tmp/gradle.zip || true
         wget -q https://services.gradle.org/distributions/gradle-8.12.1-bin.zip -O /tmp/gradle.zip
-        unzip -q /tmp/gradle.zip -d /tmp/
+        unzip -qq /tmp/gradle.zip -d /tmp/
         export GRADLE_HOME=/tmp/gradle-8.12.1
         export PATH=$GRADLE_HOME/bin:$PATH
 
