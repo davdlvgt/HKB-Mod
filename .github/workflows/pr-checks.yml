@@ -75,9 +75,61 @@ jobs:
     runs-on: ubuntu-latest
     needs: validate-pr
 
+    env:
+      GRADLE_OPTS: -Xmx4g -Xms1g
+      GRADLE_USER_HOME: ${{ github.workspace }}/.gradle
+      DISABLE_GRADLE_CACHING: true
+      GRADLE_VERSION: "8.12.1"
+      GRADLE_DISTRIBUTION_URL: "https://services.gradle.org/distributions/gradle-8.12.1-bin.zip"
+
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
+
+    - name: Setup Gradle 8.12.1 directly (bypass wrapper issues)
+      run: |
+        # Remove any system Gradle installations that might interfere
+        sudo rm -rf /opt/gradle* || true
+        sudo rm -rf /usr/share/gradle* || true
+
+        # Find and remove all gradle binaries
+        sudo find /usr -name "gradle" -type f -delete 2>/dev/null || true
+        sudo find /bin -name "gradle" -type f -delete 2>/dev/null || true
+        sudo find /usr/local -name "gradle" -type f -delete 2>/dev/null || true
+
+        # Download Gradle 8.12.1 directly to unique location
+        echo "Downloading Gradle 8.12.1..."
+        rm -rf /tmp/gradle-8.12.1 || true
+        rm -rf /tmp/gradle.zip || true
+        wget -q https://services.gradle.org/distributions/gradle-8.12.1-bin.zip -O /tmp/gradle.zip
+        unzip -qq /tmp/gradle.zip -d /tmp/
+
+        # Set up environment to use our Gradle exclusively
+        export GRADLE_HOME=/tmp/gradle-8.12.1
+        export PATH=$GRADLE_HOME/bin:$PATH
+
+        # Create system-wide gradle symlink to our version
+        sudo ln -sf /tmp/gradle-8.12.1/bin/gradle /usr/local/bin/gradle
+        sudo chmod +x /usr/local/bin/gradle
+
+        # Verify we have the right version
+        echo "=== Gradle Version Check ==="
+        /tmp/gradle-8.12.1/bin/gradle --version
+        gradle --version
+
+        # Fix wrapper permissions
+        chmod +x gradlew || true
+
+        # Update wrapper properties to point to 8.12.1
+        echo "distributionBase=GRADLE_USER_HOME" > gradle/wrapper/gradle-wrapper.properties
+        echo "distributionPath=wrapper/dists" >> gradle/wrapper/gradle-wrapper.properties
+        echo "distributionUrl=https\://services.gradle.org/distributions/gradle-8.12.1-bin.zip" >> gradle/wrapper/gradle-wrapper.properties
+        echo "networkTimeout=10000" >> gradle/wrapper/gradle-wrapper.properties
+        echo "validateDistributionUrl=true" >> gradle/wrapper/gradle-wrapper.properties
+        echo "zipStoreBase=GRADLE_USER_HOME" >> gradle/wrapper/gradle-wrapper.properties
+        echo "zipStorePath=wrapper/dists" >> gradle/wrapper/gradle-wrapper.properties
+
+        echo "=== Setup Complete ==="
 
     - name: Set up JDK 21
       uses: actions/setup-java@v4
@@ -85,27 +137,46 @@ jobs:
         java-version: '21'
         distribution: 'temurin'
 
-    - name: Cache Gradle packages
-      uses: actions/cache@v4
-      with:
-        path: |
-          ~/.gradle/caches
-          ~/.gradle/wrapper
-        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-        restore-keys: |
-          ${{ runner.os }}-gradle-
+    # Disabled caching to prevent Gradle version conflicts
+    # - name: Cache Gradle packages
+    #   uses: actions/cache@v4
+    #   with:
+    #     path: |
+    #       ~/.gradle/caches
+    #       ~/.gradle/wrapper
+    #     key: ${{ runner.os }}-gradle-8.12.1-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+    #     restore-keys: |
+    #       ${{ runner.os }}-gradle-8.12.1-
 
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
 
+    - name: Verify and force Gradle wrapper version
+      run: |
+        echo "Gradle wrapper version:"
+        grep "distributionUrl" gradle/wrapper/gradle-wrapper.properties
+        echo "Forcing Gradle wrapper to download correct version..."
+        ./gradlew wrapper --gradle-version=8.12.1
+        echo "Verifying Gradle version:"
+        ./gradlew --version
+
     - name: Clean build
-      run: ./gradlew clean
+      run: |
+        export GRADLE_HOME=/tmp/gradle-8.12.1
+        export PATH=$GRADLE_HOME/bin:$PATH
+        /tmp/gradle-8.12.1/bin/gradle clean --no-daemon
 
     - name: Build with Gradle
-      run: ./gradlew build
+      run: |
+        export GRADLE_HOME=/tmp/gradle-8.12.1
+        export PATH=$GRADLE_HOME/bin:$PATH
+        /tmp/gradle-8.12.1/bin/gradle build --no-daemon
 
     - name: Run data generation
-      run: ./gradlew runData
+      run: |
+        export GRADLE_HOME=/tmp/gradle-8.12.1
+        export PATH=$GRADLE_HOME/bin:$PATH
+        /tmp/gradle-8.12.1/bin/gradle runData --no-daemon
 
     - name: Check for generated files changes
       id: check_generated
@@ -118,17 +189,12 @@ jobs:
           echo "has_changes=false" >> $GITHUB_OUTPUT
         fi
 
-    - name: Comment on PR about generated files
+    - name: Log generated files status
       if: steps.check_generated.outputs.has_changes == 'true'
-      uses: actions/github-script@v7
-      with:
-        script: |
-          github.rest.issues.createComment({
-            issue_number: context.issue.number,
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            body: '⚠️ **Generated files are out of date**\n\nThe data generation produced different files than what\'s committed. Please run `./gradlew runData` locally and commit the updated generated files.\n\nThis is likely because:\n- New items/blocks were added without regenerating data\n- Data generator code was modified\n- Dependencies were updated\n\nGenerated files should always be kept in sync with the code.'
-          })
+      run: |
+        echo "⚠️ Generated files are out of date"
+        echo "The data generation produced different files than what's committed."
+        echo "Please run './gradlew runData' locally and commit the updated generated files."
 
     - name: Fail if generated files are out of date
       if: steps.check_generated.outputs.has_changes == 'true' && github.base_ref == 'master'
@@ -141,21 +207,83 @@ jobs:
         # Add your code style checks here if you have any
         echo "Code style check passed"
 
-    - name: Security scan
-      uses: securecodewarrior/github-action-add-sarif@v1
-      if: github.event_name == 'pull_request'
-      continue-on-error: true
-      with:
-        sarif-file: 'results.sarif'
+    - name: Basic security check
+      run: |
+        # Basic security checks
+        echo "Running basic security checks..."
+
+        # Check for common security issues in Java files
+        if find src -name "*.java" -exec grep -l "System.out.print" {} \; | head -5; then
+          echo "⚠️ Warning: Found System.out.print statements (consider using logger)"
+        fi
+
+        # Check for hardcoded secrets patterns
+        if find src -name "*.java" -exec grep -l "password\|secret\|key.*=" {} \; | head -5; then
+          echo "⚠️ Warning: Potential hardcoded secrets found"
+        fi
+
+        echo "Basic security check completed"
 
   size-check:
     name: Check JAR Size
     runs-on: ubuntu-latest
     needs: build-and-test
 
+    env:
+      GRADLE_OPTS: -Xmx4g -Xms1g
+      GRADLE_USER_HOME: ${{ github.workspace }}/.gradle
+      DISABLE_GRADLE_CACHING: true
+      GRADLE_VERSION: "8.12.1"
+      GRADLE_DISTRIBUTION_URL: "https://services.gradle.org/distributions/gradle-8.12.1-bin.zip"
+
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
+
+    - name: Setup Gradle 8.12.1 directly (bypass wrapper issues)
+      run: |
+        # Remove any system Gradle installations that might interfere
+        sudo rm -rf /opt/gradle* || true
+        sudo rm -rf /usr/share/gradle* || true
+
+        # Find and remove all gradle binaries
+        sudo find /usr -name "gradle" -type f -delete 2>/dev/null || true
+        sudo find /bin -name "gradle" -type f -delete 2>/dev/null || true
+        sudo find /usr/local -name "gradle" -type f -delete 2>/dev/null || true
+
+        # Download Gradle 8.12.1 directly to unique location
+        echo "Downloading Gradle 8.12.1..."
+        rm -rf /tmp/gradle-8.12.1 || true
+        rm -rf /tmp/gradle.zip || true
+        wget -q https://services.gradle.org/distributions/gradle-8.12.1-bin.zip -O /tmp/gradle.zip
+        unzip -qq /tmp/gradle.zip -d /tmp/
+
+        # Set up environment to use our Gradle exclusively
+        export GRADLE_HOME=/tmp/gradle-8.12.1
+        export PATH=$GRADLE_HOME/bin:$PATH
+
+        # Create system-wide gradle symlink to our version
+        sudo ln -sf /tmp/gradle-8.12.1/bin/gradle /usr/local/bin/gradle
+        sudo chmod +x /usr/local/bin/gradle
+
+        # Verify we have the right version
+        echo "=== Gradle Version Check ==="
+        /tmp/gradle-8.12.1/bin/gradle --version
+        gradle --version
+
+        # Fix wrapper permissions
+        chmod +x gradlew || true
+
+        # Update wrapper properties to point to 8.12.1
+        echo "distributionBase=GRADLE_USER_HOME" > gradle/wrapper/gradle-wrapper.properties
+        echo "distributionPath=wrapper/dists" >> gradle/wrapper/gradle-wrapper.properties
+        echo "distributionUrl=https\://services.gradle.org/distributions/gradle-8.12.1-bin.zip" >> gradle/wrapper/gradle-wrapper.properties
+        echo "networkTimeout=10000" >> gradle/wrapper/gradle-wrapper.properties
+        echo "validateDistributionUrl=true" >> gradle/wrapper/gradle-wrapper.properties
+        echo "zipStoreBase=GRADLE_USER_HOME" >> gradle/wrapper/gradle-wrapper.properties
+        echo "zipStorePath=wrapper/dists" >> gradle/wrapper/gradle-wrapper.properties
+
+        echo "=== Setup Complete ==="
 
     - name: Set up JDK 21
       uses: actions/setup-java@v4
@@ -163,18 +291,29 @@ jobs:
         java-version: '21'
         distribution: 'temurin'
 
-    - name: Cache Gradle packages
-      uses: actions/cache@v4
-      with:
-        path: |
-          ~/.gradle/caches
-          ~/.gradle/wrapper
-        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+    # Disabled caching to prevent Gradle version conflicts
+    # - name: Cache Gradle packages
+    #   uses: actions/cache@v4
+    #   with:
+    #     path: |
+    #       ~/.gradle/caches
+    #       ~/.gradle/wrapper
+    #     key: ${{ runner.os }}-gradle-8.12.1-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
 
     - name: Build JAR
       run: |
-        chmod +x gradlew
-        ./gradlew build
+        # Download Gradle 8.12.1 directly to unique location
+        rm -rf /tmp/gradle-8.12.1 || true
+        rm -rf /tmp/gradle.zip || true
+        wget -q https://services.gradle.org/distributions/gradle-8.12.1-bin.zip -O /tmp/gradle.zip
+        unzip -qq /tmp/gradle.zip -d /tmp/
+        export GRADLE_HOME=/tmp/gradle-8.12.1
+        export PATH=$GRADLE_HOME/bin:$PATH
+
+        echo "Gradle version:"
+        /tmp/gradle-8.12.1/bin/gradle --version
+        echo "Building with Gradle 8.12.1..."
+        /tmp/gradle-8.12.1/bin/gradle build --no-daemon
 
     - name: Check JAR size
       run: |
@@ -195,18 +334,13 @@ jobs:
           exit 1
         fi
 
-    - name: Comment JAR size on PR
-      uses: actions/github-script@v7
-      with:
-        script: |
-          const fs = require('fs');
-          const jarFile = require('child_process').execSync('ls build/libs/*.jar | head -n 1').toString().trim();
-          const jarSize = fs.statSync(jarFile).size;
-          const jarSizeMB = Math.round(jarSize / 1024 / 1024 * 100) / 100;
-
-          github.rest.issues.createComment({
-            issue_number: context.issue.number,
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            body: `📦 **Build Information**\n\n- JAR Size: ${jarSizeMB}MB\n- Java Version: 21\n- Build Status: ✅ Success\n\nThe mod has been successfully built and is ready for testing.`
-          })
+    - name: Log JAR size information
+      run: |
+        JAR_FILE=$(ls build/libs/*.jar | head -n 1)
+        JAR_SIZE=$(stat -c%s "$JAR_FILE")
+        JAR_SIZE_MB=$((JAR_SIZE / 1024 / 1024))
+        echo "📦 Build Information"
+        echo "- JAR Size: ${JAR_SIZE_MB}MB"
+        echo "- Java Version: 21"
+        echo "- Build Status: ✅ Success"
+        echo "The mod has been successfully built and is ready for testing."

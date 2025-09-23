@@ -27,6 +27,18 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
+    - name: Fix Gradle wrapper permissions and version immediately
+      run: |
+        chmod +x gradlew
+        echo "Forcing Gradle 8.12.1 for Forge compatibility..."
+        echo "distributionBase=GRADLE_USER_HOME" > gradle/wrapper/gradle-wrapper.properties
+        echo "distributionPath=wrapper/dists" >> gradle/wrapper/gradle-wrapper.properties
+        echo "distributionUrl=https\://services.gradle.org/distributions/gradle-8.12.1-bin.zip" >> gradle/wrapper/gradle-wrapper.properties
+        echo "networkTimeout=10000" >> gradle/wrapper/gradle-wrapper.properties
+        echo "validateDistributionUrl=true" >> gradle/wrapper/gradle-wrapper.properties
+        echo "zipStoreBase=GRADLE_USER_HOME" >> gradle/wrapper/gradle-wrapper.properties
+        echo "zipStorePath=wrapper/dists" >> gradle/wrapper/gradle-wrapper.properties
+
     - name: Set up JDK 21
       uses: actions/setup-java@v4
       with:
@@ -45,14 +57,20 @@ jobs:
         path: |
           ~/.gradle/caches
           ~/.gradle/wrapper
-        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+        key: ${{ runner.os }}-gradle-8.12.1-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
         restore-keys: |
-          ${{ runner.os }}-gradle-
+          ${{ runner.os }}-gradle-8.12.1-
 
     - name: Build with Gradle
       run: |
         chmod +x gradlew
-        ./gradlew build -x test
+        echo "Gradle wrapper version:"
+        grep "distributionUrl" gradle/wrapper/gradle-wrapper.properties
+        echo "Forcing Gradle wrapper to download correct version..."
+        ./gradlew wrapper --gradle-version=8.12.1
+        echo "Verifying Gradle version:"
+        ./gradlew --version
+        ./gradlew build -x test --no-daemon
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v3

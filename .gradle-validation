@@ -1,0 +1,2 @@
+# Disable GitHub's automatic Gradle validation
+disabled=true

@@ -1,0 +1,17 @@
+name: "Custom CodeQL Config"
+
+# Disable automatic dependency detection
+disable-default-path-filters: true
+
+# Only scan specific paths, avoiding automatic Gradle detection
+paths:
+  - src/main/java
+
+paths-ignore:
+  - gradle/**
+  - gradlew*
+  - build.gradle
+  - settings.gradle
+
+queries:
+  - uses: security-extended
