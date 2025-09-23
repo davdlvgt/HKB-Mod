@@ -1,11 +1,11 @@
 {
   "parent": "minecraft:recipes/root",
   "criteria": {
-    "has_iron_ingot": {
+    "has_alexandrite": {
       "conditions": {
         "items": [
           {
-            "items": "minecraft:iron_ingot"
+            "items": "hkbmod:alexandrite"
           }
         ]
       },
@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "hkbmod:throwing_knife"
+        "recipe": "hkbmod:growth_accelerator_wand"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -21,12 +21,12 @@
   "requirements": [
     [
       "has_the_recipe",
-      "has_iron_ingot"
+      "has_alexandrite"
     ]
   ],
   "rewards": {
     "recipes": [
-      "hkbmod:throwing_knife"
+      "hkbmod:growth_accelerator_wand"
     ]
   }
 }

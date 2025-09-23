@@ -1,0 +1,9 @@
+// 1.21.7	2025-09-23T15:51:42.8987371	Loot Tables
+d229e3bc73580bd0e80e04ecc34c12a587eb5822 data/hkbmod/loot_table/blocks/alexandrite_block.json
+c2d54d9a9b0a5c9358bef891429f76d44b8eb723 data/hkbmod/loot_table/blocks/alexandrite_deepslate_ore.json
+0a0fec370d06d7ba0d2539b3f996f46a98321262 data/hkbmod/loot_table/blocks/alexandrite_ore.json
+7f83be46baf2f19889aeba39688daf1923afe651 data/hkbmod/loot_table/blocks/feather_block.json
+49ca937a94242f80db569c27179ecd2b7f90b428 data/hkbmod/loot_table/blocks/jump_block.json
+51d6093d4aad2328ca6eedd13fa8b24845f78798 data/hkbmod/loot_table/blocks/magic_block.json
+4e59b9e68a7ec48eb0890d18277127640ab599ae data/hkbmod/loot_table/blocks/raw_alexandrite_block.json
+6008629b14c92eb138d3855719c71cb48912de27 data/hkbmod/loot_table/blocks/string_block.json

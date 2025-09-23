@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "A": "hkbmod:alexandrite",
+    "B": "minecraft:bone_meal",
+    "C": "minecraft:stick"
+  },
+  "pattern": [
+    " AB",
+    " CA",
+    "C  "
+  ],
+  "result": {
+    "count": 1,
+    "id": "hkbmod:growth_accelerator_wand"
+  }
+}

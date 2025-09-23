@@ -1,0 +1,4 @@
+// 1.21.7	2025-09-23T15:51:42.8903297	Tags for minecraft:block mod id hkbmod
+2798c42fda438fc6795c0bf2a6c1b71cc9d7e97b data/minecraft/tags/block/mineable/pickaxe.json
+2a7f580817a63a6894ec8335a3fbe4ede81017a8 data/minecraft/tags/block/needs_diamond_tool.json
+106f84899d8a92d226eb79cfd83ce4d6adfa2c63 data/minecraft/tags/block/needs_iron_tool.json

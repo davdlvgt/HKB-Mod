@@ -12,23 +12,17 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.level.block.Block;
-import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.stream.Stream;
 
 /**
- * Diese Klasse generiert Block- und Item-Modelle für die Blöcke im Mod.
- * Sie erweitert die ModelProvider-Klasse von Minecraft und überschreibt
- * die notwendigen Methoden, um die Modelle zu erstellen.
- */
-
-/*
- * Klasse wird aktuell nicht genutzt
+ * Class that provides block models and blockstates for the mod.
  */
 
 public class ModBlockStateProvider extends ModelProvider {
-    public ModBlockStateProvider(PackOutput output) {
+    public ModBlockStateProvider(PackOutput output, ExistingFileHelper existingFileHelper) {
         super(output);
     }
 
