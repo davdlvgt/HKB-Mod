@@ -15,6 +15,9 @@ jobs:
       matrix:
         java: [21]
 
+    env:
+      GRADLE_OPTS: -Xmx4g -Xms1g
+
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
@@ -29,6 +32,7 @@ jobs:
       uses: gradle/actions/setup-gradle@v4
       with:
         gradle-version: 8.12.1
+        gradle-home-cache-cleanup: true
 
     - name: Cache Gradle packages
       uses: actions/cache@v4
@@ -44,13 +48,13 @@ jobs:
       run: chmod +x gradlew
 
     - name: Clean build
-      run: ./gradlew clean
+      run: ./gradlew clean --no-daemon
 
     - name: Build with Gradle
-      run: ./gradlew build
+      run: ./gradlew build --no-daemon
 
     - name: Run data generation
-      run: ./gradlew runData
+      run: ./gradlew runData --no-daemon
 
     - name: Check for uncommitted generated files
       run: |
