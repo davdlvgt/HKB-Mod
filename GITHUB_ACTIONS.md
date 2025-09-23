@@ -65,6 +65,7 @@ Jobs:
 #### Environment Variables:
 ```bash
 JAVA_VERSION: 21
+GRADLE_VERSION: 8.12.1 (compatible with Forge Gradle plugin)
 CACHE_KEY: Based on Gradle files hash
 ARTIFACT_RETENTION: 30 days
 LOG_RETENTION: 7 days (failures only)
@@ -407,6 +408,21 @@ Error: Task :compileJava FAILED
 - Check Java version (should be 21)
 - Verify Gradle wrapper permissions
 - Clear Gradle cache (re-run workflow)
+```
+
+#### 1a. Gradle Version Incompatibility
+```bash
+# Error message
+Error: Found Gradle version Gradle 9.0.0. Versions Gradle 9.0 and newer are not supported yet.
+
+# Solution: Fixed in workflows with explicit Gradle version
+- name: Setup Gradle
+  uses: gradle/actions/setup-gradle@v4
+  with:
+    gradle-version: 8.12.1
+
+# Local solution: Update your gradle/wrapper/gradle-wrapper.properties
+distributionUrl=https://services.gradle.org/distributions/gradle-8.12.1-bin.zip
 ```
 
 #### 2. Data Generation Issues
