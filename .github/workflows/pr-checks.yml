@@ -88,11 +88,6 @@ jobs:
         java-version: '21'
         distribution: 'temurin'
 
-    - name: Setup Gradle
-      uses: gradle/actions/setup-gradle@v4
-      with:
-        gradle-version: 8.12.1
-
     - name: Cache Gradle packages
       uses: actions/cache@v4
       with:
@@ -105,6 +100,15 @@ jobs:
 
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
+
+    - name: Verify and force Gradle wrapper version
+      run: |
+        echo "Gradle wrapper version:"
+        grep "distributionUrl" gradle/wrapper/gradle-wrapper.properties
+        echo "Forcing Gradle wrapper to download correct version..."
+        ./gradlew wrapper --gradle-version=8.12.1
+        echo "Verifying Gradle version:"
+        ./gradlew --version
 
     - name: Clean build
       run: ./gradlew clean --no-daemon
@@ -184,11 +188,6 @@ jobs:
         java-version: '21'
         distribution: 'temurin'
 
-    - name: Setup Gradle
-      uses: gradle/actions/setup-gradle@v4
-      with:
-        gradle-version: 8.12.1
-
     - name: Cache Gradle packages
       uses: actions/cache@v4
       with:
@@ -200,6 +199,12 @@ jobs:
     - name: Build JAR
       run: |
         chmod +x gradlew
+        echo "Gradle wrapper version:"
+        grep "distributionUrl" gradle/wrapper/gradle-wrapper.properties
+        echo "Forcing Gradle wrapper to download correct version..."
+        ./gradlew wrapper --gradle-version=8.12.1
+        echo "Verifying Gradle version:"
+        ./gradlew --version
         ./gradlew build --no-daemon
 
     - name: Check JAR size

@@ -25,11 +25,6 @@ jobs:
         java-version: '21'
         distribution: 'temurin'
 
-    - name: Setup Gradle
-      uses: gradle/actions/setup-gradle@v4
-      with:
-        gradle-version: 8.12.1
-
     - name: Cache Gradle packages
       uses: actions/cache@v4
       with:
@@ -43,8 +38,20 @@ jobs:
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
 
+    - name: Verify and force Gradle wrapper version
+      run: |
+        echo "Gradle wrapper version:"
+        grep "distributionUrl" gradle/wrapper/gradle-wrapper.properties
+        echo "Forcing Gradle wrapper to download correct version..."
+        ./gradlew wrapper --gradle-version=8.12.1
+        echo "Verifying Gradle version:"
+        ./gradlew --version
+
     - name: Check for Gradle updates
-      run: ./gradlew wrapper --gradle-version=latest
+      run: |
+        echo "Current Gradle version (should be 8.12.1 for Forge compatibility):"
+        ./gradlew --version
+        echo "Skipping Gradle update - Forge requires Gradle 8.12.1"
 
     - name: Check current versions
       id: current_versions
@@ -132,11 +139,6 @@ jobs:
         java-version: '21'
         distribution: 'temurin'
 
-    - name: Setup Gradle
-      uses: gradle/actions/setup-gradle@v4
-      with:
-        gradle-version: 8.12.1
-
     - name: Cache Gradle packages
       uses: actions/cache@v4
       with:
@@ -148,6 +150,12 @@ jobs:
     - name: Run security audit
       run: |
         chmod +x gradlew
+        echo "Gradle wrapper version:"
+        grep "distributionUrl" gradle/wrapper/gradle-wrapper.properties
+        echo "Forcing Gradle wrapper to download correct version..."
+        ./gradlew wrapper --gradle-version=8.12.1
+        echo "Verifying Gradle version:"
+        ./gradlew --version
         # Check for known vulnerabilities in dependencies
         ./gradlew dependencies --configuration runtimeClasspath > dependencies.txt
 
