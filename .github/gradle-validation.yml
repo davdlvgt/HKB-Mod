@@ -1,0 +1,3 @@
+# Disable automatic Gradle validation for MinecraftForge compatibility
+enabled: false
+version: "8.12.1"

@@ -79,15 +79,25 @@ jobs:
       GRADLE_OPTS: -Xmx4g -Xms1g
       GRADLE_USER_HOME: ${{ github.workspace }}/.gradle
       DISABLE_GRADLE_CACHING: true
+      GRADLE_VERSION: "8.12.1"
+      GRADLE_DISTRIBUTION_URL: "https://services.gradle.org/distributions/gradle-8.12.1-bin.zip"
 
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    - name: Fix Gradle wrapper permissions and version immediately
+    - name: Remove system Gradle and configure wrapper
       run: |
+        # Remove any system Gradle to prevent conflicts
+        sudo rm -rf /opt/gradle* || true
+        sudo rm -rf /usr/share/gradle* || true
+        export PATH=$(echo $PATH | tr ':' '\n' | grep -v gradle | tr '\n' ':')
+
+        # Ensure only our wrapper is used
         chmod +x gradlew
-        echo "Forcing Gradle 8.12.1 for Forge compatibility..."
+        echo "Forcing Gradle 8.12.1 for MinecraftForge compatibility..."
+
+        # Completely recreate wrapper properties
         echo "distributionBase=GRADLE_USER_HOME" > gradle/wrapper/gradle-wrapper.properties
         echo "distributionPath=wrapper/dists" >> gradle/wrapper/gradle-wrapper.properties
         echo "distributionUrl=https\://services.gradle.org/distributions/gradle-8.12.1-bin.zip" >> gradle/wrapper/gradle-wrapper.properties
@@ -96,21 +106,28 @@ jobs:
         echo "zipStoreBase=GRADLE_USER_HOME" >> gradle/wrapper/gradle-wrapper.properties
         echo "zipStorePath=wrapper/dists" >> gradle/wrapper/gradle-wrapper.properties
 
+        # Verify configuration
+        echo "=== Gradle wrapper configuration ==="
+        cat gradle/wrapper/gradle-wrapper.properties
+        echo "=== PATH without gradle ==="
+        echo $PATH
+
     - name: Set up JDK 21
       uses: actions/setup-java@v4
       with:
         java-version: '21'
         distribution: 'temurin'
 
-    - name: Cache Gradle packages
-      uses: actions/cache@v4
-      with:
-        path: |
-          ~/.gradle/caches
-          ~/.gradle/wrapper
-        key: ${{ runner.os }}-gradle-8.12.1-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-        restore-keys: |
-          ${{ runner.os }}-gradle-8.12.1-
+    # Disabled caching to prevent Gradle version conflicts
+    # - name: Cache Gradle packages
+    #   uses: actions/cache@v4
+    #   with:
+    #     path: |
+    #       ~/.gradle/caches
+    #       ~/.gradle/wrapper
+    #     key: ${{ runner.os }}-gradle-8.12.1-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+    #     restore-keys: |
+    #       ${{ runner.os }}-gradle-8.12.1-
 
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
@@ -144,17 +161,12 @@ jobs:
           echo "has_changes=false" >> $GITHUB_OUTPUT
         fi
 
-    - name: Comment on PR about generated files
+    - name: Log generated files status
       if: steps.check_generated.outputs.has_changes == 'true'
-      uses: actions/github-script@v7
-      with:
-        script: |
-          github.rest.issues.createComment({
-            issue_number: context.issue.number,
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            body: '⚠️ **Generated files are out of date**\n\nThe data generation produced different files than what\'s committed. Please run `./gradlew runData` locally and commit the updated generated files.\n\nThis is likely because:\n- New items/blocks were added without regenerating data\n- Data generator code was modified\n- Dependencies were updated\n\nGenerated files should always be kept in sync with the code.'
-          })
+      run: |
+        echo "⚠️ Generated files are out of date"
+        echo "The data generation produced different files than what's committed."
+        echo "Please run './gradlew runData' locally and commit the updated generated files."
 
     - name: Fail if generated files are out of date
       if: steps.check_generated.outputs.has_changes == 'true' && github.base_ref == 'master'
@@ -193,15 +205,25 @@ jobs:
       GRADLE_OPTS: -Xmx4g -Xms1g
       GRADLE_USER_HOME: ${{ github.workspace }}/.gradle
       DISABLE_GRADLE_CACHING: true
+      GRADLE_VERSION: "8.12.1"
+      GRADLE_DISTRIBUTION_URL: "https://services.gradle.org/distributions/gradle-8.12.1-bin.zip"
 
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    - name: Fix Gradle wrapper permissions and version immediately
+    - name: Remove system Gradle and configure wrapper
       run: |
+        # Remove any system Gradle to prevent conflicts
+        sudo rm -rf /opt/gradle* || true
+        sudo rm -rf /usr/share/gradle* || true
+        export PATH=$(echo $PATH | tr ':' '\n' | grep -v gradle | tr '\n' ':')
+
+        # Ensure only our wrapper is used
         chmod +x gradlew
-        echo "Forcing Gradle 8.12.1 for Forge compatibility..."
+        echo "Forcing Gradle 8.12.1 for MinecraftForge compatibility..."
+
+        # Completely recreate wrapper properties
         echo "distributionBase=GRADLE_USER_HOME" > gradle/wrapper/gradle-wrapper.properties
         echo "distributionPath=wrapper/dists" >> gradle/wrapper/gradle-wrapper.properties
         echo "distributionUrl=https\://services.gradle.org/distributions/gradle-8.12.1-bin.zip" >> gradle/wrapper/gradle-wrapper.properties
@@ -210,19 +232,26 @@ jobs:
         echo "zipStoreBase=GRADLE_USER_HOME" >> gradle/wrapper/gradle-wrapper.properties
         echo "zipStorePath=wrapper/dists" >> gradle/wrapper/gradle-wrapper.properties
 
+        # Verify configuration
+        echo "=== Gradle wrapper configuration ==="
+        cat gradle/wrapper/gradle-wrapper.properties
+        echo "=== PATH without gradle ==="
+        echo $PATH
+
     - name: Set up JDK 21
       uses: actions/setup-java@v4
       with:
         java-version: '21'
         distribution: 'temurin'
 
-    - name: Cache Gradle packages
-      uses: actions/cache@v4
-      with:
-        path: |
-          ~/.gradle/caches
-          ~/.gradle/wrapper
-        key: ${{ runner.os }}-gradle-8.12.1-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+    # Disabled caching to prevent Gradle version conflicts
+    # - name: Cache Gradle packages
+    #   uses: actions/cache@v4
+    #   with:
+    #     path: |
+    #       ~/.gradle/caches
+    #       ~/.gradle/wrapper
+    #     key: ${{ runner.os }}-gradle-8.12.1-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
 
     - name: Build JAR
       run: |
@@ -254,18 +283,13 @@ jobs:
           exit 1
         fi
 
-    - name: Comment JAR size on PR
-      uses: actions/github-script@v7
-      with:
-        script: |
-          const fs = require('fs');
-          const jarFile = require('child_process').execSync('ls build/libs/*.jar | head -n 1').toString().trim();
-          const jarSize = fs.statSync(jarFile).size;
-          const jarSizeMB = Math.round(jarSize / 1024 / 1024 * 100) / 100;
-
-          github.rest.issues.createComment({
-            issue_number: context.issue.number,
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            body: `📦 **Build Information**\n\n- JAR Size: ${jarSizeMB}MB\n- Java Version: 21\n- Build Status: ✅ Success\n\nThe mod has been successfully built and is ready for testing.`
-          })
+    - name: Log JAR size information
+      run: |
+        JAR_FILE=$(ls build/libs/*.jar | head -n 1)
+        JAR_SIZE=$(stat -c%s "$JAR_FILE")
+        JAR_SIZE_MB=$((JAR_SIZE / 1024 / 1024))
+        echo "📦 Build Information"
+        echo "- JAR Size: ${JAR_SIZE_MB}MB"
+        echo "- Java Version: 21"
+        echo "- Build Status: ✅ Success"
+        echo "The mod has been successfully built and is ready for testing."
