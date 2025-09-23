@@ -1,0 +1,141 @@
+name: 🐛 Bug Report
+description: Report a bug or unexpected behavior
+title: "[BUG] "
+labels: ["bug", "needs-investigation"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this bug report! Please provide as much detail as possible.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug Description
+      description: A clear and concise description of what the bug is.
+      placeholder: Describe what happened and what you expected to happen instead.
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to Reproduce
+      description: Steps to reproduce the behavior
+      placeholder: |
+        1. Go to '...'
+        2. Click on '...'
+        3. Use item '...'
+        4. See error
+      value: |
+        1.
+        2.
+        3.
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+      description: What you expected to happen
+      placeholder: Describe what should have happened instead.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: minecraft-version
+    attributes:
+      label: Minecraft Version
+      description: What version of Minecraft are you using?
+      options:
+        - 1.21.7
+        - 1.21.6
+        - Other (please specify in additional context)
+    validations:
+      required: true
+
+  - type: dropdown
+    id: forge-version
+    attributes:
+      label: Forge Version
+      description: What version of Forge are you using?
+      options:
+        - 57.0.2
+        - 57.0.1
+        - 57.0.0
+        - Other (please specify in additional context)
+    validations:
+      required: true
+
+  - type: input
+    id: mod-version
+    attributes:
+      label: HKB Mod Version
+      description: What version of the HKB mod are you using?
+      placeholder: e.g., 1.0.0
+    validations:
+      required: true
+
+  - type: dropdown
+    id: environment
+    attributes:
+      label: Environment
+      description: Where does this bug occur?
+      multiple: true
+      options:
+        - Single-player
+        - Multiplayer (as client)
+        - Multiplayer (as server)
+        - Dedicated server
+    validations:
+      required: true
+
+  - type: textarea
+    id: other-mods
+    attributes:
+      label: Other Mods
+      description: List any other mods you have installed
+      placeholder: |
+        - JEI 15.2.0
+        - Iron Chests 14.4.4
+        - None (only HKB mod)
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Crash Report / Logs
+      description: |
+        If you have a crash report or relevant log output, please paste it here.
+        Wrap large logs in triple backticks (```) or upload to a paste service like https://gist.github.com
+      placeholder: Paste crash report or log here...
+
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots
+      description: If applicable, add screenshots to help explain your problem. You can drag and drop images here.
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional Context
+      description: Add any other context about the problem here.
+      placeholder: Any additional information that might be helpful...
+
+  - type: checkboxes
+    id: confirmations
+    attributes:
+      label: Confirmations
+      description: Please confirm the following
+      options:
+        - label: I have searched existing issues to make sure this isn't a duplicate
+          required: true
+        - label: I have tested this with only the HKB mod installed (no other mods)
+          required: false
+        - label: I can reproduce this issue consistently
+          required: false
+        - label: I have included relevant logs or crash reports
+          required: false
