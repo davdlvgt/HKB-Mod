@@ -17,6 +17,9 @@ jobs:
     runs-on: ubuntu-latest
     if: github.ref_name == 'master' || github.event_name == 'workflow_dispatch'
 
+    env:
+      GRADLE_OPTS: -Xmx4g -Xms1g
+
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
@@ -61,10 +64,10 @@ jobs:
         sed -i "s/mod_version=.*/mod_version=${{ steps.version.outputs.version }}/" gradle.properties
 
     - name: Build release JAR
-      run: ./gradlew build
+      run: ./gradlew build --no-daemon
 
     - name: Generate data
-      run: ./gradlew runData
+      run: ./gradlew runData --no-daemon
 
     - name: Get mod file name
       id: modfile
