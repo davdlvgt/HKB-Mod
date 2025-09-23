@@ -1,0 +1,124 @@
+name: ✨ Feature Request
+description: Suggest a new feature or enhancement
+title: "[FEATURE] "
+labels: ["enhancement", "needs-discussion"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for suggesting a new feature! Please provide as much detail as possible about your idea.
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: Feature Summary
+      description: A clear and concise description of the feature you'd like to see added.
+      placeholder: Describe the feature in one or two sentences.
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem/Use Case
+      description: What problem would this feature solve? What use case does it address?
+      placeholder: |
+        Describe the problem or use case this feature would solve.
+        Example: "I'm always frustrated when..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed Solution
+      description: Describe how you envision this feature working.
+      placeholder: |
+        A clear and concise description of what you want to happen.
+        Include details about how the feature should work, what it should look like, etc.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: Feature Category
+      description: What type of feature is this?
+      options:
+        - New Item
+        - New Block
+        - New Entity
+        - Gameplay Mechanic
+        - User Interface
+        - Quality of Life
+        - Performance
+        - Configuration
+        - Integration (with other mods)
+        - Other
+    validations:
+      required: true
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      description: How important is this feature to you?
+      options:
+        - Low - Nice to have
+        - Medium - Would improve the experience
+        - High - Significantly improves gameplay
+        - Critical - Essential for my use case
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternative Solutions
+      description: Have you considered any alternative solutions or workarounds?
+      placeholder: Describe any alternative solutions or features you've considered.
+
+  - type: textarea
+    id: examples
+    attributes:
+      label: Examples
+      description: Are there any existing mods, games, or references that implement something similar?
+      placeholder: |
+        References to similar features in other mods or games:
+        - Mod X has a similar feature that works like...
+        - Game Y implements this as...
+
+  - type: textarea
+    id: mockups
+    attributes:
+      label: Mockups/Screenshots
+      description: If you have any mockups, drawings, or reference screenshots, please attach them here.
+      placeholder: You can drag and drop images here or describe your visual ideas.
+
+  - type: textarea
+    id: implementation
+    attributes:
+      label: Implementation Ideas (Optional)
+      description: If you have ideas about how this could be implemented technically, share them here.
+      placeholder: |
+        Technical implementation suggestions (if you have any):
+        - Could use existing X system
+        - Might need new Y component
+        - Similar to how Z works
+
+  - type: checkboxes
+    id: confirmations
+    attributes:
+      label: Confirmations
+      description: Please confirm the following
+      options:
+        - label: I have searched existing issues to make sure this isn't a duplicate
+          required: true
+        - label: This feature would fit the theme and style of the HKB mod
+          required: false
+        - label: I understand that this is a suggestion and may not be implemented
+          required: true
+        - label: I'm willing to provide additional feedback if requested
+          required: false

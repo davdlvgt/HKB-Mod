@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 💬 Discussion
+    url: https://github.com/YOUR_USERNAME/HKB-Mod/discussions
+    about: For general questions, ideas, and community discussion
+  - name: 📚 Documentation
+    url: https://github.com/YOUR_USERNAME/HKB-Mod/wiki
+    about: Check the wiki for mod documentation and guides
+  - name: 🔧 Support
+    url: https://github.com/YOUR_USERNAME/HKB-Mod/discussions/categories/q-a
+    about: Get help with installation, configuration, or usage questions
