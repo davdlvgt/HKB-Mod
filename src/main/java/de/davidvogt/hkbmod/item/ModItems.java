@@ -6,6 +6,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.SpawnEggItem;
 import net.minecraftforge.eventbus.api.bus.BusGroup;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -80,6 +81,17 @@ public class ModItems {
                     .stacksTo(1)
                     .durability(128)
                     .setId(ResourceKey.create(Registries.ITEM, ResourceLocation.parse("hkbmod:growth_accelerator_wand")))));
+
+    public static final RegistryObject<Item> MAGNETIC_BAR = ITEMS.register("magnetic_bar",
+            () -> new MagneticBarItem(new Item.Properties()
+                    .stacksTo(1)
+                    .durability(256)
+                    .setId(ResourceKey.create(Registries.ITEM, ResourceLocation.parse("hkbmod:magnetic_bar")))));
+
+    public static final RegistryObject<Item> DEER_SPAWN_EGG = ITEMS.register("deer_spawn_egg",
+            () -> new SpawnEggItem(de.davidvogt.hkbmod.entities.ModEntityTypes.DEER.get(),
+                    new Item.Properties()
+                            .setId(ResourceKey.create(Registries.ITEM, ResourceLocation.parse("hkbmod:deer_spawn_egg")))));
 
     public static void register(BusGroup busGroup) {
         ITEMS.register(busGroup);

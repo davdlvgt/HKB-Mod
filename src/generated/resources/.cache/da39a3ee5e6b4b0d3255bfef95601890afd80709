@@ -1,4 +1,4 @@
-// 1.21.7	2025-09-23T15:51:42.8903297	
+// 1.21.7	2025-09-23T20:04:22.6933277	
 a8a433fc2c922fd776d7334c3c831c6b2893aef7 data/hkbmod/advancement/recipes/combat/throwing_knife.json
 fc72e9fb7e0899e13f6f71e650c204f0c111d3e0 data/hkbmod/advancement/recipes/combat/throwing_knife_explosive.json
 62e22fe80f06e2397cba4304c758c3ee382f40a3 data/hkbmod/advancement/recipes/misc/alexandrite.json
@@ -15,6 +15,7 @@ e8151ae9e5740f0790a4a3606bc555b18b6f6d19 data/hkbmod/advancement/recipes/misc/fe
 0a41bd6ebb9095858297fb9790e16f8431ce372d data/hkbmod/advancement/recipes/misc/jump_block.json
 c7eae4ad7c79ea348320d6e5c5f3ba6be1390c41 data/hkbmod/advancement/recipes/misc/string_block.json
 9762eb90bae93c47ded1b10298ad7b40be3893ef data/hkbmod/advancement/recipes/tools/growth_accelerator_wand.json
+c955dd4de35573be2dd891e56bca179fe42987b9 data/hkbmod/advancement/recipes/tools/magnetic_bar.json
 7fe8692c5d7e2fbd17011d7b395cc19bef9d0585 data/hkbmod/recipe/alexandrite.json
 9edeee125c8f73cc9e9dd924efcb6d1d71f03b5a data/hkbmod/recipe/alexandrite_block.json
 596baa3e31131e9bc792564a8ded9774600f60b4 data/hkbmod/recipe/alexandrite_from_blasting_alexandrite_deepslate_ore.json
@@ -28,6 +29,7 @@ b595e48f5d41989fabfbd2f6b65c2e51c6591fd8 data/hkbmod/recipe/alexandrite_from_sme
 9dd429ac4045f9d4e05f534795077bfdf63600e5 data/hkbmod/recipe/feather_wings.json
 d78d355e5c0da4fdf240624f394c6cf4c69e9833 data/hkbmod/recipe/growth_accelerator_wand.json
 bee879b6f832a73e10abc7fb5ccc4425549cbe97 data/hkbmod/recipe/jump_block.json
+a2f3566d4274b5314285e3ba63c4c92fad2d5227 data/hkbmod/recipe/magnetic_bar.json
 e086792bac8bda6ca364b71a383b8ef3fb570d2a data/hkbmod/recipe/string_block.json
 372013d7a6119d486b38a18034ca125e15154524 data/hkbmod/recipe/throwing_knife.json
 1fa30e9e7bdfe16459bb829272f3f6145f9952d3 data/hkbmod/recipe/throwing_knife_explosive.json
