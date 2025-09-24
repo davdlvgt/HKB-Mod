@@ -1,6 +1,7 @@
 package de.davidvogt.hkbmod.entities;
 
 import de.davidvogt.hkbmod.HkbMod;
+import de.davidvogt.hkbmod.entity.custom.DeerEntity;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -20,6 +21,11 @@ public class ModEntityTypes {
                             ThrowingKnifeEntity::new, MobCategory.MISC)
                     .sized(0.25F, 0.25F)
                     .build(ResourceKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath(HkbMod.MOD_ID, "throwing_knife"))));
+
+    public static final RegistryObject<EntityType<DeerEntity>> DEER =
+            ENTITY_TYPES.register("deer", () -> EntityType.Builder.of(DeerEntity::new, MobCategory.CREATURE)
+                    .sized(0.9f, 1.4f) // Width and height
+                    .build(ResourceKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath(HkbMod.MOD_ID, "deer"))));
 
     public static void register(BusGroup eventBus) {
         ENTITY_TYPES.register(eventBus);

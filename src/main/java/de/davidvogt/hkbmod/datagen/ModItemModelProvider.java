@@ -41,6 +41,8 @@ public class ModItemModelProvider extends ModelProvider {
                 basicItem(ModItems.THROWING_KNIFE_INSTANT_DAMAGE.get());
                 basicItem(ModItems.LIGHTNING_AXE.get());
                 basicItem(ModItems.LIGHTNING_WAND.get());
+                basicItem(ModItems.MAGNETIC_BAR.get());
+                basicItem(ModItems.DEER_SPAWN_EGG.get());
             }
 
             private void basicItem(Item item) {
@@ -66,7 +68,9 @@ public class ModItemModelProvider extends ModelProvider {
                 ModItems.THROWING_KNIFE_SLOWNESS.get(),
                 ModItems.THROWING_KNIFE_INSTANT_DAMAGE.get(),
                 ModItems.LIGHTNING_AXE.get(),
-                ModItems.LIGHTNING_WAND.get()
+                ModItems.LIGHTNING_WAND.get(),
+                ModItems.MAGNETIC_BAR.get(),
+                ModItems.DEER_SPAWN_EGG.get()
         );
     }
 

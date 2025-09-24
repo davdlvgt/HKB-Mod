@@ -21,6 +21,10 @@
   "item.hkbmod.lightning_axe": "Lightning Axe",
   "item.hkbmod.lightning_wand": "Lightning Wand",
   "item.hkbmod.growth_accelerator_wand": "Growth Accelerator Wand",
+  "item.hkbmod.magnetic_bar": "Magnetic Bar",
+  "item.hkbmod.deer_spawn_egg": "Deer Spawn Egg",
+
+  "entity.hkbmod.deer": "Deer",
 
   "creativetab.hkbmod.alexandrite_items": "Alexandrite Items",
   "creativetab.hkbmod.alexandrite_blocks": "Alexandrite Blocks"

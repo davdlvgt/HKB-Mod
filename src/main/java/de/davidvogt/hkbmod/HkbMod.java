@@ -3,13 +3,20 @@ package de.davidvogt.hkbmod;
 import com.mojang.logging.LogUtils;
 import de.davidvogt.hkbmod.block.ModBlocks;
 import de.davidvogt.hkbmod.entities.ModEntityTypes;
+import de.davidvogt.hkbmod.entity.client.DeerModel;
+import de.davidvogt.hkbmod.entity.client.DeerRenderer;
+import de.davidvogt.hkbmod.entity.client.ModModelLayers;
+import de.davidvogt.hkbmod.entity.custom.DeerEntity;
 import de.davidvogt.hkbmod.item.ModCreativeModeTabs;
 import de.davidvogt.hkbmod.item.ModItems;
+import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
+import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.eventbus.api.listener.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
@@ -77,11 +84,29 @@ public final class HkbMod {
     }
 
     // You can use EventBusSubscriber to automatically register all static methods in the class annotated with @SubscribeEvent
-    @Mod.EventBusSubscriber(modid = MOD_ID, value = Dist.CLIENT)
+    @Mod.EventBusSubscriber(modid = MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
     public static class ClientModEvents {
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event) {
-            
+
+        }
+
+        @SubscribeEvent
+        public static void registerEntityRenderers(EntityRenderersEvent.RegisterRenderers event) {
+            event.registerEntityRenderer(ModEntityTypes.DEER.get(), DeerRenderer::new);
+        }
+
+        @SubscribeEvent
+        public static void registerLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event) {
+            event.registerLayerDefinition(ModModelLayers.DEER_LAYER, DeerModel::createBodyLayer);
+        }
+    }
+
+    @Mod.EventBusSubscriber(modid = MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
+    public static class CommonModEvents {
+        @SubscribeEvent
+        public static void registerEntityAttributes(EntityAttributeCreationEvent event) {
+            event.put(ModEntityTypes.DEER.get(), DeerEntity.createAttributes().build());
         }
     }
 }

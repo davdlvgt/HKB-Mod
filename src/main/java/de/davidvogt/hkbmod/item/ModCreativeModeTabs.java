@@ -31,6 +31,7 @@ public class ModCreativeModeTabs {
                         output.accept(ModItems.MYSTICAL_WAND.get());
                         output.accept(ModItems.FEATHER_WINGS.get());
                         output.accept(ModItems.GROWTH_ACCELERATOR_WAND.get());
+                        output.accept(ModItems.MAGNETIC_BAR.get());
 
                         output.accept(ModItems.THROWING_KNIFE.get());
                         output.accept(ModItems.THROWING_KNIFE_EXPLOSIVE.get());
@@ -39,6 +40,8 @@ public class ModCreativeModeTabs {
 
                         output.accept(ModItems.LIGHTNING_AXE.get());
                         output.accept(ModItems.LIGHTNING_WAND.get());
+
+                        output.accept(ModItems.DEER_SPAWN_EGG.get());
                     }).build());
 
     public static final RegistryObject<CreativeModeTab> ALEXANDRITE_BLOCKS_TAB = CREATIVE_MODE_TABS.register("alexandrite_blocks_tab",
