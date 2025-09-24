@@ -43,6 +43,7 @@ public class ModLanguageProvider extends LanguageProvider {
         add(ModBlocks.JUMP_BLOCK.get(), "Jump Block");
         add(ModBlocks.STRING_BLOCK.get(), "String Block");
         add(ModBlocks.FEATHER_BLOCK.get(), "Feather Block");
+        add(ModBlocks.RESEARCH_TABLE.get(), "Research Table");
 
         // Creative Tabs
         add("itemgroup.hkbmod.hkb_tab", "HKB Mod");

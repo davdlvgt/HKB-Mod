@@ -4,6 +4,7 @@ import de.davidvogt.hkbmod.HkbMod;
 import de.davidvogt.hkbmod.block.custom.FeatherBlock;
 import de.davidvogt.hkbmod.block.custom.JumpBlock;
 import de.davidvogt.hkbmod.block.custom.MagicBlock;
+import de.davidvogt.hkbmod.block.custom.ResearchTableBlock;
 import de.davidvogt.hkbmod.block.custom.StringBlock;
 import de.davidvogt.hkbmod.item.ModItems;
 import net.minecraft.core.registries.Registries;
@@ -66,6 +67,11 @@ public class ModBlocks {
             () -> new FeatherBlock(BlockBehaviour.Properties.of()
                     .strength(0.5f).requiresCorrectToolForDrops().sound(SoundType.WOOL)
                     .setId(ResourceKey.create(Registries.BLOCK, ResourceLocation.parse("hkbmod:feather_block")))));
+
+    public static final RegistryObject<Block> RESEARCH_TABLE = registerBlock("research_table",
+            () -> new ResearchTableBlock(BlockBehaviour.Properties.of()
+                    .strength(2.5f).requiresCorrectToolForDrops().sound(SoundType.WOOD)
+                    .setId(ResourceKey.create(Registries.BLOCK, ResourceLocation.parse("hkbmod:research_table")))));
 
     private static <T extends Block> RegistryObject<T> registerBlock(String name, Supplier<T> block) {
         RegistryObject<T> toReturn = BLOCKS.register(name, block);

@@ -81,6 +81,10 @@ public final class HkbMod {
             event.accept(ModBlocks.ALEXANDRITE_ORE);
             event.accept(ModBlocks.ALEXANDRITE_DEEPSLATE_ORE);
         }
+
+        if (event.getTabKey() == CreativeModeTabs.FUNCTIONAL_BLOCKS) {
+            event.accept(ModBlocks.RESEARCH_TABLE);
+        }
     }
 
     // You can use EventBusSubscriber to automatically register all static methods in the class annotated with @SubscribeEvent

@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": "minecraft:book",
+    "B": "minecraft:oak_planks",
+    "W": "minecraft:crafting_table"
+  },
+  "pattern": [
+    "AAA",
+    "BWB",
+    "B B"
+  ],
+  "result": {
+    "count": 1,
+    "id": "hkbmod:research_table"
+  }
+}

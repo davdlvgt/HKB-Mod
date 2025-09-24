@@ -23,6 +23,9 @@
   "item.hkbmod.growth_accelerator_wand": "Growth Accelerator Wand",
   "item.hkbmod.magnetic_bar": "Magnetic Bar",
   "item.hkbmod.deer_spawn_egg": "Deer Spawn Egg",
+  "item.hkbmod.research_table": "Research Table",
+
+  "block.hkbmod.research_table": "Research Table",
 
   "entity.hkbmod.deer": "Deer",
 

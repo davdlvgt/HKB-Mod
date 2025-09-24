@@ -99,6 +99,15 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                 .define('R', Items.REDSTONE)
                 .unlockedBy(getHasName(ModItems.ALEXANDRITE.get()), has(ModItems.ALEXANDRITE.get())).save(this.output);
 
+        this.shaped(RecipeCategory.DECORATIONS, ModBlocks.RESEARCH_TABLE.get(), 1)
+                .pattern("AAA")
+                .pattern("BWB")
+                .pattern("B B")
+                .define('A', Items.BOOK)
+                .define('W', Items.CRAFTING_TABLE)
+                .define('B', Items.OAK_PLANKS)
+                .unlockedBy(getHasName(Items.CRAFTING_TABLE), has(Items.CRAFTING_TABLE)).save(this.output);
+
         this.shapeless(RecipeCategory.MISC, ModItems.ALEXANDRITE.get(), 9)
                 .requires(ModBlocks.ALEXANDRITE_BLOCK.get())
                 .unlockedBy(getHasName(ModBlocks.ALEXANDRITE_BLOCK.get()), has(ModBlocks.ALEXANDRITE_BLOCK.get())).save(this.output);

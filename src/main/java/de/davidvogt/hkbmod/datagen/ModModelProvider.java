@@ -78,6 +78,7 @@ public class ModModelProvider extends ModelProvider {
                 cubeAll(ModBlocks.JUMP_BLOCK.get());
                 cubeAll(ModBlocks.STRING_BLOCK.get());
                 cubeAll(ModBlocks.FEATHER_BLOCK.get());
+                cubeAll(ModBlocks.RESEARCH_TABLE.get());
             }
 
             private void cubeAll(Block block) {
@@ -117,7 +118,8 @@ public class ModModelProvider extends ModelProvider {
                 ModBlocks.MAGIC_BLOCK.get(),
                 ModBlocks.JUMP_BLOCK.get(),
                 ModBlocks.STRING_BLOCK.get(),
-                ModBlocks.FEATHER_BLOCK.get()
+                ModBlocks.FEATHER_BLOCK.get(),
+                ModBlocks.RESEARCH_TABLE.get()
         );
     }
 }
