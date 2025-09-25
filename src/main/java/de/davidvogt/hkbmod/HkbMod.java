@@ -2,6 +2,8 @@ package de.davidvogt.hkbmod;
 
 import com.mojang.logging.LogUtils;
 import de.davidvogt.hkbmod.block.ModBlocks;
+import de.davidvogt.hkbmod.block.entity.ModBlockEntities;
+import de.davidvogt.hkbmod.client.screen.ResearchTableScreen;
 import de.davidvogt.hkbmod.entities.ModEntityTypes;
 import de.davidvogt.hkbmod.entity.client.DeerModel;
 import de.davidvogt.hkbmod.entity.client.DeerRenderer;
@@ -9,6 +11,8 @@ import de.davidvogt.hkbmod.entity.client.ModModelLayers;
 import de.davidvogt.hkbmod.entity.custom.DeerEntity;
 import de.davidvogt.hkbmod.item.ModCreativeModeTabs;
 import de.davidvogt.hkbmod.item.ModItems;
+import de.davidvogt.hkbmod.menu.ModMenuTypes;
+import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.resources.ResourceLocation;
@@ -39,6 +43,8 @@ public final class HkbMod {
 
         ModItems.register(modBusGroup);
         ModBlocks.register(modBusGroup);
+        ModBlockEntities.register(modBusGroup);
+        ModMenuTypes.register(modBusGroup);
         ModEntityTypes.register(modBusGroup);
         ModCreativeModeTabs.register(modBusGroup);
 
@@ -92,7 +98,7 @@ public final class HkbMod {
     public static class ClientModEvents {
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event) {
-
+            MenuScreens.register(ModMenuTypes.RESEARCH_TABLE_MENU.get(), ResearchTableScreen::new);
         }
 
         @SubscribeEvent

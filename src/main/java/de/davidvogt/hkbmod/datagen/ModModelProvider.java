@@ -47,6 +47,7 @@ public class ModModelProvider extends ModelProvider {
                 basicItem(ModItems.THROWING_KNIFE_EXPLOSIVE.get());
                 basicItem(ModItems.THROWING_KNIFE_SLOWNESS.get());
                 basicItem(ModItems.THROWING_KNIFE_INSTANT_DAMAGE.get());
+                basicItem(ModItems.MAGNETIC_BAR.get());
 
                 // Handheld items (tools/weapons)
                 handheldItem(ModItems.LIGHTNING_AXE.get());
@@ -103,6 +104,7 @@ public class ModModelProvider extends ModelProvider {
                 ModItems.THROWING_KNIFE_EXPLOSIVE.get(),
                 ModItems.THROWING_KNIFE_SLOWNESS.get(),
                 ModItems.THROWING_KNIFE_INSTANT_DAMAGE.get(),
+                ModItems.MAGNETIC_BAR.get(),
                 ModItems.LIGHTNING_AXE.get(),
                 ModItems.LIGHTNING_WAND.get()
         );

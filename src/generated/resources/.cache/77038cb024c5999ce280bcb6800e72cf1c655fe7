@@ -1,4 +1,4 @@
-// 1.21.7	2025-09-24T14:05:38.9896484	Model Definitions
+// 1.21.7	2025-09-24T14:29:19.227247	Model Definitions
 55c2aee7bd8f5b8913803e233af17d3ac084dca1 assets/hkbmod/blockstates/alexandrite_block.json
 9c518302d80fd7774fa382e7cc1b7c4ca4d9a69e assets/hkbmod/blockstates/alexandrite_deepslate_ore.json
 0ade0e5ce305519501ec2494fd8e8d426f80ecf9 assets/hkbmod/blockstates/alexandrite_ore.json
@@ -16,6 +16,7 @@ fdaf2835b0eb023f8f9019f9d198790e814aea38 assets/hkbmod/items/growth_accelerator_
 b465d75b3ee195bfc0803b9fae203e8c2e748292 assets/hkbmod/items/kohlrabi.json
 3931d815373b0897dc66e809e53e51d880554e3f assets/hkbmod/items/lightning_axe.json
 b21691ecec5a3770c10ccc7c9248133f0fa687cd assets/hkbmod/items/lightning_wand.json
+fb13e7e3e772eb1d243c093046a0593fe337a646 assets/hkbmod/items/magnetic_bar.json
 d25a508c7432e1116b013eecb9ef3aea554ef305 assets/hkbmod/items/mystical_wand.json
 7d335153029bd0d8e6a90bd230ece76f4a7acc91 assets/hkbmod/items/raw_alexandrite.json
 3dea6b101167145aaff1ba6d8abd4c35a08e6ab9 assets/hkbmod/items/throwing_knife.json
