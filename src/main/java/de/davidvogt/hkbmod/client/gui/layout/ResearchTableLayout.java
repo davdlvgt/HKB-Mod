@@ -72,7 +72,7 @@ public class ResearchTableLayout {
     public static final int SLOT_SPACING = 2;
 
     // Research tree settings
-    public static final int RESEARCH_BUTTON_WIDTH = 50;
+    public static final int RESEARCH_BUTTON_WIDTH = 150; // Increased from 50 to 65
     public static final int RESEARCH_BUTTON_HEIGHT = 18;
     public static final int TIER_SPACING = 25;
     public static final int RESEARCH_SPACING = 4;

@@ -28,6 +28,11 @@ public class ResearchTreePanel extends AbstractWidget {
     // Scroll state
     private int scrollY = 0;
 
+    // Scroll bar drag state
+    private boolean isDraggingScrollBar = false;
+    private int dragStartY = 0;
+    private int dragStartScrollY = 0;
+
     // Research buttons managed by this panel
     private final List<ResearchButton> researchButtons = new ArrayList<>();
 
@@ -78,14 +83,12 @@ public class ResearchTreePanel extends AbstractWidget {
     }
 
     private void drawScrollBar(GuiGraphics guiGraphics) {
-        if (ResearchTableLayout.MAX_SCROLL_Y <= 0) return;
+        int maxScrollY = Math.max(0, ResearchTableLayout.TIER_SPACING * 4 - contentArea.height);
+        if (maxScrollY <= 0) return;
 
         int scrollBarX = windowX + ResearchTableLayout.SCROLL_BAR_X_OFFSET;
         int scrollBarY = contentArea.y;
         int scrollBarHeight = contentArea.height - 10;
-
-        // Berechne die tatsächliche Scroll-Höhe basierend auf dem Inhalt
-        int maxScrollY = Math.max(0, ResearchTableLayout.TIER_SPACING * 4 - contentArea.height);
 
         // Scroll track background
         guiGraphics.fill(scrollBarX, scrollBarY, scrollBarX + ResearchTableLayout.SCROLL_BAR_WIDTH, scrollBarY + scrollBarHeight, ResearchTableLayout.COLOR_PANEL);
@@ -95,7 +98,9 @@ public class ResearchTreePanel extends AbstractWidget {
         int thumbHeight = Math.max(8, scrollBarHeight / 4);
         int thumbY = scrollBarY + (int) (scrollPercentage * (scrollBarHeight - thumbHeight));
 
-        guiGraphics.fill(scrollBarX, thumbY, scrollBarX + ResearchTableLayout.SCROLL_BAR_WIDTH, thumbY + thumbHeight, ResearchTableLayout.COLOR_BORDER);
+        // Highlight scroll thumb if being dragged
+        int thumbColor = isDraggingScrollBar ? ResearchTableLayout.COLOR_ACCENT : ResearchTableLayout.COLOR_BORDER;
+        guiGraphics.fill(scrollBarX, thumbY, scrollBarX + ResearchTableLayout.SCROLL_BAR_WIDTH, thumbY + thumbHeight, thumbColor);
 
         // Scroll track border
         drawBorder(guiGraphics, scrollBarX, scrollBarY, ResearchTableLayout.SCROLL_BAR_WIDTH, scrollBarHeight, ResearchTableLayout.COLOR_BORDER);
@@ -188,6 +193,87 @@ public class ResearchTreePanel extends AbstractWidget {
     }
 
     /**
+     * Handle mouse click for scroll bar dragging
+     */
+    public boolean handleMouseClick(double mouseX, double mouseY, int button) {
+        if (button != 0) return false; // Only handle left mouse button
+
+        int maxScrollY = Math.max(0, ResearchTableLayout.TIER_SPACING * 4 - contentArea.height);
+        if (maxScrollY <= 0) return false;
+
+        int scrollBarX = windowX + ResearchTableLayout.SCROLL_BAR_X_OFFSET;
+        int scrollBarY = contentArea.y;
+        int scrollBarHeight = contentArea.height - 10;
+
+        // Check if click is on scroll bar area
+        if (mouseX >= scrollBarX && mouseX <= scrollBarX + ResearchTableLayout.SCROLL_BAR_WIDTH &&
+            mouseY >= scrollBarY && mouseY <= scrollBarY + scrollBarHeight) {
+
+            // Calculate thumb position and size
+            float scrollPercentage = maxScrollY == 0 ? 0f : (float) scrollY / maxScrollY;
+            int thumbHeight = Math.max(8, scrollBarHeight / 4);
+            int thumbY = scrollBarY + (int) (scrollPercentage * (scrollBarHeight - thumbHeight));
+
+            // Check if click is on thumb
+            if (mouseY >= thumbY && mouseY <= thumbY + thumbHeight) {
+                // Start dragging thumb
+                isDraggingScrollBar = true;
+                dragStartY = (int) mouseY;
+                dragStartScrollY = scrollY;
+                return true;
+            } else {
+                // Click on track - jump to position
+                float clickPercentage = (float) (mouseY - scrollBarY) / (scrollBarHeight - thumbHeight);
+                clickPercentage = Mth.clamp(clickPercentage, 0.0f, 1.0f);
+                this.scrollY = (int) (maxScrollY * clickPercentage);
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Handle mouse drag for scroll bar
+     */
+    public boolean handleMouseDrag(double mouseX, double mouseY, int button, double dragX, double dragY) {
+        if (!isDraggingScrollBar || button != 0) return false;
+
+        int maxScrollY = Math.max(0, ResearchTableLayout.TIER_SPACING * 4 - contentArea.height);
+        if (maxScrollY <= 0) return false;
+
+        int scrollBarHeight = contentArea.height - 10;
+        int thumbHeight = Math.max(8, scrollBarHeight / 4);
+        int scrollableHeight = scrollBarHeight - thumbHeight;
+
+        // Calculate new scroll position based on drag distance
+        int dragDistance = (int) mouseY - dragStartY;
+        float dragPercentage = (float) dragDistance / scrollableHeight;
+        int newScrollY = dragStartScrollY + (int) (maxScrollY * dragPercentage);
+
+        this.scrollY = Mth.clamp(newScrollY, 0, maxScrollY);
+        return true;
+    }
+
+    /**
+     * Handle mouse release for scroll bar
+     */
+    public boolean handleMouseRelease(double mouseX, double mouseY, int button) {
+        if (isDraggingScrollBar && button == 0) {
+            isDraggingScrollBar = false;
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Check if currently dragging scroll bar
+     */
+    public boolean isDraggingScrollBar() {
+        return isDraggingScrollBar;
+    }
+
+    /**
      * Reset scroll position (e.g., when changing class)
      */
     public void resetScroll() {
@@ -259,4 +345,3 @@ public class ResearchTreePanel extends AbstractWidget {
         narrationElementOutput.add(net.minecraft.client.gui.narration.NarratedElementType.TITLE, "Research Tree Panel");
     }
 }
-

@@ -72,14 +72,8 @@ public class ResearchButton extends Button {
             drawCompletionIndicator(guiGraphics);
         }
 
-        // Draw research type icon
-        drawTypeIcon(guiGraphics);
-
         // Draw text with improved formatting
         drawButtonText(guiGraphics, textColor);
-
-        // Draw tier indicator
-        drawTierIndicator(guiGraphics);
     }
 
     private int getBackgroundColor() {
@@ -177,52 +171,49 @@ public class ResearchButton extends Button {
         guiGraphics.fill(checkX + 4, checkY + 1, checkX + 5, checkY + 2, COLOR_TEXT_WHITE);
     }
 
-    private void drawTypeIcon(GuiGraphics guiGraphics) {
-        // Draw small icon based on research type - FIXED: Anpassung an verfügbare ResearchType Enums
-        String icon = switch (research.getType()) {
+    private void drawButtonText(GuiGraphics guiGraphics, int textColor) {
+        Font font = Minecraft.getInstance().font;
+
+        // Build text with format: "T[tier] [symbol] [name]"
+        String tierText = "T" + research.getTier();
+        String symbol = getTypeSymbol();
+        String name = research.getName();
+
+        String fullText = tierText + " " + symbol + " " + name;
+
+        // Truncate text if too long
+        int maxWidth = getWidth() - 8; // Leave padding on both sides
+        if (font.width(fullText) > maxWidth) {
+            // First try to truncate the name
+            String truncatedName = name;
+            while (font.width(tierText + " " + symbol + " " + truncatedName + "...") > maxWidth && truncatedName.length() > 1) {
+                truncatedName = truncatedName.substring(0, truncatedName.length() - 1);
+            }
+            if (truncatedName.length() > 1) {
+                fullText = tierText + " " + symbol + " " + truncatedName + "...";
+            } else {
+                // If name is too short, just show tier and symbol
+                fullText = tierText + " " + symbol;
+            }
+        }
+
+        // Left-align text instead of centering
+        int textX = getX() + 4; // Small left padding
+        int textY = getY() + (getHeight() - 8) / 2;
+
+        // Draw text shadow for better readability
+        guiGraphics.drawString(font, fullText, textX + 1, textY + 1, 0x55000000, false);
+        guiGraphics.drawString(font, fullText, textX, textY, textColor, false);
+    }
+
+    private String getTypeSymbol() {
+        return switch (research.getType()) {
             case COMBAT -> "⚔";
             case CRAFTING -> "🔨";
             case MAGIC -> "✦";
             case UTILITY -> "🔧";
             case PASSIVE -> "🛡";
         };
-
-        Font font = Minecraft.getInstance().font;
-        guiGraphics.drawString(font, icon, getX() + 2, getY() + getHeight() - 10, COLOR_TIER, false);
-    }
-
-    private void drawButtonText(GuiGraphics guiGraphics, int textColor) {
-        Font font = Minecraft.getInstance().font;
-        String text = research.getName();
-
-        // Truncate text if too long
-        int maxWidth = getWidth() - 12; // More space for truncation
-        if (font.width(text) > maxWidth) {
-            while (font.width(text + "...") > maxWidth && text.length() > 1) {
-                text = text.substring(0, text.length() - 1);
-            }
-            text += "...";
-        }
-
-        int textX = getX() + (getWidth() - font.width(text)) / 2;
-        int textY = getY() + (getHeight() - 8) / 2;
-
-        // Draw text shadow for better readability
-        guiGraphics.drawString(font, text, textX + 1, textY + 1, 0x55000000, false);
-        guiGraphics.drawString(font, text, textX, textY, textColor, false);
-    }
-
-    private void drawTierIndicator(GuiGraphics guiGraphics) {
-        // Draw tier number in top-left corner
-        String tierText = String.valueOf(research.getTier());
-        Font font = Minecraft.getInstance().font;
-
-        // Background circle for tier
-        int tierX = getX() + 3;
-        int tierY = getY() + 3;
-
-        guiGraphics.fill(tierX - 1, tierY - 1, tierX + 7, tierY + 7, 0x88000000); // Semi-transparent background
-        guiGraphics.drawString(font, tierText, tierX, tierY, COLOR_TIER, false);
     }
 
     // Utility method to blend two colors

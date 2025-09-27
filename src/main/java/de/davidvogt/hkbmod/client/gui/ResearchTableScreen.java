@@ -515,4 +515,35 @@ public class ResearchTableScreen extends AbstractContainerScreen<ResearchTableMe
 
         return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
     }
+
+    @Override
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        // Handle scroll bar clicking first
+        if (researchTreePanel != null && researchTreePanel.handleMouseClick(mouseX, mouseY, button)) {
+            return true;
+        }
+
+        return super.mouseClicked(mouseX, mouseY, button);
+    }
+
+    @Override
+    public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
+        // Handle scroll bar dragging
+        if (researchTreePanel != null && researchTreePanel.handleMouseDrag(mouseX, mouseY, button, dragX, dragY)) {
+            updateResearchButtons();
+            return true;
+        }
+
+        return super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
+    }
+
+    @Override
+    public boolean mouseReleased(double mouseX, double mouseY, int button) {
+        // Handle scroll bar release
+        if (researchTreePanel != null && researchTreePanel.handleMouseRelease(mouseX, mouseY, button)) {
+            return true;
+        }
+
+        return super.mouseReleased(mouseX, mouseY, button);
+    }
 }
