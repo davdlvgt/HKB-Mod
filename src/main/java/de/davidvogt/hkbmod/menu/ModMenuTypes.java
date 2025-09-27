@@ -12,8 +12,8 @@ public class ModMenuTypes {
     public static final DeferredRegister<MenuType<?>> MENUS =
             DeferredRegister.create(ForgeRegistries.MENU_TYPES, HkbMod.MOD_ID);
 
-    public static final RegistryObject<MenuType<ResearchTableMenu>> RESEARCH_TABLE_MENU =
-            MENUS.register("research_table_menu", () ->
+    public static final RegistryObject<MenuType<ResearchTableMenu>> RESEARCH_TABLE =
+            MENUS.register("research_table", () ->
                     IForgeMenuType.create(ResearchTableMenu::new));
 
     public static void register(BusGroup busGroup) {

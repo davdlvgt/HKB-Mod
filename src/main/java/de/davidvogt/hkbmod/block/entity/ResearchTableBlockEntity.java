@@ -1,372 +1,203 @@
 package de.davidvogt.hkbmod.block.entity;
 
 import de.davidvogt.hkbmod.HkbMod;
-import de.davidvogt.hkbmod.menu.ResearchTableMenu;
-import de.davidvogt.hkbmod.research.*;
+import de.davidvogt.hkbmod.research.Research;
+import de.davidvogt.hkbmod.util.NBTUtil;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.core.HolderLookup;
+import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.MenuProvider;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.Containers;
 import net.minecraft.world.SimpleContainer;
-import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.CraftingRecipe;
-import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.ItemStackHandler;
 
-import javax.annotation.Nullable;
-import java.util.*;
+public class ResearchTableBlockEntity extends BlockEntity {
 
-public class ResearchTableBlockEntity extends BlockEntity implements MenuProvider {
-    // Slot configuration:
-    // 0-8: Crafting grid (3x3)
-    // 9: Crafting result slot
-    // 10-15: Research input slots (6 slots for materials)
-    public static final int CRAFTING_GRID_SIZE = 9;
-    public static final int CRAFTING_RESULT_SLOT = 9;
-    public static final int RESEARCH_INPUT_START = 10;
-    public static final int RESEARCH_INPUT_SIZE = 6;
-    public static final int TOTAL_SLOTS = 16;
+    public static final int RESEARCH_SLOTS = 9; // 5 slots for research materials
+    private final NonNullList<ItemStack> researchItems = NonNullList.withSize(RESEARCH_SLOTS, ItemStack.EMPTY);
 
-    private final ItemStackHandler itemHandler = new ItemStackHandler(TOTAL_SLOTS) {
-        @Override
-        protected void onContentsChanged(int slot) {
-            setChanged();
-        }
-
-        @Override
-        public boolean isItemValid(int slot, ItemStack stack) {
-            if (slot == CRAFTING_RESULT_SLOT) {
-                return false; // Result slot is output only
-            }
-            return true;
-        }
-    };
-
-    private LazyOptional<IItemHandler> lazyItemHandler = LazyOptional.empty();
-
-    // Research system data
-    private Set<ResourceLocation> unlockedResearches = new HashSet<>();
-    private ResourceLocation activeResearchId = null;
-    private int researchProgress = 0;
-    private int researchMaxProgress = 0;
+    // Research progress fields
+    private ResourceLocation currentResearchId = null;
+    private int researchProgress = 0; // in ticks
+    private int researchDuration = 0; // total duration in ticks
     private boolean isResearching = false;
 
     public ResearchTableBlockEntity(BlockPos pos, BlockState blockState) {
-        super(ModBlockEntities.RESEARCH_TABLE.get(), pos, blockState);
+        super(ModBlockEntities.RESEARCH_TABLE_BE.get(), pos, blockState);
+    }
 
-        // Initialize default research nodes
-        if (level != null && !level.isClientSide) {
-            ResearchManager.getInstance().initializeDefaultNodes();
+    public NonNullList<ItemStack> getResearchItems() {
+        return researchItems;
+    }
+
+    public ItemStack getResearchItem(int slot) {
+        if (slot >= 0 && slot < researchItems.size()) {
+            return researchItems.get(slot);
+        }
+        return ItemStack.EMPTY;
+    }
+
+    public void setResearchItem(int slot, ItemStack stack) {
+        if (slot >= 0 && slot < researchItems.size()) {
+            researchItems.set(slot, stack);
+            setChanged();
         }
     }
 
-    @Override
-    public Component getDisplayName() {
-        return Component.translatable("container.hkbmod.research_table");
-    }
-
-    @Override
-    public AbstractContainerMenu createMenu(int id, Inventory inventory, Player player) {
-        return new ResearchTableMenu(id, inventory, this);
-    }
-
-    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        tag.put("inventory", itemHandler.serializeNBT(registries));
-
-        // Save research data
-        CompoundTag researchTag = new CompoundTag();
-
-        // Save unlocked researches
-        ListTag unlockedList = new ListTag();
-        for (ResourceLocation research : unlockedResearches) {
-            CompoundTag researchCompound = new CompoundTag();
-            researchCompound.putString("id", research.toString());
-            unlockedList.add(researchCompound);
-        }
-        researchTag.put("unlocked", unlockedList);
-
-        // Save active research state
-        if (activeResearchId != null) {
-            researchTag.putString("activeResearch", activeResearchId.toString());
-            researchTag.putInt("progress", researchProgress);
-            researchTag.putInt("maxProgress", researchMaxProgress);
-            researchTag.putBoolean("isResearching", isResearching);
-        }
-
-        tag.put("research", researchTag);
-    }
-
-    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        if (tag.contains("inventory")) {
-            tag.getCompound("inventory").ifPresent(inventoryTag ->
-                itemHandler.deserializeNBT(registries, inventoryTag));
-        }
-
-        // Load research data
-        if (tag.contains("research")) {
-            tag.getCompound("research").ifPresent(researchTag -> {
-                // Load unlocked researches
-                unlockedResearches.clear();
-                researchTag.getList("unlocked").ifPresent(unlockedList -> {
-                    for (int i = 0; i < unlockedList.size(); i++) {
-                        unlockedList.getCompound(i).ifPresent(researchCompound -> {
-                            researchCompound.getString("id").ifPresent(researchId -> {
-                                try {
-                                    unlockedResearches.add(ResourceLocation.parse(researchId));
-                                } catch (Exception e) {
-                                    HkbMod.LOGGER.warn("Failed to load research id: {}", researchId);
-                                }
-                            });
-                        });
-                    }
-                });
-
-                // Load active research state
-                if (researchTag.contains("activeResearch")) {
-                    try {
-                        researchTag.getString("activeResearch").ifPresent(activeResearch -> {
-                            activeResearchId = ResourceLocation.parse(activeResearch);
-                        });
-                        researchProgress = researchTag.getInt("progress").orElse(0);
-                        researchMaxProgress = researchTag.getInt("maxProgress").orElse(0);
-                        isResearching = researchTag.getBoolean("isResearching").orElse(false);
-                    } catch (Exception e) {
-                        HkbMod.LOGGER.warn("Failed to load active research state");
-                        activeResearchId = null;
-                        researchProgress = 0;
-                        researchMaxProgress = 0;
-                        isResearching = false;
-                    }
+    public ItemStack removeResearchItem(int slot, int count) {
+        if (slot >= 0 && slot < researchItems.size()) {
+            ItemStack stack = researchItems.get(slot);
+            if (!stack.isEmpty()) {
+                ItemStack result = stack.split(count);
+                if (stack.isEmpty()) {
+                    researchItems.set(slot, ItemStack.EMPTY);
                 }
-            });
+                setChanged();
+                return result;
+            }
         }
+        return ItemStack.EMPTY;
     }
 
-    @Override
-    public void onLoad() {
-        super.onLoad();
-        lazyItemHandler = LazyOptional.of(() -> itemHandler);
-    }
-
-    @Override
-    public void invalidateCaps() {
-        super.invalidateCaps();
-        lazyItemHandler.invalidate();
-    }
-
-    @Override
-    public <T> LazyOptional<T> getCapability(Capability<T> cap, Direction side) {
-        if (cap == ForgeCapabilities.ITEM_HANDLER) {
-            return lazyItemHandler.cast();
+    public void clearResearchItems() {
+        for (int i = 0; i < researchItems.size(); i++) {
+            researchItems.set(i, ItemStack.EMPTY);
         }
-        return super.getCapability(cap, side);
-    }
-
-    public IItemHandler getItemHandler() {
-        return itemHandler;
-    }
-
-    // Research system methods
-    public Set<ResourceLocation> getUnlockedResearches() {
-        return new HashSet<>(unlockedResearches);
-    }
-
-    public List<ResearchNode> getAvailableNodesForClass(ResearchClass researchClass) {
-        return ResearchManager.getInstance().getAvailableNodes(researchClass, unlockedResearches);
-    }
-
-    public boolean isResearchUnlocked(ResourceLocation researchId) {
-        return unlockedResearches.contains(researchId);
-    }
-
-    public boolean canStartResearch(ResourceLocation researchId) {
-        ResearchNode node = ResearchManager.getInstance().getNode(researchId);
-        if (node == null) return false;
-
-        if (unlockedResearches.contains(researchId)) return false; // Already unlocked
-        if (isResearching && !researchId.equals(activeResearchId)) return false; // Already researching something else
-
-        return ResearchManager.getInstance().canUnlockNode(node, unlockedResearches);
-    }
-
-    public boolean startResearch(ResourceLocation researchId) {
-        if (!canStartResearch(researchId)) return false;
-
-        ResearchNode node = ResearchManager.getInstance().getNode(researchId);
-        if (node == null) return false;
-
-        // Check if we have the required items
-        if (!hasRequiredItems(node)) return false;
-
-        // Consume the items
-        consumeResearchItems(node);
-
-        // Start research
-        activeResearchId = researchId;
-        researchProgress = 0;
-        researchMaxProgress = calculateResearchTime(node);
-        isResearching = true;
-
         setChanged();
+    }
+
+    public boolean areResearchSlotsEmpty() {
+        for (ItemStack stack : researchItems) {
+            if (!stack.isEmpty()) {
+                return false;
+            }
+        }
         return true;
+    }
+
+    public void dropContents(Level level, BlockPos pos) {
+        SimpleContainer container = new SimpleContainer(researchItems.size());
+        for (int i = 0; i < researchItems.size(); i++) {
+            container.setItem(i, researchItems.get(i));
+        }
+        Containers.dropContents(level, pos, container);
+    }
+
+    public boolean stillValid(Player player) {
+        if (this.level.getBlockEntity(this.worldPosition) != this) {
+            return false;
+        } else {
+            return player.distanceToSqr((double)this.worldPosition.getX() + 0.5D,
+                                      (double)this.worldPosition.getY() + 0.5D,
+                                      (double)this.worldPosition.getZ() + 0.5D) <= 64.0D;
+        }
+    }
+
+    // Research progress methods
+    public void startResearch(Research research) {
+        HkbMod.LOGGER.info("[ResearchTableBlockEntity] Starting research: " + research.getId() +
+            " (Client side: " + (level != null ? level.isClientSide : "unknown") + ")");
+        this.currentResearchId = research.getId();
+        this.researchDuration = 10 * 20; // 10 seconds for all research, converted to ticks (20 ticks = 1 second)
+        this.researchProgress = 0;
+        this.isResearching = true;
+        HkbMod.LOGGER.info("[ResearchTableBlockEntity] Research state set - isResearching: " + this.isResearching +
+            ", progress: " + this.researchProgress + "/" + this.researchDuration);
+        setChanged();
     }
 
     public void cancelResearch() {
-        if (!isResearching) return;
-
-        // TODO: Optionally return some items
-        activeResearchId = null;
-        researchProgress = 0;
-        researchMaxProgress = 0;
-        isResearching = false;
+        this.currentResearchId = null;
+        this.researchProgress = 0;
+        this.researchDuration = 0;
+        this.isResearching = false;
         setChanged();
-    }
-
-    public void completeResearch() {
-        if (!isResearching || activeResearchId == null) return;
-
-        ResearchNode node = ResearchManager.getInstance().getNode(activeResearchId);
-        if (node != null) {
-            unlockedResearches.add(activeResearchId);
-
-            // TODO: Apply unlock reward (recipes, abilities, etc.)
-            applyUnlockReward(node.getUnlockReward());
-
-            HkbMod.LOGGER.info("Research completed: {}", activeResearchId);
-        }
-
-        activeResearchId = null;
-        researchProgress = 0;
-        researchMaxProgress = 0;
-        isResearching = false;
-        setChanged();
-    }
-
-    private boolean hasRequiredItems(ResearchNode node) {
-        List<ItemStack> availableItems = new ArrayList<>();
-        for (int i = RESEARCH_INPUT_START; i < RESEARCH_INPUT_START + RESEARCH_INPUT_SIZE; i++) {
-            ItemStack stack = itemHandler.getStackInSlot(i);
-            if (!stack.isEmpty()) {
-                availableItems.add(stack.copy());
-            }
-        }
-
-        for (ItemCost cost : node.getCosts()) {
-            int needed = cost.getCount();
-            for (ItemStack stack : availableItems) {
-                if (cost.matches(stack)) {
-                    int taken = Math.min(needed, stack.getCount());
-                    needed -= taken;
-                    stack.shrink(taken);
-                    if (needed <= 0) break;
-                }
-            }
-            if (needed > 0) return false; // Not enough items
-        }
-
-        return true;
-    }
-
-    private void consumeResearchItems(ResearchNode node) {
-        for (ItemCost cost : node.getCosts()) {
-            int needed = cost.getCount();
-            for (int i = RESEARCH_INPUT_START; i < RESEARCH_INPUT_START + RESEARCH_INPUT_SIZE && needed > 0; i++) {
-                ItemStack stack = itemHandler.getStackInSlot(i);
-                if (cost.matches(stack)) {
-                    int taken = Math.min(needed, stack.getCount());
-                    stack.shrink(taken);
-                    needed -= taken;
-                    itemHandler.setStackInSlot(i, stack);
-                }
-            }
-        }
-    }
-
-    private int calculateResearchTime(ResearchNode node) {
-        // Base time increases with tier: 10s per tier
-        // Can be made configurable later
-        return (node.getTier() + 1) * 200; // 10 seconds in ticks per tier
-    }
-
-    private void applyUnlockReward(UnlockReward reward) {
-        if (reward == null) return;
-
-        // TODO: Implement reward application based on type
-        // For now, just log it
-        HkbMod.LOGGER.info("Applying unlock reward: {} -> {}", reward.getType(), reward.getTargetId());
-    }
-
-    // Crafting system methods
-    private void updateCraftingResult() {
-        if (level == null || level.isClientSide) return;
-
-        // TODO: Implement crafting result calculation when crafting API is stable
-        // For now, just clear the result slot
-        itemHandler.setStackInSlot(CRAFTING_RESULT_SLOT, ItemStack.EMPTY);
-    }
-
-    private void updateResearchProgress() {
-        // This is called when research input items change
-        // Could be used for visual feedback or validation
-    }
-
-    // Tick method for research progress
-    public void tick() {
-        if (level == null || level.isClientSide) return;
-
-        if (isResearching && activeResearchId != null) {
-            researchProgress++;
-
-            if (researchProgress >= researchMaxProgress) {
-                completeResearch();
-            } else {
-                // Update every second for sync
-                if (researchProgress % 20 == 0) {
-                    setChanged();
-                }
-            }
-        }
-    }
-
-    // Getters for UI
-    @Nullable
-    public ResourceLocation getActiveResearchId() {
-        return activeResearchId;
-    }
-
-    @Nullable
-    public ResearchNode getActiveResearchNode() {
-        return activeResearchId != null ? ResearchManager.getInstance().getNode(activeResearchId) : null;
-    }
-
-    public int getResearchProgress() {
-        return researchProgress;
-    }
-
-    public int getResearchMaxProgress() {
-        return researchMaxProgress;
     }
 
     public boolean isResearching() {
         return isResearching;
     }
 
-    public float getResearchProgressPercent() {
-        return researchMaxProgress > 0 ? (float) researchProgress / researchMaxProgress : 0.0f;
+    public ResourceLocation getCurrentResearchId() {
+        return currentResearchId;
     }
+
+    public int getResearchProgress() {
+        return researchProgress;
+    }
+
+    public int getResearchDuration() {
+        return researchDuration;
+    }
+
+    public float getResearchProgressPercentage() {
+        if (researchDuration == 0) return 0f;
+        return (float) researchProgress / researchDuration;
+    }
+
+    public int getRemainingResearchTime() {
+        return Math.max(0, researchDuration - researchProgress);
+    }
+
+    public int getRemainingResearchSeconds() {
+        return getRemainingResearchTime() / 20; // Convert ticks to seconds
+    }
+
+    // Client-side research state methods (for networking sync)
+    public void setResearchProgress(int progress, int duration, ResourceLocation researchId) {
+        this.researchProgress = progress;
+        this.researchDuration = duration;
+        this.currentResearchId = researchId;
+        this.isResearching = true;
+    }
+
+    public void clearClientResearchState() {
+        this.researchProgress = 0;
+        this.researchDuration = 0;
+        this.currentResearchId = null;
+        this.isResearching = false;
+    }
+
+    public static void tick(Level level, BlockPos pos, BlockState state, ResearchTableBlockEntity blockEntity) {
+        if (blockEntity.isResearching && !level.isClientSide) {
+            blockEntity.researchProgress++;
+
+            // Debug logging every 20 ticks (1 second)
+            if (blockEntity.researchProgress % 20 == 0) {
+                HkbMod.LOGGER.info("[ResearchTableBlockEntity] Tick: Research progress " +
+                    blockEntity.researchProgress + "/" + blockEntity.researchDuration +
+                    " (Research: " + blockEntity.currentResearchId + ")");
+                blockEntity.sendProgressUpdate();
+            }
+
+            // Check if research is complete
+            if (blockEntity.researchProgress >= blockEntity.researchDuration) {
+                HkbMod.LOGGER.info("[ResearchTableBlockEntity] Research completed: " + blockEntity.currentResearchId);
+                // Research completed - the menu will handle the actual unlock logic
+                blockEntity.isResearching = false;
+                blockEntity.sendProgressUpdate(); // Final update to show completion
+                blockEntity.setChanged();
+            }
+        } else if (blockEntity.isResearching && level.isClientSide) {
+            // Debug: client side tick
+            if (blockEntity.researchProgress % 40 == 0) { // Every 2 seconds on client
+                HkbMod.LOGGER.info("[ResearchTableBlockEntity] CLIENT Tick: Research progress " +
+                    blockEntity.researchProgress + "/" + blockEntity.researchDuration);
+            }
+        }
+    }
+
+    private void sendProgressUpdate() {
+        // Networking temporarily disabled - progress updates are handled locally
+    }
+
+    // NBT persistence temporarily disabled - API needs research for Forge 57.0.3
+    // Research progress and items will be lost on world reload until proper NBT implementation
+    // TODO: Research correct NBT persistence API for this Forge version
 }

@@ -8,16 +8,14 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
-import java.util.Set;
-
 public class ModBlockEntities {
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES =
             DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, HkbMod.MOD_ID);
 
-    public static final RegistryObject<BlockEntityType<ResearchTableBlockEntity>> RESEARCH_TABLE =
-            BLOCK_ENTITIES.register("research_table", () ->
+    public static final RegistryObject<BlockEntityType<ResearchTableBlockEntity>> RESEARCH_TABLE_BE =
+            BLOCK_ENTITIES.register("research_table_be", () ->
                     new BlockEntityType<>(ResearchTableBlockEntity::new,
-                            Set.of(ModBlocks.RESEARCH_TABLE.get())));
+                            java.util.Set.of(ModBlocks.RESEARCH_TABLE.get())));
 
     public static void register(BusGroup busGroup) {
         BLOCK_ENTITIES.register(busGroup);

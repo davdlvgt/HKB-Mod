@@ -1,0 +1,25 @@
+{
+  "id": "hkbmod:cavalier_basic",
+  "name": "Basic Horsemanship",
+  "description": "Learn to ride and fight on horseback",
+  "player_class": "CAVALIER",
+  "tier": 1,
+  "type": "PASSIVE",
+  "prerequisites": [
+    "hkbmod:cavalier_foundation"
+  ],
+  "costs": [
+    {
+      "item": "minecraft:saddle",
+      "count": 1
+    },
+    {
+      "item": "minecraft:carrot",
+      "count": 8
+    },
+    {
+      "item": "minecraft:apple",
+      "count": 4
+    }
+  ]
+}

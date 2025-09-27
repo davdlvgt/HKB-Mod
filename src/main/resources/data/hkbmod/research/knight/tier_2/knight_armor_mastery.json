@@ -1,0 +1,19 @@
+{
+  "id": "hkbmod:knight_armor_mastery",
+  "name": "Armor Mastery",
+  "description": "Master the art of wearing heavy armor",
+  "player_class": "KNIGHT",
+  "tier": 2,
+  "type": "PASSIVE",
+  "prerequisites": ["hkbmod:knight_basic"],
+  "costs": [
+    {
+      "item": "minecraft:iron_ingot",
+      "count": 8
+    },
+    {
+      "item": "minecraft:diamond",
+      "count": 2
+    }
+  ]
+}

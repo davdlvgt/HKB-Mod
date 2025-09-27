@@ -3,12 +3,14 @@ package de.davidvogt.hkbmod.block.custom;
 import com.mojang.serialization.MapCodec;
 import de.davidvogt.hkbmod.block.entity.ModBlockEntities;
 import de.davidvogt.hkbmod.block.entity.ResearchTableBlockEntity;
+import de.davidvogt.hkbmod.menu.ResearchTableMenu;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.RenderShape;
@@ -33,10 +35,14 @@ public class ResearchTableBlock extends BaseEntityBlock {
 
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
-        if (!level.isClientSide()) {
+        if (!level.isClientSide() && player instanceof ServerPlayer serverPlayer) {
             BlockEntity blockEntity = level.getBlockEntity(pos);
             if (blockEntity instanceof ResearchTableBlockEntity researchTableEntity) {
-                player.openMenu(researchTableEntity);
+                serverPlayer.openMenu(new SimpleMenuProvider(
+                        (containerId, playerInventory, playerEntity) ->
+                                new ResearchTableMenu(containerId, playerInventory, researchTableEntity, ContainerLevelAccess.create(level, pos)),
+                        Component.translatable("container.hkbmod.research_table")
+                ));
             }
         }
         return InteractionResult.SUCCESS;
@@ -58,7 +64,16 @@ public class ResearchTableBlock extends BaseEntityBlock {
             return null; // No client-side ticking needed
         }
 
-        return createTickerHelper(blockEntityType, ModBlockEntities.RESEARCH_TABLE.get(),
-                (level1, pos, state1, blockEntity) -> blockEntity.tick());
+        return createTickerHelper(blockEntityType, ModBlockEntities.RESEARCH_TABLE_BE.get(),
+                ResearchTableBlockEntity::tick);
+    }
+
+    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
+        if (!state.is(newState.getBlock())) {
+            BlockEntity blockEntity = level.getBlockEntity(pos);
+            if (blockEntity instanceof ResearchTableBlockEntity researchTableEntity) {
+                researchTableEntity.dropContents(level, pos);
+            }
+        }
     }
 }

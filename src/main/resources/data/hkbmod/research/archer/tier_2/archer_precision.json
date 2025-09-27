@@ -1,0 +1,19 @@
+{
+  "id": "hkbmod:archer_precision",
+  "name": "Precision Shooting",
+  "description": "Increase accuracy and critical hits",
+  "player_class": "ARCHER",
+  "tier": 2,
+  "type": "COMBAT",
+  "prerequisites": ["hkbmod:archer_basic"],
+  "costs": [
+    {
+      "item": "minecraft:bow",
+      "count": 1
+    },
+    {
+      "item": "minecraft:arrow",
+      "count": 32
+    }
+  ]
+}

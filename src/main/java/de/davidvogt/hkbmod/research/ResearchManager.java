@@ -1,285 +1,333 @@
 package de.davidvogt.hkbmod.research;
 
-import com.google.gson.*;
-import de.davidvogt.hkbmod.HkbMod;
+import net.minecraft.core.NonNullList;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.server.packs.resources.ResourceManager;
-import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
-import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Items;
-import net.minecraftforge.event.AddReloadListenerEvent;
+import net.minecraft.world.item.ItemStack;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.List;
+import java.util.Set;
 
 public class ResearchManager {
-    // Note: Simplified implementation without JSON reload listener for now
-    private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
-    private static ResearchManager INSTANCE;
+    private static ResearchTree globalResearchTree;
+    private static boolean initialized = false;
 
-    private Map<ResourceLocation, ResearchNode> allNodes = new HashMap<>();
-    private Map<ResearchClass, List<ResearchNode>> nodesByClass = new EnumMap<>(ResearchClass.class);
-
-    public ResearchManager() {
-        INSTANCE = this;
-
-        // Initialize class maps
-        for (ResearchClass clazz : ResearchClass.values()) {
-            nodesByClass.put(clazz, new ArrayList<>());
+    public static void initialize() {
+        if (!initialized) {
+            globalResearchTree = new ResearchTree();
+            ModResearches.populateResearchTree(globalResearchTree);
+            initialized = true;
         }
     }
 
-    public static ResearchManager getInstance() {
-        if (INSTANCE == null) {
-            INSTANCE = new ResearchManager();
+    public static ResearchTree getGlobalResearchTree() {
+        if (!initialized) {
+            initialize();
         }
-        return INSTANCE;
+        return globalResearchTree;
     }
 
-    public static void addReloadListeners(AddReloadListenerEvent event) {
-        // Note: For now we'll initialize nodes in code rather than JSON
-        getInstance().initializeDefaultNodes();
+    public static Research getResearch(ResourceLocation id) {
+        return getGlobalResearchTree().getResearch(id);
     }
 
-    // Simplified apply method - JSON loading disabled for stability
-    protected void apply(Map<ResourceLocation, JsonElement> resources,
-                        ResourceManager resourceManager, ProfilerFiller profiler) {
-        allNodes.clear();
-        nodesByClass.values().forEach(List::clear);
-
-        for (Map.Entry<ResourceLocation, JsonElement> entry : resources.entrySet()) {
-            ResourceLocation nodeId = entry.getKey();
-
-            try {
-                JsonObject json = entry.getValue().getAsJsonObject();
-                ResearchNode node = parseResearchNode(nodeId, json);
-                allNodes.put(nodeId, node);
-                nodesByClass.get(node.getResearchClass()).add(node);
-            } catch (Exception e) {
-                HkbMod.LOGGER.error("Failed to parse research node {}: {}", nodeId, e.getMessage());
-            }
-        }
-
-        // Sort nodes by tier within each class
-        for (List<ResearchNode> nodes : nodesByClass.values()) {
-            nodes.sort(Comparator.comparing(ResearchNode::getTier));
-        }
-
-        HkbMod.LOGGER.info("Loaded {} research nodes", allNodes.size());
+    public static List<Research> getAvailableResearches(PlayerClass playerClass, PlayerResearchData playerData) {
+        return getGlobalResearchTree().getAvailableResearches(playerClass, playerData.getUnlockedResearches());
     }
 
-    private ResearchNode parseResearchNode(ResourceLocation id, JsonObject json) {
-        String name = json.get("name").getAsString();
-        String description = json.get("description").getAsString();
-        ResearchClass researchClass = ResearchClass.fromId(json.get("class").getAsString());
-        int tier = json.get("tier").getAsInt();
-
-        // Parse costs
-        List<ItemCost> costs = new ArrayList<>();
-        if (json.has("cost")) {
-            JsonArray costArray = json.getAsJsonArray("cost");
-            for (JsonElement costElement : costArray) {
-                JsonObject costObj = costElement.getAsJsonObject();
-                ResourceLocation itemId = ResourceLocation.parse(costObj.get("item").getAsString());
-                int count = costObj.get("count").getAsInt();
-                costs.add(new ItemCost(itemId, count));
-            }
-        }
-
-        // Parse prerequisites
-        List<ResourceLocation> prerequisites = new ArrayList<>();
-        if (json.has("prerequisites")) {
-            JsonArray prereqArray = json.getAsJsonArray("prerequisites");
-            for (JsonElement prereqElement : prereqArray) {
-                prerequisites.add(ResourceLocation.parse(prereqElement.getAsString()));
-            }
-        }
-
-        // Parse cross-requisites
-        List<ResourceLocation> crossRequisites = new ArrayList<>();
-        if (json.has("cross_requisites")) {
-            JsonArray crossReqArray = json.getAsJsonArray("cross_requisites");
-            for (JsonElement crossReqElement : crossReqArray) {
-                crossRequisites.add(ResourceLocation.parse(crossReqElement.getAsString()));
-            }
-        }
-
-        // Parse unlock reward
-        UnlockReward unlockReward = null;
-        if (json.has("unlock")) {
-            JsonObject unlockObj = json.getAsJsonObject("unlock");
-            UnlockReward.Type type = UnlockReward.Type.valueOf(unlockObj.get("type").getAsString().toUpperCase());
-            ResourceLocation targetId = ResourceLocation.parse(unlockObj.get("recipe_id").getAsString());
-            String script = unlockObj.has("script") ? unlockObj.get("script").getAsString() : null;
-            unlockReward = new UnlockReward(type, targetId, script);
-        }
-
-        return new ResearchNode(id, name, description, researchClass, tier, costs,
-                               prerequisites, crossRequisites, unlockReward);
+    public static List<Research> getResearchesForClass(PlayerClass playerClass) {
+        return getGlobalResearchTree().getResearchesForClass(playerClass);
     }
 
-    // Public API methods
-    public ResearchNode getNode(ResourceLocation id) {
-        return allNodes.get(id);
+    public static List<Research> getResearchesByTier(PlayerClass playerClass, int tier) {
+        return getGlobalResearchTree().getResearchesByTier(playerClass, tier);
     }
 
-    public List<ResearchNode> getNodesForClass(ResearchClass researchClass) {
-        return new ArrayList<>(nodesByClass.get(researchClass));
-    }
+    public static boolean canUnlockResearch(Research research, PlayerResearchData playerData, Player player) {
+        if (research == null || playerData == null) {
+            return false;
+        }
 
-    public List<ResearchNode> getAvailableNodes(ResearchClass researchClass, Set<ResourceLocation> unlockedNodes) {
-        return nodesByClass.get(researchClass).stream()
-                .filter(node -> !unlockedNodes.contains(node.getId()))
-                .filter(node -> canUnlockNode(node, unlockedNodes))
-                .collect(Collectors.toList());
-    }
+        // Check if already unlocked
+        if (playerData.hasUnlockedResearch(research.getId())) {
+            return false;
+        }
 
-    public boolean canUnlockNode(ResearchNode node, Set<ResourceLocation> unlockedNodes) {
+        // Check if player has the required class
+        if (research.getRequiredClass() != playerData.getPlayerClass()) {
+            return false;
+        }
+
         // Check prerequisites
-        for (ResourceLocation prereq : node.getPrerequisites()) {
-            if (!unlockedNodes.contains(prereq)) {
-                return false;
-            }
+        if (!getGlobalResearchTree().arePrerequisitesMet(research, playerData.getUnlockedResearches())) {
+            return false;
         }
 
-        // Check cross-requisites
-        for (ResourceLocation crossReq : node.getCrossRequisites()) {
-            if (!unlockedNodes.contains(crossReq)) {
-                return false;
-            }
+        // Check if player has required items
+        if (!hasRequiredItems(player, research.getCosts())) {
+            return false;
         }
 
         return true;
     }
 
-    public Collection<ResearchNode> getAllNodes() {
-        return allNodes.values();
+    public static boolean unlockResearch(Research research, PlayerResearchData playerData, Player player) {
+        if (!canUnlockResearch(research, playerData, player)) {
+            return false;
+        }
+
+        // Consume required items
+        if (!consumeItems(player, research.getCosts())) {
+            return false;
+        }
+
+        // Unlock the research
+        playerData.unlockResearch(research.getId());
+        return true;
     }
 
-    // Initialize default research nodes for development/testing
-    public void initializeDefaultNodes() {
-        if (!allNodes.isEmpty()) return; // Already loaded from JSON
+    // Check if research is available to select and research
+    public static boolean isResearchAvailable(Research research, PlayerResearchData playerData) {
+        if (research == null || playerData == null) {
+            return false;
+        }
 
-        // Create some basic nodes for each class
-        createMagicianNodes();
-        createArcherNodes();
-        createKnightNodes();
-        createCavalierNodes();
+        // Check if already unlocked (completed research cannot be researched again)
+        if (playerData.hasUnlockedResearch(research.getId())) {
+            return false;
+        }
+
+        // Check if player has the required class
+        if (research.getRequiredClass() != playerData.getPlayerClass()) {
+            return false;
+        }
+
+        // Check prerequisites (Tier 0 has no prerequisites, so will be available immediately)
+        // Higher tiers require previous tier research to be completed
+        if (!getGlobalResearchTree().arePrerequisitesMet(research, playerData.getUnlockedResearches())) {
+            return false;
+        }
+
+        return true;
     }
 
-    private void createMagicianNodes() {
-        // Basic Elemental (Tier 0)
-        ResourceLocation basicElementalId = ResourceLocation.fromNamespaceAndPath(HkbMod.MOD_ID, "basic_elemental");
-        List<ItemCost> basicCosts = List.of(
-                new ItemCost(Items.PAPER, 5),
-                new ItemCost(Items.STICK, 1)
-        );
-        ResearchNode basicElemental = new ResearchNode(
-                basicElementalId,
-                "Basic Elemental",
-                "Introduction to elemental magic",
-                ResearchClass.MAGICIAN,
-                0,
-                basicCosts,
-                List.of(),
-                List.of(),
-                new UnlockReward(UnlockReward.Type.FLAG, basicElementalId)
-        );
+    // New methods for slot-based research
+    public static boolean canUnlockResearchWithItems(Research research, PlayerResearchData playerData, NonNullList<ItemStack> researchItems) {
+        if (research == null || playerData == null) {
+            System.out.println("[ResearchManager] DEBUG: research or playerData is null");
+            return false;
+        }
 
-        allNodes.put(basicElementalId, basicElemental);
-        nodesByClass.get(ResearchClass.MAGICIAN).add(basicElemental);
+        // Check if player has the required class
+        if (research.getRequiredClass() != playerData.getPlayerClass()) {
+            System.out.println("[ResearchManager] DEBUG: " + research.getName() + " class mismatch - need " + research.getRequiredClass() + ", have " + playerData.getPlayerClass());
+            return false;
+        }
 
-        // Fire Wand (Tier 1)
-        ResourceLocation fireWandId = ResourceLocation.fromNamespaceAndPath(HkbMod.MOD_ID, "fire_wand");
-        List<ItemCost> fireWandCosts = List.of(
-                new ItemCost(Items.BLAZE_POWDER, 3),
-                new ItemCost(Items.STICK, 1),
-                new ItemCost(Items.PAPER, 5)
-        );
-        ResearchNode fireWand = new ResearchNode(
-                fireWandId,
-                "Fire Wand",
-                "Unlocks crafting recipe for Fire Wand",
-                ResearchClass.MAGICIAN,
-                1,
-                fireWandCosts,
-                List.of(basicElementalId),
-                List.of(),
-                new UnlockReward(UnlockReward.Type.RECIPE, ResourceLocation.fromNamespaceAndPath(HkbMod.MOD_ID, "fire_wand"))
-        );
+        // Check prerequisites (must be available to research)
+        if (!isResearchAvailable(research, playerData)) {
+            System.out.println("[ResearchManager] DEBUG: " + research.getName() + " not available for research");
+            return false;
+        }
 
-        allNodes.put(fireWandId, fireWand);
-        nodesByClass.get(ResearchClass.MAGICIAN).add(fireWand);
+        // Check if research slots have required items
+        if (!hasRequiredItemsInSlots(researchItems, research.getCosts())) {
+            System.out.println("[ResearchManager] DEBUG: " + research.getName() + " missing items - needs " + research.getCosts().size() + " items");
+            return false;
+        }
+
+        System.out.println("[ResearchManager] DEBUG: " + research.getName() + " CAN be unlocked!");
+        return true;
     }
 
-    private void createArcherNodes() {
-        // Basic Marksmanship (Tier 0)
-        ResourceLocation basicMarksmanshipId = ResourceLocation.fromNamespaceAndPath(HkbMod.MOD_ID, "basic_marksmanship");
-        List<ItemCost> basicCosts = List.of(
-                new ItemCost(Items.STRING, 3),
-                new ItemCost(Items.STICK, 2)
-        );
-        ResearchNode basicMarksmanship = new ResearchNode(
-                basicMarksmanshipId,
-                "Basic Marksmanship",
-                "Introduction to ranged combat",
-                ResearchClass.ARCHER,
-                0,
-                basicCosts,
-                List.of(),
-                List.of(),
-                new UnlockReward(UnlockReward.Type.FLAG, basicMarksmanshipId)
-        );
+    public static boolean unlockResearchWithItems(Research research, PlayerResearchData playerData, NonNullList<ItemStack> researchItems) {
+        if (!canUnlockResearchWithItems(research, playerData, researchItems)) {
+            return false;
+        }
 
-        allNodes.put(basicMarksmanshipId, basicMarksmanship);
-        nodesByClass.get(ResearchClass.ARCHER).add(basicMarksmanship);
+        // Consume required items from slots
+        if (!consumeItemsFromSlots(researchItems, research.getCosts())) {
+            return false;
+        }
+
+        // Unlock the research
+        playerData.unlockResearch(research.getId());
+        return true;
     }
 
-    private void createKnightNodes() {
-        // Basic Defense (Tier 0)
-        ResourceLocation basicDefenseId = ResourceLocation.fromNamespaceAndPath(HkbMod.MOD_ID, "basic_defense");
-        List<ItemCost> basicCosts = List.of(
-                new ItemCost(Items.IRON_INGOT, 2),
-                new ItemCost(Items.LEATHER, 3)
-        );
-        ResearchNode basicDefense = new ResearchNode(
-                basicDefenseId,
-                "Basic Defense",
-                "Introduction to heavy armor and shields",
-                ResearchClass.KNIGHT,
-                0,
-                basicCosts,
-                List.of(),
-                List.of(),
-                new UnlockReward(UnlockReward.Type.FLAG, basicDefenseId)
-        );
-
-        allNodes.put(basicDefenseId, basicDefense);
-        nodesByClass.get(ResearchClass.KNIGHT).add(basicDefense);
+    private static boolean hasRequiredItemsInSlots(NonNullList<ItemStack> researchItems, List<ItemStack> costs) {
+        for (ItemStack cost : costs) {
+            if (!hasItemInSlots(researchItems, cost)) {
+                return false;
+            }
+        }
+        return true;
     }
 
-    private void createCavalierNodes() {
-        // Mounted Basics (Tier 0)
-        ResourceLocation mountedBasicsId = ResourceLocation.fromNamespaceAndPath(HkbMod.MOD_ID, "mounted_basics");
-        List<ItemCost> basicCosts = List.of(
-                new ItemCost(Items.SADDLE, 1),
-                new ItemCost(Items.LEATHER, 4)
-        );
-        ResearchNode mountedBasics = new ResearchNode(
-                mountedBasicsId,
-                "Mounted Basics",
-                "Introduction to cavalry combat",
-                ResearchClass.CAVALIER,
-                0,
-                basicCosts,
-                List.of(),
-                List.of(),
-                new UnlockReward(UnlockReward.Type.FLAG, mountedBasicsId)
-        );
+    private static boolean hasItemInSlots(NonNullList<ItemStack> researchItems, ItemStack requiredStack) {
+        int requiredCount = requiredStack.getCount();
+        int foundCount = 0;
 
-        allNodes.put(mountedBasicsId, mountedBasics);
-        nodesByClass.get(ResearchClass.CAVALIER).add(mountedBasics);
+        for (ItemStack stack : researchItems) {
+            if (ItemStack.isSameItemSameComponents(stack, requiredStack)) {
+                foundCount += stack.getCount();
+                if (foundCount >= requiredCount) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private static boolean consumeItemsFromSlots(NonNullList<ItemStack> researchItems, List<ItemStack> costs) {
+        // First, check if we have all items (safety check)
+        if (!hasRequiredItemsInSlots(researchItems, costs)) {
+            return false;
+        }
+
+        // Then consume them
+        for (ItemStack cost : costs) {
+            consumeItemFromSlots(researchItems, cost);
+        }
+
+        return true;
+    }
+
+    private static void consumeItemFromSlots(NonNullList<ItemStack> researchItems, ItemStack requiredStack) {
+        int remainingToConsume = requiredStack.getCount();
+
+        for (int i = 0; i < researchItems.size() && remainingToConsume > 0; i++) {
+            ItemStack stack = researchItems.get(i);
+            if (ItemStack.isSameItemSameComponents(stack, requiredStack)) {
+                int toTake = Math.min(remainingToConsume, stack.getCount());
+                stack.shrink(toTake);
+                remainingToConsume -= toTake;
+
+                if (stack.isEmpty()) {
+                    researchItems.set(i, ItemStack.EMPTY);
+                }
+            }
+        }
+    }
+
+    // Original player inventory methods
+    private static boolean hasRequiredItems(Player player, List<ItemStack> costs) {
+        for (ItemStack cost : costs) {
+            if (!hasItemInInventory(player, cost)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static boolean hasItemInInventory(Player player, ItemStack requiredStack) {
+        int requiredCount = requiredStack.getCount();
+        int foundCount = 0;
+
+        for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
+            ItemStack stack = player.getInventory().getItem(i);
+            if (ItemStack.isSameItemSameComponents(stack, requiredStack)) {
+                foundCount += stack.getCount();
+                if (foundCount >= requiredCount) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private static boolean consumeItems(Player player, List<ItemStack> costs) {
+        // First, check if we have all items (safety check)
+        if (!hasRequiredItems(player, costs)) {
+            return false;
+        }
+
+        // Then consume them
+        for (ItemStack cost : costs) {
+            consumeItemFromInventory(player, cost);
+        }
+
+        return true;
+    }
+
+    private static void consumeItemFromInventory(Player player, ItemStack requiredStack) {
+        int remainingToConsume = requiredStack.getCount();
+
+        for (int i = 0; i < player.getInventory().getContainerSize() && remainingToConsume > 0; i++) {
+            ItemStack stack = player.getInventory().getItem(i);
+            if (ItemStack.isSameItemSameComponents(stack, requiredStack)) {
+                int toTake = Math.min(remainingToConsume, stack.getCount());
+                stack.shrink(toTake);
+                remainingToConsume -= toTake;
+
+                if (stack.isEmpty()) {
+                    player.getInventory().setItem(i, ItemStack.EMPTY);
+                }
+            }
+        }
+    }
+
+    public static int getMaxTierForClass(PlayerClass playerClass) {
+        return getGlobalResearchTree().getMaxTierForClass(playerClass);
+    }
+
+    public static List<Research> getRootResearches(PlayerClass playerClass) {
+        return getGlobalResearchTree().getRootResearches(playerClass);
+    }
+
+    public static List<Research> getDirectPrerequisites(Research research) {
+        return getGlobalResearchTree().getDirectPrerequisites(research);
+    }
+
+    public static List<Research> getDirectDependents(Research research) {
+        return getGlobalResearchTree().getDirectDependents(research);
+    }
+
+    public static List<Research> getResearchPath(Research target, Set<ResourceLocation> unlockedResearches) {
+        return getGlobalResearchTree().getResearchPath(target, unlockedResearches);
+    }
+
+    public static int getTotalResearchCount() {
+        return getGlobalResearchTree().getTotalResearchCount();
+    }
+
+    public static int getResearchCountForClass(PlayerClass playerClass) {
+        return getGlobalResearchTree().getResearchCountForClass(playerClass);
+    }
+
+    // Utility method to get research progress for a class
+    public static ResearchProgress getResearchProgress(PlayerClass playerClass, PlayerResearchData playerData) {
+        int total = getResearchCountForClass(playerClass);
+        int unlocked = playerData.getUnlockedResearchCountForClass(playerClass, getGlobalResearchTree());
+        int available = getAvailableResearches(playerClass, playerData).size();
+
+        return new ResearchProgress(total, unlocked, available);
+    }
+
+    public static class ResearchProgress {
+        private final int total;
+        private final int unlocked;
+        private final int available;
+
+        public ResearchProgress(int total, int unlocked, int available) {
+            this.total = total;
+            this.unlocked = unlocked;
+            this.available = available;
+        }
+
+        public int getTotal() { return total; }
+        public int getUnlocked() { return unlocked; }
+        public int getAvailable() { return available; }
+        public int getLocked() { return total - unlocked - available; }
+
+        public float getUnlockedPercentage() {
+            return total > 0 ? (float) unlocked / total : 0f;
+        }
+
+        public float getProgressPercentage() {
+            return total > 0 ? (float) (unlocked + available) / total : 0f;
+        }
     }
 }

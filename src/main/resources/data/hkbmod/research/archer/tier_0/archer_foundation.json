@@ -1,0 +1,19 @@
+{
+  "id": "hkbmod:archer_foundation",
+  "name": "Hunter's Instinct",
+  "description": "Develop basic hunting and tracking skills",
+  "player_class": "ARCHER",
+  "tier": 0,
+  "type": "PASSIVE",
+  "prerequisites": [],
+  "costs": [
+    {
+      "item": "minecraft:bow",
+      "count": 1
+    },
+    {
+      "item": "minecraft:arrow",
+      "count": 8
+    }
+  ]
+}

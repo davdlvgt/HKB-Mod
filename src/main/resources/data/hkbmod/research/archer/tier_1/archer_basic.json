@@ -1,0 +1,25 @@
+{
+  "id": "hkbmod:archer_basic",
+  "name": "Basic Archery",
+  "description": "Learn the art of the bow",
+  "player_class": "ARCHER",
+  "tier": 1,
+  "type": "PASSIVE",
+  "prerequisites": [
+    "hkbmod:archer_foundation"
+  ],
+  "costs": [
+    {
+      "item": "minecraft:stick",
+      "count": 6
+    },
+    {
+      "item": "minecraft:string",
+      "count": 3
+    },
+    {
+      "item": "minecraft:flint",
+      "count": 8
+    }
+  ]
+}
