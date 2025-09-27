@@ -3,6 +3,7 @@ package de.davidvogt.hkbmod.menu;
 import de.davidvogt.hkbmod.HkbMod;
 import de.davidvogt.hkbmod.block.ModBlocks;
 import de.davidvogt.hkbmod.block.entity.ResearchTableBlockEntity;
+import de.davidvogt.hkbmod.client.gui.layout.ResearchTableLayout;
 import de.davidvogt.hkbmod.research.PlayerClass;
 import de.davidvogt.hkbmod.research.PlayerResearchData;
 import de.davidvogt.hkbmod.research.PlayerResearchDataManager;
@@ -99,14 +100,19 @@ public class ResearchTableMenu extends AbstractContainerMenu {
         int columns = 3; // 3 Spalten
         int rows = 3;    // 3 Reihen
         int slotSize = 18; // Standard Slot-Größe in Pixel
-        int startX = 26;   // X-Offset des ersten Slots
-        int startY = 50;   // Y-Offset des ersten Slots
+
+        // Materials panel: adjusted positions for smaller window
+        int panelWidth = 90;
+        int gridWidth = columns * slotSize + (columns - 1) * 2; // 3 slots + 2 gaps
+
+        int startX = 5 + (panelWidth - gridWidth) / 2; // Centered horizontally
+        int startY = 55 + 15; // Fixed offset from panel top (below label)
 
         for (int row = 0; row < rows; row++) {
             for (int col = 0; col < columns; col++) {
                 int index = row * columns + col;
-                int x = startX + col * slotSize;
-                int y = startY + row * slotSize;
+                int x = startX + col * (slotSize + 2);
+                int y = startY + row * (slotSize + 2);
 
                 if (blockEntity != null) {
                     addSlot(new ResearchSlot(blockEntity, index, x, y));
@@ -119,16 +125,25 @@ public class ResearchTableMenu extends AbstractContainerMenu {
 
 
     private void addPlayerInventory(Inventory playerInventory) {
-        // Player inventory (3x9) - positioned for the new UI
+        // Calculate centered positions using the same logic as visual rendering
+        ResearchTableLayout.InventoryGridPositions positions = ResearchTableLayout.calculateInventoryGridPositions(0, 0);
+
+        // Player inventory (3x9) - centered in inventory panel
         for (int row = 0; row < 3; row++) {
             for (int col = 0; col < 9; col++) {
-                addSlot(new Slot(playerInventory, col + row * 9 + 9, 8 + col * 18, 140 + row * 18));
+                addSlot(new Slot(playerInventory,
+                    col + row * 9 + 9,
+                    positions.mainInventoryX + col * 18,
+                    positions.mainInventoryY + row * 18));
             }
         }
 
-        // Player hotbar (1x9)
+        // Player hotbar (1x9) - centered below main inventory
         for (int col = 0; col < 9; col++) {
-            addSlot(new Slot(playerInventory, col, 8 + col * 18, 198));
+            addSlot(new Slot(playerInventory,
+                col,
+                positions.hotbarX + col * 18,
+                positions.hotbarY));
         }
     }
 

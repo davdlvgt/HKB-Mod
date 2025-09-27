@@ -1,37 +1,50 @@
 package de.davidvogt.hkbmod.client.gui;
 
 import de.davidvogt.hkbmod.HkbMod;
-import de.davidvogt.hkbmod.block.entity.ResearchTableBlockEntity;
 import de.davidvogt.hkbmod.client.gui.components.ResearchButton;
+import de.davidvogt.hkbmod.client.gui.layout.ResearchTableLayout;
+import de.davidvogt.hkbmod.client.gui.panels.MaterialsPanel;
+import de.davidvogt.hkbmod.client.gui.panels.ResearchInfoPanel;
+import de.davidvogt.hkbmod.client.gui.panels.ResearchTreePanel;
 import de.davidvogt.hkbmod.menu.ResearchTableMenu;
 import de.davidvogt.hkbmod.research.PlayerClass;
 import de.davidvogt.hkbmod.research.Research;
 import de.davidvogt.hkbmod.research.ResearchManager;
-
-import java.util.ArrayList;
-import java.util.List;
-
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
+import net.minecraft.client.gui.screens.inventory.tooltip.DefaultTooltipPositioner;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
+
+import java.util.*;
 
 public class ResearchTableScreen extends AbstractContainerScreen<ResearchTableMenu> {
     private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath("hkbmod",
             "textures/gui/research_table.png");
-    private static final int IMAGE_WIDTH = 256; // Wider for split layout
-    private static final int IMAGE_HEIGHT = 222;
 
-    private Button knightButton;
-    private Button archerButton;
-    private Button cavalierButton;
-    private Button magicianButton;
+    // Use layout constants from modular layout class
+    private static final int IMAGE_WIDTH = ResearchTableLayout.WINDOW_WIDTH;
+    private static final int IMAGE_HEIGHT = ResearchTableLayout.WINDOW_HEIGHT; // Now 248 for bigger panels
+
+    // UI Komponenten
+    private Button knightButton, archerButton, cavalierButton, magicianButton;
     private Button startResearchButton;
-    private List<ResearchButton> researchButtons = new ArrayList<>();
     private String statusMessage = "";
+    private int statusMessageColor = ResearchTableLayout.COLOR_TEXT;
+
+    // Animation
+    private float animationTick = 0;
+
+    // Modular UI panels
+    private MaterialsPanel materialsPanel;
+    private ResearchTreePanel researchTreePanel;
+    private ResearchInfoPanel researchInfoPanel;
 
     public ResearchTableScreen(ResearchTableMenu menu, Inventory playerInventory, Component title) {
         super(menu, playerInventory, title);
@@ -46,55 +59,164 @@ public class ResearchTableScreen extends AbstractContainerScreen<ResearchTableMe
         int x = (width - imageWidth) / 2;
         int y = (height - imageHeight) / 2;
 
-        // Class selection buttons - arranged in a 4x1 grid at the top
-        knightButton = addRenderableWidget(Button.builder(
-                        Component.literal("Knight"),
-                        button -> selectClass(PlayerClass.KNIGHT))
-                .bounds(x + 8, y + 20, 58, 18)
-                .build());
+        // Initialize modular panels
+        initializeModularPanels(x, y);
 
-        archerButton = addRenderableWidget(Button.builder(
-                        Component.literal("Archer"),
-                        button -> selectClass(PlayerClass.ARCHER))
-                .bounds(x + 70, y + 20, 58, 18)
-                .build());
+        // Verbesserte Klassen-Auswahl Buttons mit modernem Styling
+        createClassButtons(x, y);
 
-        cavalierButton = addRenderableWidget(Button.builder(
-                        Component.literal("Cavalier"),
-                        button -> selectClass(PlayerClass.CAVALIER))
-                .bounds(x + 132, y + 20, 58, 18)
-                .build());
-
-        magicianButton = addRenderableWidget(Button.builder(
-                        Component.literal("Magician"),
-                        button -> selectClass(PlayerClass.MAGICIAN))
-                .bounds(x + 194, y + 20, 58, 18)
-                .build());
-
-        // Start Research button (positioned below research details)
+        // Start/Cancel Research Button mit verbessertem Design
+        ResearchTableLayout.ButtonPosition startButtonPos = ResearchTableLayout.calculateStartButtonPosition(x, y);
         startResearchButton = addRenderableWidget(Button.builder(
                         Component.literal("Start Research"),
                         button -> startSelectedResearch())
-                .bounds(x + 128, y + 120, 100, 20)
+                .bounds(startButtonPos.x, startButtonPos.y, startButtonPos.width, startButtonPos.height)
                 .build());
 
         updateButtonStates();
         updateResearchButtons();
     }
 
+    private void initializeModularPanels(int x, int y) {
+        // Initialize materials panel
+        materialsPanel = new MaterialsPanel(x, y);
+        addRenderableWidget(materialsPanel);
+
+        // Initialize research tree panel with callbacks
+        researchTreePanel = new ResearchTreePanel(x, y);
+        researchTreePanel.setIsResearchAvailable(research -> menu.isResearchAvailable(research));
+        researchTreePanel.setIsResearchCompleted(research -> menu.getPlayerResearchData().hasUnlockedResearch(research.getId()));
+        researchTreePanel.setIsResearchSelected(research -> research.equals(menu.getSelectedResearch()));
+        researchTreePanel.setOnResearchSelected(research -> {
+            menu.setSelectedResearch(research);
+            updateResearchButtons();
+        });
+        addRenderableWidget(researchTreePanel);
+
+        // Initialize research info panel with data providers
+        researchInfoPanel = new ResearchInfoPanel(x, y);
+        researchInfoPanel.setSelectedResearchProvider(() -> menu.getSelectedResearch());
+        researchInfoPanel.setCurrentResearchProvider(() -> {
+            if (menu.getBlockEntity() != null && menu.getBlockEntity().getCurrentResearchId() != null) {
+                return ResearchManager.getResearch(menu.getBlockEntity().getCurrentResearchId());
+            }
+            return null;
+        });
+        researchInfoPanel.setIsResearchingProvider(() -> menu.getBlockEntity() != null && menu.getBlockEntity().isResearching());
+        researchInfoPanel.setResearchProgressProvider(() -> menu.getBlockEntity() != null ? menu.getBlockEntity().getResearchProgressPercentage() : 0.0f);
+        researchInfoPanel.setRemainingTimeProvider(() -> menu.getBlockEntity() != null ? menu.getBlockEntity().getRemainingResearchSeconds() : 0);
+        addRenderableWidget(researchInfoPanel);
+    }
+
+    private void createClassButtons(int x, int y) {
+        ResearchTableLayout.ButtonLayout layout = ResearchTableLayout.calculateClassButtonLayout(x, y);
+        int buttonWidth = layout.buttonWidth;
+        int buttonHeight = layout.buttonHeight;
+        int spacing = layout.spacing;
+        int startX = layout.startX;
+        int startY = layout.startY;
+
+        knightButton = addRenderableWidget(Button.builder(
+                        Component.literal("⚔ Knight"),
+                        button -> selectClass(PlayerClass.KNIGHT))
+                .bounds(startX, startY, buttonWidth, buttonHeight)
+                .build());
+
+        archerButton = addRenderableWidget(Button.builder(
+                        Component.literal("🏹 Archer"),
+                        button -> selectClass(PlayerClass.ARCHER))
+                .bounds(startX + (buttonWidth + spacing), startY, buttonWidth, buttonHeight)
+                .build());
+
+        cavalierButton = addRenderableWidget(Button.builder(
+                        Component.literal("🐎 Cavalier"),
+                        button -> selectClass(PlayerClass.CAVALIER))
+                .bounds(startX + 2 * (buttonWidth + spacing), startY, buttonWidth, buttonHeight)
+                .build());
+
+        magicianButton = addRenderableWidget(Button.builder(
+                        Component.literal("🔮 Magician"),
+                        button -> selectClass(PlayerClass.MAGICIAN))
+                .bounds(startX + 3 * (buttonWidth + spacing), startY, buttonWidth, buttonHeight)
+                .build());
+    }
+
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+        animationTick += partialTick;
+
         // Sync research state from server to client
         menu.syncResearchState();
         menu.checkResearchCompletion();
-        updateButtonStates(); // Diese Zeile hinzufügen
-        updateResearchButtons(); // Refresh research buttons to show newly available researches
+        updateButtonStates();
+        updateResearchButtons();
+
         super.render(guiGraphics, mouseX, mouseY, partialTick);
-        renderTooltip(guiGraphics, mouseX, mouseY);
+
+        // Erweiterte Tooltip-Funktionalität
+        renderAdvancedTooltips(guiGraphics, mouseX, mouseY);
+    }
+
+    private void renderAdvancedTooltips(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+        // Verbesserte Tooltips für Research Buttons
+        if (researchTreePanel != null) {
+            for (ResearchButton button : researchTreePanel.getResearchButtons()) {
+            if (button.isHovered() && mouseX >= button.getX() && mouseY >= button.getY() &&
+                    mouseX < button.getX() + button.getWidth() && mouseY < button.getY() + button.getHeight()) {
+
+                Research research = button.getResearch();
+                List<Component> tooltip = new ArrayList<>();
+
+                // Forschungsname mit Farbe nach Typ - FIXED: Verwende ChatFormatting direkt
+                tooltip.add(Component.literal(research.getName())
+                        .withStyle(research.getType().getColor()));
+
+                // Tier und Typ
+                tooltip.add(Component.literal("Tier " + research.getTier() + " " + research.getType().name())
+                        .withStyle(s -> s.withColor(ResearchTableLayout.COLOR_TEXT_DIM)));
+
+                // Status
+                boolean isCompleted = menu.getPlayerResearchData().hasUnlockedResearch(research.getId());
+                boolean isAvailable = menu.isResearchAvailable(research);
+
+                if (isCompleted) {
+                    tooltip.add(Component.literal("✓ Completed").withStyle(s -> s.withColor(ResearchTableLayout.COLOR_SUCCESS)));
+                } else if (isAvailable) {
+                    tooltip.add(Component.literal("Available").withStyle(s -> s.withColor(ResearchTableLayout.COLOR_ACCENT)));
+                } else {
+                    tooltip.add(Component.literal("Locked").withStyle(s -> s.withColor(ResearchTableLayout.COLOR_ERROR)));
+                }
+
+                // Beschreibung
+                tooltip.add(Component.literal(""));
+                String[] descLines = research.getDescription().split("\\n");
+                for (String line : descLines) {
+                    tooltip.add(Component.literal(line).withStyle(s -> s.withColor(ResearchTableLayout.COLOR_TEXT_DIM)));
+                }
+
+                // Anforderungen - FIXED: getCosts() returns List<ItemStack>, not Map
+                if (!research.getCosts().isEmpty()) {
+                    tooltip.add(Component.literal(""));
+                    tooltip.add(Component.literal("Requirements:").withStyle(s -> s.withColor(ResearchTableLayout.COLOR_WARNING)));
+                    for (ItemStack costItem : research.getCosts()) {
+                        tooltip.add(Component.literal("• " + costItem.getCount() + "x " + costItem.getHoverName().getString())
+                                .withStyle(s -> s.withColor(ResearchTableLayout.COLOR_TEXT_DIM)));
+                    }
+                }
+
+                // FIXED: Use the correct overload that accepts List<Component>
+                guiGraphics.renderTooltip(this.font, tooltip.stream().map(Component::getVisualOrderText).map(text -> ClientTooltipComponent.create(text)).toList(), mouseX, mouseY, DefaultTooltipPositioner.INSTANCE, null);
+                break;
+            }
+        }
+        }
     }
 
     private void selectClass(PlayerClass playerClass) {
         menu.setSelectedClass(playerClass);
+        if (researchTreePanel != null) {
+            researchTreePanel.resetScroll(); // Reset scroll when changing class
+        }
         updateButtonStates();
         updateResearchButtons();
     }
@@ -102,227 +224,278 @@ public class ResearchTableScreen extends AbstractContainerScreen<ResearchTableMe
     private void updateButtonStates() {
         PlayerClass selected = menu.getSelectedClass();
 
-        knightButton.active = selected != PlayerClass.KNIGHT;
-        archerButton.active = selected != PlayerClass.ARCHER;
-        cavalierButton.active = selected != PlayerClass.CAVALIER;
-        magicianButton.active = selected != PlayerClass.MAGICIAN;
+        // Klassen-Button Styling
+        updateClassButtonStyle(knightButton, selected == PlayerClass.KNIGHT);
+        updateClassButtonStyle(archerButton, selected == PlayerClass.ARCHER);
+        updateClassButtonStyle(cavalierButton, selected == PlayerClass.CAVALIER);
+        updateClassButtonStyle(magicianButton, selected == PlayerClass.MAGICIAN);
 
-        // Update start research button
+        // Start Research Button Update
         Research selectedResearch = menu.getSelectedResearch();
         boolean isResearching = menu.getBlockEntity() != null && menu.getBlockEntity().isResearching();
 
         if (isResearching) {
-            // Show cancel research button when researching
-            startResearchButton.setMessage(Component.literal("Cancel Research"));
+            startResearchButton.setMessage(Component.literal("⏹ Cancel Research"));
             startResearchButton.visible = true;
             startResearchButton.active = true;
-            statusMessage = "";
+            statusMessage = "Research in progress...";
+            statusMessageColor = ResearchTableLayout.COLOR_ACCENT;
         } else if (selectedResearch != null) {
-            // Research is selected - button is always visible and clickable for available research
-            startResearchButton.setMessage(Component.literal("Start Research"));
+            startResearchButton.setMessage(Component.literal("▶ Start Research"));
             startResearchButton.visible = true;
             startResearchButton.active = menu.isResearchAvailable(selectedResearch);
 
-            // Clear status message when research changes
-            statusMessage = "";
+            if (menu.canUnlockResearch(selectedResearch)) {
+                statusMessage = "Ready to start research";
+                statusMessageColor = ResearchTableLayout.COLOR_SUCCESS;
+            } else if (!menu.hasAllRequiredItemsInSlots(selectedResearch)) {
+                statusMessage = "Missing required materials";
+                statusMessageColor = ResearchTableLayout.COLOR_ERROR;
+            } else {
+                statusMessage = "Prerequisites not met";
+                statusMessageColor = ResearchTableLayout.COLOR_WARNING;
+            }
         } else {
-            startResearchButton.visible = false;
-            statusMessage = "";
+            startResearchButton.visible = true;
+            startResearchButton.active = false;
+            startResearchButton.setMessage(Component.literal("Select Research"));
+            statusMessage = "Select a research to begin";
+            statusMessageColor = ResearchTableLayout.COLOR_TEXT_DIM;
         }
     }
 
+    private void updateClassButtonStyle(Button button, boolean isSelected) {
+        // Visual feedback für ausgewählte Klasse - wird in renderBg() gehandhabt
+        button.active = !isSelected;
+    }
+
     private void startSelectedResearch() {
-        // Check research status - client-side check
         boolean isResearching = menu.getBlockEntity() != null && menu.getBlockEntity().isResearching();
 
         if (isResearching) {
-            // Cancel current research (direct call for singleplayer)
+            // Cancel research logic (existing implementation)
             HkbMod.LOGGER.info("Cancelling research directly");
 
-            // Cancel on client-side
             if (menu.getBlockEntity() != null) {
                 menu.getBlockEntity().cancelResearch();
             }
 
-            // Also cancel on server-side in singleplayer
             if (minecraft.getSingleplayerServer() != null) {
                 var server = minecraft.getSingleplayerServer();
                 var serverPlayer = server.getPlayerList().getPlayer(minecraft.player.getUUID());
                 if (serverPlayer != null && serverPlayer.containerMenu instanceof ResearchTableMenu serverMenu) {
-                    HkbMod.LOGGER.info("Cancelling research on server side");
                     if (serverMenu.getBlockEntity() != null) {
                         serverMenu.getBlockEntity().cancelResearch();
                     }
                 }
             }
-
-            statusMessage = "";
+            statusMessage = "Research cancelled";
+            statusMessageColor = ResearchTableLayout.COLOR_WARNING;
         } else {
-            // Start new research
+            // Start research logic (existing implementation with improved feedback)
             Research selectedResearch = menu.getSelectedResearch();
-            HkbMod.LOGGER.info("Selected research: " + (selectedResearch != null ? selectedResearch.getName() : "null"));
             if (selectedResearch != null && menu.isResearchAvailable(selectedResearch)) {
-                HkbMod.LOGGER.info("Attempting to start research: " + selectedResearch.getName());
-                // Check if required items are in slots
                 if (menu.hasAllRequiredItemsInSlots(selectedResearch)) {
-                    HkbMod.LOGGER.info("Starting research directly: " + selectedResearch.getName());
-
-                    // Call client-side menu first
                     menu.startResearch(selectedResearch);
 
-                    // In singleplayer, also trigger server-side menu
-                    if (minecraft.player != null && minecraft.level != null && !minecraft.level.isClientSide) {
-                        HkbMod.LOGGER.info("Also calling server-side menu");
-                        // This should be the server-side menu
-                        if (minecraft.player.containerMenu instanceof ResearchTableMenu serverMenu) {
+                    if (minecraft.getSingleplayerServer() != null) {
+                        var server = minecraft.getSingleplayerServer();
+                        var serverPlayer = server.getPlayerList().getPlayer(minecraft.player.getUUID());
+                        if (serverPlayer != null && serverPlayer.containerMenu instanceof ResearchTableMenu serverMenu) {
                             serverMenu.startResearch(selectedResearch);
                         }
-                    } else {
-                        // In singleplayer, client and server run together, so we need to access the server player
-                        HkbMod.LOGGER.info("Accessing server-side through integrated server");
-                        var server = minecraft.getSingleplayerServer();
-                        if (server != null) {
-                            var serverPlayer = server.getPlayerList().getPlayer(minecraft.player.getUUID());
-                            if (serverPlayer != null && serverPlayer.containerMenu instanceof ResearchTableMenu serverMenu) {
-                                HkbMod.LOGGER.info("Calling server-side menu for research start");
-                                serverMenu.startResearch(selectedResearch);
-                            }
-                        }
                     }
-
-                    statusMessage = "";
+                    statusMessage = "Research started: " + selectedResearch.getName();
+                    statusMessageColor = ResearchTableLayout.COLOR_SUCCESS;
                 } else {
-                    HkbMod.LOGGER.info("Cannot start research, missing materials: " + selectedResearch.getName());
-                    // Display missing materials message
                     statusMessage = "Missing required materials!";
+                    statusMessageColor = ResearchTableLayout.COLOR_ERROR;
                 }
             }
         }
     }
 
     private void updateResearchButtons() {
-        // Remove old research buttons
-        for (ResearchButton button : researchButtons) {
-            removeWidget(button);
-        }
-        researchButtons.clear();
-
-        // Add research buttons for current class in a better layout
-        int x = (width - imageWidth) / 2;
-        int y = (height - imageHeight) / 2;
-
         List<Research> researches = menu.getResearchesForCurrentClass();
 
-        // Group researches by tier for better layout
-        List<Research> tier0 = new ArrayList<>();
-        List<Research> tier1 = new ArrayList<>();
-        List<Research> tier2 = new ArrayList<>();
-        List<Research> tier3 = new ArrayList<>();
-
-        for (Research research : researches) {
-            switch (research.getTier()) {
-                case 0 -> tier0.add(research);
-                case 1 -> tier1.add(research);
-                case 2 -> tier2.add(research);
-                case 3 -> tier3.add(research);
-            }
-        }
-
-        // Research buttons on the right side (starting at x + 130)
-        // Layout tier 0 research (foundation row)
-        layoutTierResearches(tier0, x + 130, y + 50, 0);
-        // Layout tier 1 research (basic row)
-        layoutTierResearches(tier1, x + 130, y + 75, 1);
-        // Layout tier 2 research (advanced row)
-        layoutTierResearches(tier2, x + 130, y + 100, 2);
-        // Layout tier 3 research (master row)
-        layoutTierResearches(tier3, x + 130, y + 125, 3);
-
-        // Update button states after refreshing research buttons
-        updateButtonStates();
-    }
-
-    private void layoutTierResearches(List<Research> researches, int startX, int startY, int tier) {
-        int buttonWidth = 60; // Smaller to fit in right side
-        int buttonHeight = 20;
-        int spacing = 4;
-
-        for (int i = 0; i < researches.size() && i < 2; i++) { // Max 2 per tier
-            Research research = researches.get(i);
-            boolean isCompleted = menu.getPlayerResearchData().hasUnlockedResearch(research.getId());
-            boolean isAvailable = menu.isResearchAvailable(research);
-
-            // For the ResearchButton constructor:
-            // canUnlock parameter determines if research can be started (blue button)
-            // isCompleted parameter determines if research is completed (green button)
-            boolean canUnlock = isAvailable; // Can research if available (not completed and prerequisites met)
-
-            int buttonX = startX + i * (buttonWidth + spacing);
-            int buttonY = startY;
-
-            ResearchButton researchButton = new ResearchButton(
-                    research, buttonX, buttonY, buttonWidth, buttonHeight,
-                    canUnlock, isCompleted,
-                    button -> {
-                        if (isAvailable || isCompleted) {
-                            // Select the research to show its details (can select both available and completed)
-                            menu.setSelectedResearch(research);
-                            updateResearchButtons(); // Refresh to show selection
-                        }
-                    }
+        if (researchTreePanel != null) {
+            researchTreePanel.updateResearchButtons(
+                researches,
+                this::addRenderableWidget,
+                this::removeWidget
             );
-
-            // Set selection state
-            researchButton.setSelected(research.equals(menu.getSelectedResearch()));
-
-            researchButtons.add(researchButton);
-            addRenderableWidget(researchButton);
         }
     }
+
+    // This method is now handled by ResearchTreePanel
 
     @Override
     protected void renderBg(GuiGraphics guiGraphics, float partialTick, int mouseX, int mouseY) {
         int x = (width - imageWidth) / 2;
         int y = (height - imageHeight) / 2;
 
-        // Main background - darker, more professional
-        guiGraphics.fill(x, y, x + imageWidth, y + imageHeight, 0xFF2C2C2C);
+        // Haupthintergrund
+        guiGraphics.fill(x, y, x + imageWidth, y + imageHeight, ResearchTableLayout.COLOR_BACKGROUND);
 
-        // Header section for class selection
-        guiGraphics.fill(x + 4, y + 16, x + imageWidth - 4, y + 42, 0xFF404040);
+        // Header Panel - consistent 5px margin from top
+        drawModernPanel(guiGraphics, x + ResearchTableLayout.PANEL_MARGIN, y + ResearchTableLayout.HEADER_Y,
+                        imageWidth - 2 * ResearchTableLayout.PANEL_MARGIN, ResearchTableLayout.HEADER_PANEL_HEIGHT,
+                        ResearchTableLayout.COLOR_PANEL);
 
-        // Left side - Research materials section
-        guiGraphics.fill(x + 4, y + 46, x + 120, y + 134, 0xFF505050);
+        // Materials Panel - consistent spacing
+        drawModernPanel(guiGraphics, x + ResearchTableLayout.MATERIALS_X, y + ResearchTableLayout.MATERIALS_Y,
+                        ResearchTableLayout.MATERIALS_PANEL_WIDTH, ResearchTableLayout.MATERIALS_PANEL_HEIGHT,
+                        ResearchTableLayout.COLOR_PANEL);
 
-        // Right side - Research tree section
-        guiGraphics.fill(x + 124, y + 46, x + imageWidth - 4, y + 134, 0xFF353535);
+        // Research Tree Panel - consistent spacing
+        drawModernPanel(guiGraphics, x + ResearchTableLayout.RESEARCH_TREE_X, y + ResearchTableLayout.RESEARCH_TREE_Y,
+                        ResearchTableLayout.RESEARCH_TREE_PANEL_WIDTH, ResearchTableLayout.RESEARCH_TREE_PANEL_HEIGHT,
+                        ResearchTableLayout.COLOR_PANEL_LIGHT);
 
-        // Player inventory section
-        guiGraphics.fill(x + 4, y + 138, x + imageWidth - 4, y + imageHeight - 4, 0xFF454545);
+        // Player Inventory Panel - consistent spacing
+        ResearchTableLayout.PanelArea inventoryArea = ResearchTableLayout.calculateInventoryPanelArea(x, y);
+        drawModernPanel(guiGraphics, inventoryArea.x, inventoryArea.y, inventoryArea.width, inventoryArea.height,
+                        ResearchTableLayout.COLOR_PANEL);
 
-        // Draw borders
-        drawBorder(guiGraphics, x, y, imageWidth, imageHeight, 0xFF666666);
-        drawBorder(guiGraphics, x + 4, y + 16, imageWidth - 8, 26, 0xFF888888); // Header
-        drawBorder(guiGraphics, x + 4, y + 46, 116, 88, 0xFF888888); // Left side (materials)
-        drawBorder(guiGraphics, x + 124, y + 46, imageWidth - 128, 88, 0xFF888888); // Right side (research)
+        // Draw inventory slot grids
+        drawInventorySlotGrids(guiGraphics, x, y);
 
-        int columns = 3;
-        int rows = 3;
-        int slotSize = 18;
-        int startX = x + 26;
-        int startY = y + 50;
+        // Research Control Panel - consistent spacing
+        ResearchTableLayout.PanelArea controlArea = ResearchTableLayout.calculateResearchControlArea(x, y);
+        drawModernPanel(guiGraphics, controlArea.x, controlArea.y, controlArea.width, controlArea.height,
+                        ResearchTableLayout.COLOR_PANEL);
 
-        for (int row = 0; row < rows; row++) {
-            for (int col = 0; col < columns; col++) {
-                int slotX = startX + col * slotSize - 1; // -1 wegen Rahmen
-                int slotY = startY + row * slotSize - 1;
-                guiGraphics.fill(slotX, slotY, slotX + 18, slotY + 18, 0xFF222222);
-                drawBorder(guiGraphics, slotX, slotY, 18, 18, 0xFF666666);
+        // Render research tree connections
+        if (researchTreePanel != null) {
+            List<Research> researches = menu.getResearchesForCurrentClass();
+            researchTreePanel.renderConnections(guiGraphics, researches);
+        }
+
+        // Zeichne ausgewählte Klasse Highlight
+        highlightSelectedClass(guiGraphics, x, y);
+    }
+
+    private void drawModernPanel(GuiGraphics guiGraphics, int x, int y, int width, int height, int color) {
+        // Panel Hintergrund
+        guiGraphics.fill(x, y, x + width, y + height, color);
+
+        // Subtiler Rahmen
+        guiGraphics.fill(x, y, x + width, y + 1, ResearchTableLayout.COLOR_BORDER); // Top
+        guiGraphics.fill(x, y + height - 1, x + width, y + height, ResearchTableLayout.COLOR_BORDER); // Bottom
+        guiGraphics.fill(x, y, x + 1, y + height, ResearchTableLayout.COLOR_BORDER); // Left
+        guiGraphics.fill(x + width - 1, y, x + width, y + height, ResearchTableLayout.COLOR_BORDER); // Right
+    }
+
+    private void drawInventorySlotGrids(GuiGraphics guiGraphics, int x, int y) {
+        ResearchTableLayout.InventoryGridPositions positions = ResearchTableLayout.calculateInventoryGridPositions(x, y);
+
+        // Draw main inventory slots (3x9 grid)
+        for (int row = 0; row < ResearchTableLayout.INVENTORY_ROWS; row++) {
+            for (int col = 0; col < ResearchTableLayout.INVENTORY_SLOTS_PER_ROW; col++) {
+                int slotX = positions.mainInventoryX + col * ResearchTableLayout.INVENTORY_SLOT_SIZE;
+                int slotY = positions.mainInventoryY + row * ResearchTableLayout.INVENTORY_SLOT_SIZE;
+
+                drawInventorySlot(guiGraphics, slotX, slotY);
             }
         }
 
+        // Draw hotbar slots (1x9 grid)
+        for (int col = 0; col < ResearchTableLayout.HOTBAR_SLOTS; col++) {
+            int slotX = positions.hotbarX + col * ResearchTableLayout.INVENTORY_SLOT_SIZE;
+            int slotY = positions.hotbarY;
+
+            drawInventorySlot(guiGraphics, slotX, slotY);
+        }
     }
 
+    private void drawInventorySlot(GuiGraphics guiGraphics, int slotX, int slotY) {
+        // Slot border (slightly darker than panel border)
+        guiGraphics.fill(
+            slotX - 1, slotY - 1,
+            slotX + ResearchTableLayout.INVENTORY_SLOT_SIZE + 1,
+            slotY + ResearchTableLayout.INVENTORY_SLOT_SIZE + 1,
+            ResearchTableLayout.COLOR_BORDER
+        );
+
+        // Slot interior (dark background)
+        guiGraphics.fill(
+            slotX, slotY,
+            slotX + ResearchTableLayout.INVENTORY_SLOT_SIZE,
+            slotY + ResearchTableLayout.INVENTORY_SLOT_SIZE,
+            0xFF000000
+        );
+    }
+
+    // This method is now handled by ResearchTreePanel
+
+    private void highlightSelectedClass(GuiGraphics guiGraphics, int x, int y) {
+        PlayerClass selected = menu.getSelectedClass();
+        int buttonIndex = switch (selected) {
+            case KNIGHT -> 0;
+            case ARCHER -> 1;
+            case CAVALIER -> 2;
+            case MAGICIAN -> 3;
+        };
+
+        // Use the same layout calculation as createClassButtons
+        ResearchTableLayout.ButtonLayout layout = ResearchTableLayout.calculateClassButtonLayout(x, y);
+        int buttonWidth = layout.buttonWidth;
+        int buttonHeight = layout.buttonHeight;
+        int spacing = layout.spacing;
+        int startX = layout.startX;
+        int startY = layout.startY;
+
+        // Calculate the exact button position
+        int buttonX = startX + buttonIndex * (buttonWidth + spacing);
+        int buttonY = startY;
+
+        // Draw highlight border around the actual button
+        guiGraphics.fill(buttonX - 2, buttonY - 2, buttonX + buttonWidth + 2, buttonY, ResearchTableLayout.COLOR_ACCENT); // Top
+        guiGraphics.fill(buttonX - 2, buttonY + buttonHeight, buttonX + buttonWidth + 2, buttonY + buttonHeight + 2, ResearchTableLayout.COLOR_ACCENT); // Bottom
+        guiGraphics.fill(buttonX - 2, buttonY, buttonX, buttonY + buttonHeight, ResearchTableLayout.COLOR_ACCENT); // Left
+        guiGraphics.fill(buttonX + buttonWidth, buttonY, buttonX + buttonWidth + 2, buttonY + buttonHeight, ResearchTableLayout.COLOR_ACCENT); // Right
+    }
+
+    @Override
+    protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+        // Research Table title - positioned at top with consistent spacing to window edge
+        Component title = Component.literal("Research Table").withStyle(s -> s.withColor(ResearchTableLayout.COLOR_TEXT));
+        int titleWidth = this.font.width(title);
+        int titleX = (imageWidth - titleWidth) / 2;
+        int titleY = ResearchTableLayout.TITLE_Y; // Same spacing as panel margins
+
+        // Shadow
+        guiGraphics.drawString(this.font, title, titleX + 1, titleY + 1, 0x55000000, false);
+        // Text
+        guiGraphics.drawString(this.font, title, titleX, titleY, ResearchTableLayout.COLOR_TEXT, false);
+
+        // Materials label - consistent spacing from panel top
+        Component materialsLabel = Component.literal("Materials");
+        int materialsLabelWidth = this.font.width(materialsLabel);
+        int materialsPanelX = ResearchTableLayout.MATERIALS_X;
+        int materialsPanelWidth = ResearchTableLayout.MATERIALS_PANEL_WIDTH;
+        int materialsCenterX = materialsPanelX + (materialsPanelWidth - materialsLabelWidth) / 2;
+        guiGraphics.drawString(this.font, materialsLabel, materialsCenterX, ResearchTableLayout.MATERIALS_Y + ResearchTableLayout.PANEL_MARGIN, ResearchTableLayout.COLOR_TEXT_DIM, false);
+
+        // Research Tree label - consistent spacing from panel top
+        guiGraphics.drawString(this.font, Component.literal("Research Tree"), ResearchTableLayout.RESEARCH_TREE_X + ResearchTableLayout.PANEL_MARGIN, ResearchTableLayout.RESEARCH_TREE_Y + ResearchTableLayout.PANEL_MARGIN, ResearchTableLayout.COLOR_TEXT_DIM, false);
+
+        // Research Control label - consistent spacing from panel top
+        guiGraphics.drawString(this.font, Component.literal("Research"), ResearchTableLayout.RESEARCH_CONTROL_X + ResearchTableLayout.PANEL_MARGIN, ResearchTableLayout.RESEARCH_CONTROL_Y + ResearchTableLayout.PANEL_MARGIN, ResearchTableLayout.COLOR_TEXT_DIM, false);
+
+        // Status Message - positioned at bottom of Research Tree Panel with consistent spacing
+        if (!statusMessage.isEmpty()) {
+            int statusX = ResearchTableLayout.RESEARCH_TREE_X + ResearchTableLayout.PANEL_MARGIN;
+            int statusY = ResearchTableLayout.RESEARCH_TREE_Y + ResearchTableLayout.RESEARCH_TREE_PANEL_HEIGHT - 12;
+            guiGraphics.drawString(this.font, Component.literal(statusMessage), statusX, statusY, statusMessageColor, false);
+        }
+    }
+
+    // This method is now handled by ResearchInfoPanel
+
+    // Color conversion is now handled by ResearchInfoPanel
+
+    // Utility method für moderne Rahmen
     private void drawBorder(GuiGraphics guiGraphics, int x, int y, int width, int height, int color) {
         guiGraphics.fill(x, y, x + width, y + 1, color); // Top
         guiGraphics.fill(x, y + height - 1, x + width, y + height, color); // Bottom
@@ -330,145 +503,16 @@ public class ResearchTableScreen extends AbstractContainerScreen<ResearchTableMe
         guiGraphics.fill(x + width - 1, y, x + width, y + height, color); // Right
     }
 
+    // Scroll bar is now handled by ResearchTreePanel
+
+    // Scroll-Funktionalität für große Forschungsbäume
     @Override
-    protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
-        // Title
-        Component title = Component.literal("Research Table").withStyle(style -> style.withColor(0xFFFFFF));
-        int titleWidth = this.font.width(title);
-        guiGraphics.drawString(this.font, title, (imageWidth - titleWidth) / 2, 6, 0xFFFFFF, false);
-
-        // Left side labels
-        guiGraphics.drawString(this.font, Component.literal("Research Materials"), 8, 48, 0xFFFFFF, false);
-
-        // Right side labels
-        guiGraphics.drawString(this.font, Component.literal("Research Tree"), 128, 48, 0xFFFFFF, false);
-
-        // Check if research is in progress and show progress or selection details
-        boolean isResearching = menu.getBlockEntity() != null && menu.getBlockEntity().isResearching();
-
-        if (isResearching) {
-            // Show research progress
-            ResourceLocation currentResearchId = menu.getBlockEntity().getCurrentResearchId();
-            Research currentResearch = ResearchManager.getResearch(currentResearchId);
-
-            if (currentResearch != null) {
-                guiGraphics.drawString(this.font, Component.literal("Researching:"), 128, 52, 0xFFFFFF, false);
-
-                // Research name
-                guiGraphics.drawString(this.font, Component.literal(currentResearch.getName()), 128, 62, 0xFFD700, false);
-
-                // Progress bar
-                int barWidth = 100;
-                int barHeight = 8;
-                int barX = 128;
-                int barY = 75;
-
-                // Background
-                guiGraphics.fill(barX, barY, barX + barWidth, barY + barHeight, 0xFF444444);
-
-                // Progress fill
-                float progress = menu.getBlockEntity().getResearchProgressPercentage();
-                int progressWidth = (int) (barWidth * progress);
-                guiGraphics.fill(barX, barY, barX + progressWidth, barY + barHeight, 0xFF00FF00);
-
-                // Progress border
-                drawBorder(guiGraphics, barX, barY, barWidth, barHeight, 0xFFFFFFFF);
-
-                // Time remaining
-                int remainingSeconds = menu.getBlockEntity().getRemainingResearchSeconds();
-                String timeText = "Time: " + remainingSeconds + "s";
-                guiGraphics.drawString(this.font, Component.literal(timeText), 128, 90, 0xFFFFFF, false);
-            }
-        } else {
-            // Show status message if any
-            if (!statusMessage.isEmpty()) {
-                guiGraphics.drawString(this.font, Component.literal(statusMessage), 128, 145, 0xFF4444, false);
-            }
-            Research selectedResearch = menu.getSelectedResearch();
-            if (selectedResearch != null) {
-                // Show selected research details
-                guiGraphics.drawString(this.font, Component.literal("Selected Research:"), 128, 52, 0xFFFFFF, false);
-
-                // Research name with tier color
-                Component nameComponent = Component.literal(selectedResearch.getName()).withStyle(selectedResearch.getType().getColor());
-                guiGraphics.drawString(this.font, nameComponent, 128, 62, 0xFFFFFF, false);
-
-                // Tier and type info
-                String tierText = "Tier " + selectedResearch.getTier() + " | " + selectedResearch.getType().name();
-                guiGraphics.drawString(this.font, Component.literal(tierText), 128, 72, 0xFFD700, false);
-
-                // Description (wrap text if needed)
-                String description = selectedResearch.getDescription();
-                if (description.length() > 18) {
-                    description = description.substring(0, 15) + "...";
-                }
-                guiGraphics.drawString(this.font, Component.literal(description), 128, 82, 0xAAAAAA, false);
-
-                // Required materials
-                if (!selectedResearch.getCosts().isEmpty()) {
-                    guiGraphics.drawString(this.font, Component.literal("Required:"), 128, 95, 0xFFFFFF, false);
-                    int yOffset = 105;
-                    for (ItemStack cost : selectedResearch.getCosts()) {
-                        String costText = cost.getCount() + "x " + cost.getHoverName().getString();
-                        if (costText.length() > 16) {
-                            costText = costText.substring(0, 13) + "...";
-                        }
-                        guiGraphics.drawString(this.font, Component.literal("• " + costText), 128, yOffset, 0xCCCCCC, false);
-                        yOffset += 10;
-                    }
-                }
-            } else {
-                // Show research tier labels when nothing is selected
-                guiGraphics.drawString(this.font, Component.literal("Tier 0"), 128, 52, 0xFFFFFFFF, false); // White (Foundation)
-                guiGraphics.drawString(this.font, Component.literal("Tier 1"), 128, 77, 0xFFD700, false); // Gold
-                guiGraphics.drawString(this.font, Component.literal("Tier 2"), 128, 102, 0xFF87CEEB, false); // Sky blue
-                guiGraphics.drawString(this.font, Component.literal("Tier 3"), 128, 127, 0xFFFF6347, false); // Tomato
-            }
+    public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
+        if (researchTreePanel != null && researchTreePanel.handleScroll(mouseX, mouseY, scrollY)) {
+            updateResearchButtons();
+            return true;
         }
 
-        // Player inventory label
-        guiGraphics.drawString(this.font, this.playerInventoryTitle, 8, this.imageHeight - 80, 0xFFFFFF, false);
-    }
-
-    @Override
-    protected void renderTooltip(GuiGraphics guiGraphics, int x, int y) {
-        super.renderTooltip(guiGraphics, x, y);
-
-        // Add research button tooltips
-        for (ResearchButton button : researchButtons) {
-            if (button.isHoveredOrFocused()) {
-                List<Component> tooltip = new ArrayList<>();
-                Research research = button.getResearch();
-
-                tooltip.add(Component.literal(research.getName()).withStyle(research.getType().getColor()));
-                tooltip.add(Component.literal(research.getDescription()).withStyle(style -> style.withColor(0xAAAAAA)));
-                tooltip.add(Component.literal("Tier: " + research.getTier()).withStyle(style -> style.withColor(0xFFD700)));
-
-                if (!research.getCosts().isEmpty()) {
-                    tooltip.add(Component.literal("Costs:").withStyle(style -> style.withColor(0xFFFFFF)));
-                    for (var cost : research.getCosts()) {
-                        tooltip.add(Component.literal("• " + cost.getCount() + "x " + cost.getHoverName().getString())
-                                .withStyle(style -> style.withColor(0xCCCCCC)));
-                    }
-                }
-
-                String status;
-                int statusColor;
-                if (button.isUnlocked()) {
-                    status = "✓ Unlocked";
-                    statusColor = 0x00FF00;
-                } else if (button.canUnlock()) {
-                    status = "⚡ Ready to unlock";
-                    statusColor = 0x00AAFF;
-                } else {
-                    status = "✗ Locked";
-                    statusColor = 0xFF4444;
-                }
-                tooltip.add(Component.literal(status).withStyle(style -> style.withColor(statusColor)));
-
-                guiGraphics.renderComponentTooltip(this.font, tooltip, x, y, ItemStack.EMPTY);
-                break;
-            }
-        }
+        return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
     }
 }
