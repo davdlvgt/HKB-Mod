@@ -23,18 +23,12 @@ public class PlayerResearchData {
         this.playerClass = PlayerClass.KNIGHT; // Default class
         this.unlockedResearches = new HashSet<>();
         this.classUnlocked = false;
-
-        // Add some sample completed researches for testing
-        addSampleResearches();
     }
 
     public PlayerResearchData(PlayerClass playerClass) {
         this.playerClass = playerClass;
         this.unlockedResearches = new HashSet<>();
         this.classUnlocked = false;
-
-        // Add some sample completed researches for testing
-        addSampleResearches();
     }
 
     public PlayerClass getPlayerClass() {
@@ -82,6 +76,15 @@ public class PlayerResearchData {
 
     public void unlockResearch(ResourceLocation researchId) {
         unlockedResearches.add(researchId);
+        // Automatisch speichern wird vom PlayerResearchDataManager übernommen
+    }
+
+    public void unlockResearch(ResourceLocation researchId, net.minecraft.world.entity.player.Player player) {
+        unlockedResearches.add(researchId);
+        // Automatisch speichern wenn Spieler verfügbar ist
+        if (player != null) {
+            PlayerResearchDataManager.savePlayerResearchData(player, this);
+        }
     }
 
     public void lockResearch(ResourceLocation researchId) {
@@ -191,16 +194,8 @@ public class PlayerResearchData {
     }
 
     private void addSampleResearches() {
-        // Add foundation research for current class
-        if (playerClass == PlayerClass.KNIGHT) {
-            unlockedResearches.add(ResourceLocation.fromNamespaceAndPath("hkbmod", "knight_foundation"));
-        } else if (playerClass == PlayerClass.ARCHER) {
-            unlockedResearches.add(ResourceLocation.fromNamespaceAndPath("hkbmod", "archer_foundation"));
-        } else if (playerClass == PlayerClass.MAGICIAN) {
-            unlockedResearches.add(ResourceLocation.fromNamespaceAndPath("hkbmod", "magician_foundation"));
-        } else if (playerClass == PlayerClass.CAVALIER) {
-            unlockedResearches.add(ResourceLocation.fromNamespaceAndPath("hkbmod", "cavalier_foundation"));
-        }
+        // Entfernt - Sample researches überschreiben geladene Daten
+        // Beispiel-Forschungen werden nur noch zur Entwicklungszeit gesetzt
     }
 
     @Override

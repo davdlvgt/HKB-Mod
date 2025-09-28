@@ -98,4 +98,12 @@ public class PlayerResearchDataManager {
     public static PlayerResearchData getCachedData(UUID playerId) {
         return RESEARCH_DATA_CACHE.get(playerId);
     }
+
+    /**
+     * Check if a player has completed a specific research
+     */
+    public static boolean isResearchCompleted(Player player, net.minecraft.resources.ResourceLocation researchId) {
+        PlayerResearchData data = getPlayerResearchData(player);
+        return data.hasUnlockedResearch(researchId);
+    }
 }

@@ -8,7 +8,9 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.RecipeProvider;
+import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.data.recipes.SimpleCookingRecipeBuilder;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.ItemLike;
@@ -67,6 +69,7 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                 .define('A', ModBlocks.FEATHER_BLOCK.get())
                 .unlockedBy(getHasName(ModBlocks.FEATHER_BLOCK.get()), has(ModBlocks.FEATHER_BLOCK.get())).save(this.output);
 
+        // Throwing knife recipe - visible but only craftable with archer_basic research
         this.shaped(RecipeCategory.COMBAT, ModItems.THROWING_KNIFE.get(), 1)
                 .pattern(" N ")
                 .pattern(" I ")
@@ -74,7 +77,8 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                 .define('N', Items.IRON_NUGGET)
                 .define('I', Items.IRON_INGOT)
                 .define('A', Items.STICK)
-                .unlockedBy(getHasName(Items.IRON_INGOT), has(Items.IRON_INGOT)).save(this.output);
+                .unlockedBy(getHasName(Items.IRON_INGOT), has(Items.IRON_INGOT))
+                .save(this.output);
 
         this.shapeless(RecipeCategory.COMBAT, ModItems.THROWING_KNIFE_EXPLOSIVE.get(), 1)
                 .requires(ModItems.THROWING_KNIFE.get())
@@ -151,6 +155,7 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                     .save(recipeOutput, HkbMod.MOD_ID + ":" + getItemName(pResult) + pRecipeName + "_" + getItemName(itemlike));
         }
     }
+
 
     public static class Generator extends RecipeProvider.Runner {
         public Generator(PackOutput output, CompletableFuture<HolderLookup.Provider> registries) {
