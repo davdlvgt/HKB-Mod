@@ -23,32 +23,27 @@ public class MysticalWandItem extends Item {
 
     @Override
     public InteractionResult use(Level pLevel, Player pPlayer, InteractionHand pHand) {
-
-        Level level = pLevel;
-        Player player = pPlayer;
-
-
-        if (!level.isClientSide && player != null) {
+        if (!pLevel.isClientSide && pPlayer != null) {
 
             //if Control key is pressed, shoot a snowball
-            if (player.isShiftKeyDown()) {
-                Snowball snowball = new Snowball(level, player, new ItemStack(net.minecraft.world.item.Items.SNOWBALL, Integer.MAX_VALUE));
+            if (pPlayer.isShiftKeyDown()) {
+                Snowball snowball = new Snowball(pLevel, pPlayer, new ItemStack(net.minecraft.world.item.Items.SNOWBALL, Integer.MAX_VALUE));
 
                 snowball.setPos(
-                        player.getX(),
-                        player.getEyeY(),
-                        player.getZ()
+                        pPlayer.getX(),
+                        pPlayer.getEyeY(),
+                        pPlayer.getZ()
                 );
 
-                snowball.setDeltaMovement(player.getLookAngle().scale(3f));
+                snowball.setDeltaMovement(pPlayer.getLookAngle().scale(3f));
 
-                level.addFreshEntity(snowball);
+                pLevel.addFreshEntity(snowball);
 
-                if (level instanceof ServerLevel serverLevel) {
-                    player.hurtServer(serverLevel, player.damageSources().magic(), 1.0F);
+                if (pLevel instanceof ServerLevel serverLevel) {
+                    pPlayer.hurtServer(serverLevel, pPlayer.damageSources().magic(), 1.0F);
                 }
 
-                level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.SNOWBALL_THROW, SoundSource.PLAYERS, 1.0F, 1.0F);
+                pLevel.playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundEvents.SNOWBALL_THROW, SoundSource.PLAYERS, 1.0F, 1.0F);
 
                 // if snowball hits fire the fire is extinguished
 
@@ -57,24 +52,24 @@ public class MysticalWandItem extends Item {
             }
 
             SmallFireball fireball = new SmallFireball(
-                    level,
-                    player,
-                    player.getLookAngle()
+                    pLevel,
+                    pPlayer,
+                    pPlayer.getLookAngle()
             );
 
             fireball.setPos(
-                    player.getX(),
-                    player.getEyeY(),
-                    player.getZ()
+                    pPlayer.getX(),
+                    pPlayer.getEyeY(),
+                    pPlayer.getZ()
             );
 
-            level.addFreshEntity(fireball);
+            pLevel.addFreshEntity(fireball);
 
-            if (level instanceof ServerLevel serverLevel) {
-                player.hurtServer(serverLevel, player.damageSources().magic(), 2.0F);
+            if (pLevel instanceof ServerLevel serverLevel) {
+                pPlayer.hurtServer(serverLevel, pPlayer.damageSources().magic(), 2.0F);
             }
 
-            level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.BLAZE_SHOOT, SoundSource.PLAYERS, 1.0F, 1.0F);
+            pLevel.playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundEvents.BLAZE_SHOOT, SoundSource.PLAYERS, 1.0F, 1.0F);
         }
         return InteractionResult.SUCCESS;
     }

@@ -1,6 +1,5 @@
 package de.davidvogt.hkbmod.block.custom;
 
-import de.davidvogt.hkbmod.item.ModItems;
 import de.davidvogt.hkbmod.util.ModTags;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;

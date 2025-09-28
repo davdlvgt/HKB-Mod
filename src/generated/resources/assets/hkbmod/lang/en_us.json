@@ -8,6 +8,15 @@
   "block.hkbmod.raw_alexandrite_block": "Raw Alexandrite Block",
   "block.hkbmod.research_table": "Research Table",
   "block.hkbmod.string_block": "String Block",
+  "gui.hkbmod.class.progress": "Progress: %s/%s researches",
+  "gui.hkbmod.class.status.locked": "Locked",
+  "gui.hkbmod.class.status.unlocked": "Unlocked",
+  "gui.hkbmod.research.status.available": "Available",
+  "gui.hkbmod.research.status.completed": "Completed",
+  "gui.hkbmod.research.status.in_progress": "In Progress",
+  "gui.hkbmod.research.status.locked": "Locked",
+  "gui.hkbmod.research.tier": "Tier: %s",
+  "gui.hkbmod.research_overview.title": "Research Overview",
   "item.hkbmod.alexandrite": "Alexandrite",
   "item.hkbmod.aurora_ashes": "Aurora Ashes",
   "item.hkbmod.chisel": "Chisel",
@@ -22,5 +31,7 @@
   "item.hkbmod.throwing_knife_explosive": "Explosive Throwing Knife",
   "item.hkbmod.throwing_knife_instant_damage": "Instant Damage Throwing Knife",
   "item.hkbmod.throwing_knife_slowness": "Slowness Throwing Knife",
-  "itemgroup.hkbmod.hkb_tab": "HKB Mod"
+  "itemgroup.hkbmod.hkb_tab": "HKB Mod",
+  "key.categories.hkbmod": "HKB Mod",
+  "key.hkbmod.research_overview": "Open Research Overview"
 }

@@ -3,12 +3,11 @@ package de.davidvogt.hkbmod.util;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.ItemStack;
 
 import java.util.Optional;
 
 /**
- * Utility class to handle NBT operations with proper Optional handling for Forge 57.0.3
+ * Utility class to handle NBT operations safely with Optional handling
  */
 public class NBTUtil {
 
@@ -42,25 +41,6 @@ public class NBTUtil {
     public static String getString(CompoundTag tag, String key) {
         Optional<String> optional = tag.getString(key);
         return optional.orElse("");
-    }
-
-    /**
-     * Safely save an ItemStack to NBT, handling version-specific API
-     * Note: API changed in Forge 57.0.3, needs proper implementation
-     */
-    public static CompoundTag saveItemStack(ItemStack stack) {
-        CompoundTag tag = new CompoundTag();
-        // TODO: Implement proper ItemStack saving for current API
-        return tag;
-    }
-
-    /**
-     * Safely load an ItemStack from NBT, handling version-specific API
-     * Note: API changed in Forge 57.0.3, needs proper implementation
-     */
-    public static ItemStack loadItemStack(CompoundTag tag) {
-        // TODO: Implement proper ItemStack loading for current API
-        return ItemStack.EMPTY;
     }
 
     /**

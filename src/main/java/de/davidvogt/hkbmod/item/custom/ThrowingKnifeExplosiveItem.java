@@ -61,46 +61,4 @@ public class ThrowingKnifeExplosiveItem extends AbstractThrowingKnifeItem {
         return true;
     }
 
-    /**
-     * Erstellt eine stärkere Version des explosiven Wurfmessers.
-     * Diese könnte als separate Klasse oder Factory-Methode implementiert werden.
-     */
-    public static class Heavy extends ThrowingKnifeExplosiveItem {
-        private static final float HEAVY_DAMAGE = 12.0F;
-        private static final float HEAVY_VELOCITY = 1.0F;  // Noch langsamer
-        private static final float HEAVY_SOUND_PITCH = 0.1F; // Sehr tiefer Sound
-
-        public Heavy(Properties properties) {
-            super(properties);
-        }
-
-        @Override
-        public float getDamage() {
-            return HEAVY_DAMAGE;
-        }
-
-        @Override
-        public float getVelocity() {
-            return HEAVY_VELOCITY;
-        }
-
-        @Override
-        public float getSoundPitch() {
-            return HEAVY_SOUND_PITCH;
-        }
-
-        @Override
-        protected void configureProjectile(ThrowingKnifeEntity projectile, ItemStack itemStack, Player player) {
-            super.configureProjectile(projectile, itemStack, player);
-
-            // Schwere Version kann zusätzlich Blöcke zerbrechen
-            projectile.setBlockBreaking(true);
-            projectile.setKnockback(3.0F); // Extremer Knockback
-        }
-
-        @Override
-        protected SoundEvent getSoundEvent() {
-            return SoundEvents.GENERIC_EXPLODE.get(); // Explosions-Sound
-        }
-    }
 }

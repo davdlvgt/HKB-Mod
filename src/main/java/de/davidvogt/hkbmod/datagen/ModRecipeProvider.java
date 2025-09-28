@@ -121,9 +121,21 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                 .unlockedBy(getHasName(ModBlocks.ALEXANDRITE_BLOCK.get()), has(ModBlocks.ALEXANDRITE_BLOCK.get()))
                 .save(this.output, HkbMod.MOD_ID + ":alexandrite_from_magic_block");
 
-        oreSmelting(this.output, ALEXANDRITE_SMELTABLES, RecipeCategory.MISC, ModItems.ALEXANDRITE.get(), 0.25f, 200, "alexandrite");
-        oreBlasting(this.output, ALEXANDRITE_SMELTABLES, RecipeCategory.MISC, ModItems.ALEXANDRITE.get(), 0.25f, 100, "alexandrite");
+        alexandriteOreSmelting();
+        alexandriteOreBlasting();
 
+    }
+
+    private void alexandriteOreSmelting() {
+        List<ItemLike> alexandriteSmeltables = List.of(ModItems.RAW_ALEXANDRITE.get(),
+                ModBlocks.ALEXANDRITE_ORE.get(), ModBlocks.ALEXANDRITE_DEEPSLATE_ORE.get());
+        oreSmelting(this.output, alexandriteSmeltables, RecipeCategory.MISC, ModItems.ALEXANDRITE.get(), 0.25f, 200, "alexandrite");
+    }
+
+    private void alexandriteOreBlasting() {
+        List<ItemLike> alexandriteSmeltables = List.of(ModItems.RAW_ALEXANDRITE.get(),
+                ModBlocks.ALEXANDRITE_ORE.get(), ModBlocks.ALEXANDRITE_DEEPSLATE_ORE.get());
+        oreBlasting(this.output, alexandriteSmeltables, RecipeCategory.MISC, ModItems.ALEXANDRITE.get(), 0.25f, 100, "alexandrite");
     }
 
     protected void oreSmelting(RecipeOutput recipeOutput, List<ItemLike> pIngredients, RecipeCategory pCategory, ItemLike pResult,
