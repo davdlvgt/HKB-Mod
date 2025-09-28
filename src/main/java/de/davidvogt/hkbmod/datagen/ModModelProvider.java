@@ -1,6 +1,5 @@
 package de.davidvogt.hkbmod.datagen;
 
-import de.davidvogt.hkbmod.HkbMod;
 import de.davidvogt.hkbmod.block.ModBlocks;
 import de.davidvogt.hkbmod.item.ModItems;
 import net.minecraft.client.data.models.BlockModelGenerators;
@@ -8,15 +7,11 @@ import net.minecraft.client.data.models.ItemModelGenerators;
 import net.minecraft.client.data.models.ModelProvider;
 import net.minecraft.client.data.models.model.ItemModelUtils;
 import net.minecraft.client.data.models.model.ModelLocationUtils;
-import net.minecraft.client.data.models.model.ModelTemplates;
-import net.minecraft.client.data.models.model.TextureMapping;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.common.data.ExistingFileHelper;
-import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.stream.Stream;
 

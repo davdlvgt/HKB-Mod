@@ -3,8 +3,6 @@ package de.davidvogt.hkbmod.research;
 import de.davidvogt.hkbmod.research.data.ResearchDataLoader;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 
 import java.util.HashMap;
 import java.util.Map;

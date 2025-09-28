@@ -1,11 +1,7 @@
 package de.davidvogt.hkbmod.block;
 
 import de.davidvogt.hkbmod.HkbMod;
-import de.davidvogt.hkbmod.block.custom.FeatherBlock;
-import de.davidvogt.hkbmod.block.custom.JumpBlock;
-import de.davidvogt.hkbmod.block.custom.MagicBlock;
-import de.davidvogt.hkbmod.block.custom.ResearchTableBlock;
-import de.davidvogt.hkbmod.block.custom.StringBlock;
+import de.davidvogt.hkbmod.block.custom.*;
 import de.davidvogt.hkbmod.item.ModItems;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;

@@ -1,7 +1,6 @@
 package de.davidvogt.hkbmod.research;
 
 import de.davidvogt.hkbmod.HkbMod;
-import net.minecraft.client.renderer.chunk.SectionCompiler;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraftforge.event.AddReloadListenerEvent;

@@ -1,16 +1,16 @@
 package de.davidvogt.hkbmod.client.gui;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import de.davidvogt.hkbmod.research.*;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.Mth;
 import org.lwjgl.glfw.GLFW;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class ResearchOverviewScreen extends Screen {
     private static final ResourceLocation BACKGROUND = ResourceLocation.fromNamespaceAndPath("hkbmod", "textures/gui/research_overview.png");

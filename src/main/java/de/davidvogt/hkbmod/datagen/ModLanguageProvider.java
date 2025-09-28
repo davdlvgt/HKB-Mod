@@ -2,7 +2,6 @@ package de.davidvogt.hkbmod.datagen;
 
 import de.davidvogt.hkbmod.HkbMod;
 import de.davidvogt.hkbmod.block.ModBlocks;
-import de.davidvogt.hkbmod.item.ModCreativeModeTabs;
 import de.davidvogt.hkbmod.item.ModItems;
 import net.minecraft.data.PackOutput;
 import net.minecraftforge.common.data.LanguageProvider;
