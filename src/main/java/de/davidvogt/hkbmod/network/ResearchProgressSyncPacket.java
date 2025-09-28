@@ -70,7 +70,7 @@ public class ResearchProgressSyncPacket {
                 } else {
                     HkbMod.LOGGER.warn("[ResearchProgressSyncPacket] Player does not have research table menu open");
                 }
-            };
+            }
         });
         context.setPacketHandled(true);
     }

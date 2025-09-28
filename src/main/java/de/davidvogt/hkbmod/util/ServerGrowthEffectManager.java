@@ -195,7 +195,7 @@ public class ServerGrowthEffectManager {
         // Additional green particles
         for (int i = 0; i < 20; i++) {
             double offsetX = (level.random.nextDouble() - 0.5) * 1.5;
-            double offsetY = level.random.nextDouble() * 1.0;
+            double offsetY = level.random.nextDouble();
             double offsetZ = (level.random.nextDouble() - 0.5) * 1.5;
 
             level.sendParticles(

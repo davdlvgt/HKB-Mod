@@ -66,12 +66,9 @@ public class PlayerResearchData {
     }
 
     public boolean hasUnlockedClass(PlayerClass playerClass) {
-        if (playerClass == this.playerClass) {
-            return true; // Current class is always "unlocked"
-        }
+        return playerClass == this.playerClass; // Current class is always "unlocked"
         // For other classes, check if player has completed class unlock researches
         // This is a simplified implementation
-        return false;
     }
 
     public void unlockResearch(ResourceLocation researchId) {

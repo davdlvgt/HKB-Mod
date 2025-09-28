@@ -12,8 +12,8 @@ public class KeySequenceManager {
     private static KeySequenceManager instance;
 
     private final List<Character> validKeys = Arrays.asList('g', 'h', 'j', 'u');
-    private List<Character> currentSequence = new ArrayList<>();
-    private List<Character> userInput = new ArrayList<>();
+    private final List<Character> currentSequence = new ArrayList<>();
+    private final List<Character> userInput = new ArrayList<>();
     private boolean sequenceActive = false;
     private BlockPos targetPos = null;
     private int ticksRemaining = 0;

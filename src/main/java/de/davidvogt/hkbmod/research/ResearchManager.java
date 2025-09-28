@@ -247,11 +247,7 @@ public class ResearchManager {
         }
 
         // Check if player has required items
-        if (!hasRequiredItems(player, research.getCosts())) {
-            return false;
-        }
-
-        return true;
+        return hasRequiredItems(player, research.getCosts());
     }
 
     public static boolean unlockResearch(Research research, PlayerResearchData playerData, Player player) {
@@ -287,11 +283,7 @@ public class ResearchManager {
 
         // Check prerequisites (Tier 0 has no prerequisites, so will be available immediately)
         // Higher tiers require previous tier research to be completed
-        if (!getGlobalResearchTree().arePrerequisitesMet(research, playerData.getUnlockedResearches())) {
-            return false;
-        }
-
-        return true;
+        return getGlobalResearchTree().arePrerequisitesMet(research, playerData.getUnlockedResearches());
     }
 
     // New methods for slot-based research

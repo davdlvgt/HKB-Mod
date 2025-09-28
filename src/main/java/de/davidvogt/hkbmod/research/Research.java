@@ -89,13 +89,13 @@ public class Research {
     }
 
     public static class Builder {
-        private ResourceLocation id;
-        private String name;
+        private final ResourceLocation id;
+        private final String name;
         private String description = "";
         private ResearchType type = ResearchType.UTILITY;
-        private PlayerClass requiredClass;
-        private List<ItemStack> costs = new ArrayList<>();
-        private Set<ResourceLocation> prerequisites = new HashSet<>();
+        private final PlayerClass requiredClass;
+        private final List<ItemStack> costs = new ArrayList<>();
+        private final Set<ResourceLocation> prerequisites = new HashSet<>();
         private ResourceLocation iconLocation;
         private int tier = 1;
         private boolean isClassUnlock = false;

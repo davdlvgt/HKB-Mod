@@ -409,5 +409,5 @@ public class ResearchTableMenu extends AbstractContainerMenu {
     }
 
     // Add minecraft field access
-    private net.minecraft.client.Minecraft minecraft = net.minecraft.client.Minecraft.getInstance();
+    private final net.minecraft.client.Minecraft minecraft = net.minecraft.client.Minecraft.getInstance();
 }
