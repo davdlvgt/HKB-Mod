@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "A": "hkbmod:alexandrite",
+    "B": "minecraft:book",
+    "P": "minecraft:blaze_powder",
+    "S": "minecraft:stick"
+  },
+  "pattern": [
+    "PAP",
+    "BSB",
+    " S "
+  ],
+  "result": {
+    "count": 1,
+    "id": "hkbmod:mystical_wand"
+  }
+}

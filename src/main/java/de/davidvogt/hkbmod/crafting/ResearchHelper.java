@@ -26,4 +26,12 @@ public class ResearchHelper {
         ResourceLocation archerBasicResearch = ResourceLocation.fromNamespaceAndPath("hkbmod", "archer_basic");
         return hasRequiredResearch(player, archerBasicResearch);
     }
+
+    /**
+     * Check if a player can craft the Mystical Wand (requires archer_basic research)
+     */
+    public static boolean canCraftMysticalWand(Player player) {
+        ResourceLocation archerBasicResearch = ResourceLocation.fromNamespaceAndPath("hkbmod", "magician_elemental");
+        return hasRequiredResearch(player, archerBasicResearch);
+    }
 }

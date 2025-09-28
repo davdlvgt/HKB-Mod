@@ -1,7 +1,7 @@
 {
   "id": "hkbmod:magician_elemental",
   "name": "Elemental Magic",
-  "description": "Harness the power of elements",
+  "description": "Learn the art of the Mystical Wand",
   "player_class": "MAGICIAN",
   "tier": 2,
   "type": "MAGIC",

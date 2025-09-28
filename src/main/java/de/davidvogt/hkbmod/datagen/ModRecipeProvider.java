@@ -112,6 +112,19 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                 .define('B', Items.OAK_PLANKS)
                 .unlockedBy(getHasName(Items.CRAFTING_TABLE), has(Items.CRAFTING_TABLE)).save(this.output);
 
+        // Mystical Wand recipe - visible but only craftable with magician_elemental research
+        this.shaped(RecipeCategory.COMBAT, ModItems.MYSTICAL_WAND.get(), 1)
+                .pattern("PAP")
+                .pattern("BSB")
+                .pattern(" S ")
+                .define('P', Items.BLAZE_POWDER)
+                .define('A', ModItems.ALEXANDRITE.get())
+                .define('B', Items.BOOK)
+                .define('S', Items.STICK)
+                .unlockedBy(getHasName(ModItems.ALEXANDRITE.get()), has(ModItems.ALEXANDRITE.get()))
+                .unlockedBy(getHasName(Items.BLAZE_POWDER), has(Items.BLAZE_POWDER))
+                .save(this.output);
+
         this.shapeless(RecipeCategory.MISC, ModItems.ALEXANDRITE.get(), 9)
                 .requires(ModBlocks.ALEXANDRITE_BLOCK.get())
                 .unlockedBy(getHasName(ModBlocks.ALEXANDRITE_BLOCK.get()), has(ModBlocks.ALEXANDRITE_BLOCK.get())).save(this.output);
