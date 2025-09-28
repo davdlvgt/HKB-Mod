@@ -1,5 +1,6 @@
 package de.davidvogt.hkbmod.research;
 
+import de.davidvogt.hkbmod.util.NBTUtil;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
@@ -22,15 +23,25 @@ public class PlayerResearchData {
         this.playerClass = PlayerClass.KNIGHT; // Default class
         this.unlockedResearches = new HashSet<>();
         this.classUnlocked = false;
+
+        // Add some sample completed researches for testing
+        addSampleResearches();
     }
 
     public PlayerResearchData(PlayerClass playerClass) {
         this.playerClass = playerClass;
         this.unlockedResearches = new HashSet<>();
         this.classUnlocked = false;
+
+        // Add some sample completed researches for testing
+        addSampleResearches();
     }
 
     public PlayerClass getPlayerClass() {
+        return playerClass;
+    }
+
+    public PlayerClass getCurrentClass() {
         return playerClass;
     }
 
@@ -42,8 +53,31 @@ public class PlayerResearchData {
         return new HashSet<>(unlockedResearches);
     }
 
+    public Set<ResourceLocation> getCompletedResearches() {
+        return getUnlockedResearches();
+    }
+
     public boolean hasUnlockedResearch(ResourceLocation researchId) {
         return unlockedResearches.contains(researchId);
+    }
+
+    public boolean hasCompletedResearch(ResourceLocation researchId) {
+        return hasUnlockedResearch(researchId);
+    }
+
+    public boolean isResearchInProgress(ResourceLocation researchId) {
+        // For now, no research is ever "in progress" - they're either completed or not
+        // This could be extended to track research that's being worked on
+        return false;
+    }
+
+    public boolean hasUnlockedClass(PlayerClass playerClass) {
+        if (playerClass == this.playerClass) {
+            return true; // Current class is always "unlocked"
+        }
+        // For other classes, check if player has completed class unlock researches
+        // This is a simplified implementation
+        return false;
     }
 
     public void unlockResearch(ResourceLocation researchId) {
@@ -103,25 +137,22 @@ public class PlayerResearchData {
     }
 
     public void deserializeNBT(CompoundTag tag) {
-        // Use API patterns that work with Minecraft 1.21.7
-        try {
-            this.playerClass = PlayerClass.fromString(tag.getString(NBT_PLAYER_CLASS).orElse("knight"));
-        } catch (Exception e) {
+        // Use NBTUtil for proper Optional handling
+        if (tag.contains(NBT_PLAYER_CLASS)) {
+            String classString = NBTUtil.getString(tag, NBT_PLAYER_CLASS);
+            this.playerClass = PlayerClass.fromString(classString);
+        } else {
             this.playerClass = PlayerClass.KNIGHT;
         }
 
-        try {
-            this.classUnlocked = tag.getBoolean(NBT_CLASS_UNLOCKED).orElse(false);
-        } catch (Exception e) {
-            this.classUnlocked = false;
-        }
+        this.classUnlocked = NBTUtil.getBoolean(tag, NBT_CLASS_UNLOCKED);
 
         this.unlockedResearches.clear();
-        try {
-            ListTag researchList = tag.getList(NBT_UNLOCKED_RESEARCHES).orElse(new ListTag());
+        if (tag.contains(NBT_UNLOCKED_RESEARCHES)) {
+            ListTag researchList = NBTUtil.getList(tag, NBT_UNLOCKED_RESEARCHES);
             for (int i = 0; i < researchList.size(); i++) {
                 try {
-                    String researchIdString = researchList.getString(i).orElse("");
+                    String researchIdString = NBTUtil.getStringFromList(researchList, i);
                     if (!researchIdString.isEmpty()) {
                         ResourceLocation researchId = ResourceLocation.parse(researchIdString);
                         this.unlockedResearches.add(researchId);
@@ -130,8 +161,6 @@ public class PlayerResearchData {
                     // Invalid research entry, skip
                 }
             }
-        } catch (Exception e) {
-            // No research list or invalid format
         }
     }
 
@@ -159,6 +188,19 @@ public class PlayerResearchData {
         result = 31 * result + unlockedResearches.hashCode();
         result = 31 * result + (classUnlocked ? 1 : 0);
         return result;
+    }
+
+    private void addSampleResearches() {
+        // Add foundation research for current class
+        if (playerClass == PlayerClass.KNIGHT) {
+            unlockedResearches.add(ResourceLocation.fromNamespaceAndPath("hkbmod", "knight_foundation"));
+        } else if (playerClass == PlayerClass.ARCHER) {
+            unlockedResearches.add(ResourceLocation.fromNamespaceAndPath("hkbmod", "archer_foundation"));
+        } else if (playerClass == PlayerClass.MAGICIAN) {
+            unlockedResearches.add(ResourceLocation.fromNamespaceAndPath("hkbmod", "magician_foundation"));
+        } else if (playerClass == PlayerClass.CAVALIER) {
+            unlockedResearches.add(ResourceLocation.fromNamespaceAndPath("hkbmod", "cavalier_foundation"));
+        }
     }
 
     @Override

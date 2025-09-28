@@ -47,5 +47,20 @@ public class ModLanguageProvider extends LanguageProvider {
 
         // Creative Tabs
         add("itemgroup.hkbmod.hkb_tab", "HKB Mod");
+
+        // Research Overview GUI
+        add("gui.hkbmod.research_overview.title", "Research Overview");
+        add("gui.hkbmod.research.status.completed", "Completed");
+        add("gui.hkbmod.research.status.in_progress", "In Progress");
+        add("gui.hkbmod.research.status.available", "Available");
+        add("gui.hkbmod.research.status.locked", "Locked");
+        add("gui.hkbmod.research.tier", "Tier: %s");
+        add("gui.hkbmod.class.status.unlocked", "Unlocked");
+        add("gui.hkbmod.class.status.locked", "Locked");
+        add("gui.hkbmod.class.progress", "Progress: %s/%s researches");
+
+        // Key Bindings
+        add("key.categories.hkbmod", "HKB Mod");
+        add("key.hkbmod.research_overview", "Open Research Overview");
     }
 }

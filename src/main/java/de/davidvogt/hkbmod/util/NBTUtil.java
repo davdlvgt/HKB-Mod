@@ -1,6 +1,7 @@
 package de.davidvogt.hkbmod.util;
 
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
@@ -60,6 +61,25 @@ public class NBTUtil {
     public static ItemStack loadItemStack(CompoundTag tag) {
         // TODO: Implement proper ItemStack loading for current API
         return ItemStack.EMPTY;
+    }
+
+    /**
+     * Safely get a ListTag from CompoundTag, handling Optional return type
+     */
+    public static ListTag getList(CompoundTag tag, String key) {
+        Optional<ListTag> optional = tag.getList(key);
+        return optional.orElse(new ListTag());
+    }
+
+    /**
+     * Safely get a string from ListTag at index, handling Optional return type
+     */
+    public static String getStringFromList(ListTag list, int index) {
+        if (index >= 0 && index < list.size()) {
+            Optional<String> optional = list.getString(index);
+            return optional.orElse("");
+        }
+        return "";
     }
 
     /**

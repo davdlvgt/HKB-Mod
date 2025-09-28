@@ -16,8 +16,191 @@ public class ResearchManager {
         if (!initialized) {
             globalResearchTree = new ResearchTree();
             ModResearches.populateResearchTree(globalResearchTree);
+
+            // Add sample researches if none were loaded
+            if (globalResearchTree.getTotalResearchCount() == 0) {
+                addSampleResearches(globalResearchTree);
+            }
+
             initialized = true;
         }
+    }
+
+    private static void addSampleResearches(ResearchTree tree) {
+        // Tier 0 - Basic researches
+        Research basicCombat = new Research.Builder(
+            ResourceLocation.fromNamespaceAndPath("hkbmod", "basic_combat"),
+            "Basic Combat",
+            PlayerClass.KNIGHT
+        ).description("Learn the fundamentals of combat").tier(0).type(ResearchType.COMBAT).build();
+
+        Research basicArchery = new Research.Builder(
+            ResourceLocation.fromNamespaceAndPath("hkbmod", "basic_archery"),
+            "Basic Archery",
+            PlayerClass.ARCHER
+        ).description("Learn the fundamentals of archery").tier(0).type(ResearchType.COMBAT).build();
+
+        Research basicMagic = new Research.Builder(
+            ResourceLocation.fromNamespaceAndPath("hkbmod", "basic_magic"),
+            "Basic Magic",
+            PlayerClass.MAGICIAN
+        ).description("Learn the fundamentals of magic").tier(0).type(ResearchType.MAGIC).build();
+
+        Research basicRiding = new Research.Builder(
+            ResourceLocation.fromNamespaceAndPath("hkbmod", "basic_riding"),
+            "Basic Riding",
+            PlayerClass.CAVALIER
+        ).description("Learn the fundamentals of riding").tier(0).type(ResearchType.UTILITY).build();
+
+        // Knight researches
+        Research knightFoundation = new Research.Builder(
+            ResourceLocation.fromNamespaceAndPath("hkbmod", "knight_foundation"),
+            "Knight Foundation",
+            PlayerClass.KNIGHT
+        ).description("Basic knight training").tier(1).type(ResearchType.PASSIVE)
+         .addPrerequisite(ResourceLocation.fromNamespaceAndPath("hkbmod", "basic_combat"))
+         .build();
+
+        Research knightBasic = new Research.Builder(
+            ResourceLocation.fromNamespaceAndPath("hkbmod", "knight_basic"),
+            "Knight Combat",
+            PlayerClass.KNIGHT
+        ).description("Advanced knight combat").tier(2).type(ResearchType.COMBAT)
+         .addPrerequisite(ResourceLocation.fromNamespaceAndPath("hkbmod", "knight_foundation"))
+         .build();
+
+        // Additional tier 1 knight researches for testing
+        Research knightDefense = new Research.Builder(
+            ResourceLocation.fromNamespaceAndPath("hkbmod", "knight_defense"),
+            "Shield Mastery",
+            PlayerClass.KNIGHT
+        ).description("Master shield techniques").tier(1).type(ResearchType.UTILITY)
+         .addPrerequisite(ResourceLocation.fromNamespaceAndPath("hkbmod", "basic_combat"))
+         .build();
+
+        Research knightStrength = new Research.Builder(
+            ResourceLocation.fromNamespaceAndPath("hkbmod", "knight_strength"),
+            "Power Training",
+            PlayerClass.KNIGHT
+        ).description("Increase physical strength").tier(1).type(ResearchType.PASSIVE)
+         .addPrerequisite(ResourceLocation.fromNamespaceAndPath("hkbmod", "basic_combat"))
+         .build();
+
+        // Additional knight research to test type ordering
+        Research knightCrafting = new Research.Builder(
+            ResourceLocation.fromNamespaceAndPath("hkbmod", "knight_crafting"),
+            "Weapon Forging",
+            PlayerClass.KNIGHT
+        ).description("Learn to craft weapons").tier(1).type(ResearchType.CRAFTING)
+         .addPrerequisite(ResourceLocation.fromNamespaceAndPath("hkbmod", "basic_combat"))
+         .build();
+
+        // Archer researches
+        Research archerFoundation = new Research.Builder(
+            ResourceLocation.fromNamespaceAndPath("hkbmod", "archer_foundation"),
+            "Archer Foundation",
+            PlayerClass.ARCHER
+        ).description("Basic archer training").tier(1)
+         .addPrerequisite(ResourceLocation.fromNamespaceAndPath("hkbmod", "basic_archery"))
+         .build();
+
+        Research archerBasic = new Research.Builder(
+            ResourceLocation.fromNamespaceAndPath("hkbmod", "archer_basic"),
+            "Precision Shooting",
+            PlayerClass.ARCHER
+        ).description("Advanced archery skills").tier(2)
+         .addPrerequisite(ResourceLocation.fromNamespaceAndPath("hkbmod", "archer_foundation"))
+         .build();
+
+        // Additional tier 1 archer researches for testing
+        Research archerSpeed = new Research.Builder(
+            ResourceLocation.fromNamespaceAndPath("hkbmod", "archer_speed"),
+            "Quick Draw",
+            PlayerClass.ARCHER
+        ).description("Faster bow drawing").tier(1).type(ResearchType.COMBAT)
+         .addPrerequisite(ResourceLocation.fromNamespaceAndPath("hkbmod", "basic_archery"))
+         .build();
+
+        Research archerMultishot = new Research.Builder(
+            ResourceLocation.fromNamespaceAndPath("hkbmod", "archer_multishot"),
+            "Multi-Shot",
+            PlayerClass.ARCHER
+        ).description("Fire multiple arrows").tier(1).type(ResearchType.UTILITY)
+         .addPrerequisite(ResourceLocation.fromNamespaceAndPath("hkbmod", "basic_archery"))
+         .build();
+
+        // Additional tier 1 archer research to test wider columns
+        Research archerStealth = new Research.Builder(
+            ResourceLocation.fromNamespaceAndPath("hkbmod", "archer_stealth"),
+            "Stealth",
+            PlayerClass.ARCHER
+        ).description("Move silently").tier(1).type(ResearchType.PASSIVE)
+         .addPrerequisite(ResourceLocation.fromNamespaceAndPath("hkbmod", "basic_archery"))
+         .build();
+
+        // Additional archer research to test type ordering
+        Research archerMagic = new Research.Builder(
+            ResourceLocation.fromNamespaceAndPath("hkbmod", "archer_magic"),
+            "Enchanted Arrows",
+            PlayerClass.ARCHER
+        ).description("Magical arrow enhancement").tier(1).type(ResearchType.MAGIC)
+         .addPrerequisite(ResourceLocation.fromNamespaceAndPath("hkbmod", "basic_archery"))
+         .build();
+
+        // Magician researches
+        Research magicianFoundation = new Research.Builder(
+            ResourceLocation.fromNamespaceAndPath("hkbmod", "magician_foundation"),
+            "Magician Foundation",
+            PlayerClass.MAGICIAN
+        ).description("Basic magic training").tier(1)
+         .addPrerequisite(ResourceLocation.fromNamespaceAndPath("hkbmod", "basic_magic"))
+         .build();
+
+        Research magicianBasic = new Research.Builder(
+            ResourceLocation.fromNamespaceAndPath("hkbmod", "magician_basic"),
+            "Elemental Magic",
+            PlayerClass.MAGICIAN
+        ).description("Elemental spell casting").tier(2)
+         .addPrerequisite(ResourceLocation.fromNamespaceAndPath("hkbmod", "magician_foundation"))
+         .build();
+
+        // Cavalier researches
+        Research cavalierFoundation = new Research.Builder(
+            ResourceLocation.fromNamespaceAndPath("hkbmod", "cavalier_foundation"),
+            "Cavalier Foundation",
+            PlayerClass.CAVALIER
+        ).description("Basic cavalry training").tier(1)
+         .addPrerequisite(ResourceLocation.fromNamespaceAndPath("hkbmod", "basic_riding"))
+         .build();
+
+        Research cavalierBasic = new Research.Builder(
+            ResourceLocation.fromNamespaceAndPath("hkbmod", "cavalier_basic"),
+            "Mount Mastery",
+            PlayerClass.CAVALIER
+        ).description("Advanced riding skills").tier(2)
+         .addPrerequisite(ResourceLocation.fromNamespaceAndPath("hkbmod", "cavalier_foundation"))
+         .build();
+
+        // Add to tree (including tier 0 researches and additional tier 1 researches)
+        tree.addResearch(basicCombat);
+        tree.addResearch(basicArchery);
+        tree.addResearch(basicMagic);
+        tree.addResearch(basicRiding);
+        tree.addResearch(knightFoundation);
+        tree.addResearch(knightDefense);
+        tree.addResearch(knightStrength);
+        tree.addResearch(knightCrafting);
+        tree.addResearch(knightBasic);
+        tree.addResearch(archerFoundation);
+        tree.addResearch(archerSpeed);
+        tree.addResearch(archerMultishot);
+        tree.addResearch(archerStealth);
+        tree.addResearch(archerMagic);
+        tree.addResearch(archerBasic);
+        tree.addResearch(magicianFoundation);
+        tree.addResearch(magicianBasic);
+        tree.addResearch(cavalierFoundation);
+        tree.addResearch(cavalierBasic);
     }
 
     public static ResearchTree getGlobalResearchTree() {
