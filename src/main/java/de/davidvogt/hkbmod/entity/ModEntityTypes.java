@@ -1,4 +1,4 @@
-package de.davidvogt.hkbmod.entities;
+package de.davidvogt.hkbmod.entity;
 
 import de.davidvogt.hkbmod.HkbMod;
 import de.davidvogt.hkbmod.entity.custom.DeerEntity;

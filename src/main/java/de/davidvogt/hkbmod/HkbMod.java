@@ -4,7 +4,7 @@ import com.mojang.logging.LogUtils;
 import de.davidvogt.hkbmod.block.ModBlocks;
 import de.davidvogt.hkbmod.block.entity.ModBlockEntities;
 import de.davidvogt.hkbmod.client.gui.ResearchTableScreen;
-import de.davidvogt.hkbmod.entities.ModEntityTypes;
+import de.davidvogt.hkbmod.entity.ModEntityTypes;
 import de.davidvogt.hkbmod.entity.client.DeerModel;
 import de.davidvogt.hkbmod.entity.client.DeerRenderer;
 import de.davidvogt.hkbmod.entity.client.ModModelLayers;

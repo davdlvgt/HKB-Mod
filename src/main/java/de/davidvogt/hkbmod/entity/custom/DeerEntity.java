@@ -55,7 +55,7 @@ public class DeerEntity extends Animal {
     @Nullable
     @Override
     public AgeableMob getBreedOffspring(ServerLevel level, AgeableMob otherParent) {
-        return new DeerEntity(de.davidvogt.hkbmod.entities.ModEntityTypes.DEER.get(), level);
+        return new DeerEntity(de.davidvogt.hkbmod.entity.ModEntityTypes.DEER.get(), level);
     }
 
     @Override

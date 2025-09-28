@@ -1,6 +1,6 @@
 package de.davidvogt.hkbmod.item.custom;
 
-import de.davidvogt.hkbmod.entities.ThrowingKnifeEntity;
+import de.davidvogt.hkbmod.entity.ThrowingKnifeEntity;
 import de.davidvogt.hkbmod.item.custom.abstracts.AbstractThrowingKnifeItem;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;

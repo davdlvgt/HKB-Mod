@@ -89,7 +89,7 @@ public class ModItems {
                     .setId(ResourceKey.create(Registries.ITEM, ResourceLocation.parse("hkbmod:magnetic_bar")))));
 
     public static final RegistryObject<Item> DEER_SPAWN_EGG = ITEMS.register("deer_spawn_egg",
-            () -> new SpawnEggItem(de.davidvogt.hkbmod.entities.ModEntityTypes.DEER.get(),
+            () -> new SpawnEggItem(de.davidvogt.hkbmod.entity.ModEntityTypes.DEER.get(),
                     new Item.Properties()
                             .setId(ResourceKey.create(Registries.ITEM, ResourceLocation.parse("hkbmod:deer_spawn_egg")))));
 

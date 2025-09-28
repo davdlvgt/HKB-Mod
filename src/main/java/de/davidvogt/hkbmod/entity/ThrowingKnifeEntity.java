@@ -1,4 +1,4 @@
-package de.davidvogt.hkbmod.entities;
+package de.davidvogt.hkbmod.entity;
 
 import de.davidvogt.hkbmod.item.ModItems;
 import net.minecraft.core.Holder;

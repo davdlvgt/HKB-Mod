@@ -2,7 +2,7 @@ package de.davidvogt.hkbmod.client.renderer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
-import de.davidvogt.hkbmod.entities.ThrowingKnifeEntity;
+import de.davidvogt.hkbmod.entity.ThrowingKnifeEntity;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;

@@ -1,6 +1,6 @@
 package de.davidvogt.hkbmod.item.custom.abstracts;
 
-import de.davidvogt.hkbmod.entities.ThrowingKnifeEntity;
+import de.davidvogt.hkbmod.entity.ThrowingKnifeEntity;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
