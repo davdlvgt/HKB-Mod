@@ -1,0 +1,19 @@
+{
+  "id": "hkbmod:cavalier_foundation",
+  "name": "Rider's Bond",
+  "description": "Form a basic connection with animals",
+  "player_class": "CAVALIER",
+  "tier": 0,
+  "type": "PASSIVE",
+  "prerequisites": [],
+  "costs": [
+    {
+      "item": "minecraft:wheat",
+      "count": 4
+    },
+    {
+      "item": "minecraft:carrot",
+      "count": 4
+    }
+  ]
+}

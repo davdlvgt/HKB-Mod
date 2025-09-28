@@ -1,0 +1,19 @@
+{
+  "id": "hkbmod:magician_foundation",
+  "name": "Magical Awakening",
+  "description": "Awaken your innate magical potential",
+  "player_class": "MAGICIAN",
+  "tier": 0,
+  "type": "PASSIVE",
+  "prerequisites": [],
+  "costs": [
+    {
+      "item": "minecraft:book",
+      "count": 1
+    },
+    {
+      "item": "minecraft:redstone",
+      "count": 4
+    }
+  ]
+}

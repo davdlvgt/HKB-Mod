@@ -1,0 +1,25 @@
+{
+  "id": "hkbmod:archer_basic",
+  "name": "Basic Archery",
+  "description": "Learn the art of the throwing knife",
+  "player_class": "ARCHER",
+  "tier": 1,
+  "type": "COMBAT",
+  "prerequisites": [
+    "hkbmod:archer_foundation"
+  ],
+  "costs": [
+    {
+      "item": "minecraft:stick",
+      "count": 6
+    },
+    {
+      "item": "minecraft:iron_nugget",
+      "count": 3
+    },
+    {
+      "item": "minecraft:iron_ingot",
+      "count": 8
+    }
+  ]
+}

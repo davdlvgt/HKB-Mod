@@ -34,7 +34,8 @@ public class ModBlockTagProvider extends BlockTagsProvider {
                 .add(ModBlocks.MAGIC_BLOCK.get())
                 .add(ModBlocks.STRING_BLOCK.get())
                 .add(ModBlocks.JUMP_BLOCK.get())
-                .add(ModBlocks.FEATHER_BLOCK.get());
+                .add(ModBlocks.FEATHER_BLOCK.get())
+                .add(ModBlocks.RESEARCH_TABLE.get());
 
         tag(BlockTags.NEEDS_IRON_TOOL)
                 .add(ModBlocks.ALEXANDRITE_DEEPSLATE_ORE.get());

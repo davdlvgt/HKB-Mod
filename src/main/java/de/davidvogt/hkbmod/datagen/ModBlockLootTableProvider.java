@@ -37,6 +37,7 @@ public class ModBlockLootTableProvider extends BlockLootSubProvider {
         dropSelf(ModBlocks.STRING_BLOCK.get());
         dropSelf(ModBlocks.JUMP_BLOCK.get());
         dropSelf(ModBlocks.FEATHER_BLOCK.get());
+        dropSelf(ModBlocks.RESEARCH_TABLE.get());
 
         this.add(ModBlocks.ALEXANDRITE_ORE.get(),
                 block -> createOreDrop(ModBlocks.ALEXANDRITE_ORE.get(), ModItems.RAW_ALEXANDRITE.get()));

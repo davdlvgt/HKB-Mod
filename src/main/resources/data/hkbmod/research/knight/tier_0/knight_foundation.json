@@ -1,0 +1,19 @@
+{
+  "id": "hkbmod:knight_foundation",
+  "name": "Knight's Oath",
+  "description": "Take the sacred oath of knighthood",
+  "player_class": "KNIGHT",
+  "tier": 0,
+  "type": "PASSIVE",
+  "prerequisites": [],
+  "costs": [
+    {
+      "item": "minecraft:iron_sword",
+      "count": 1
+    },
+    {
+      "item": "minecraft:leather",
+      "count": 1
+    }
+  ]
+}

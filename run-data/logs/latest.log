@@ -1,27 +1,27 @@
-[23Sept.2025 20:51:53.939] [main/INFO] [cpw.mods.modlauncher.Launcher/MODLAUNCHER]: ModLauncher running: args [--launchTarget, forge_userdev_data, --assetIndex, 26, --assetsDir, C:\Users\davdv\.gradle\caches\forge_gradle\assets, --gameDir, ., --mod, hkbmod, --all, --output, D:\Projekte\Minecraft Mods\HKB Mod\HKB-Mod\src\generated\resources, --existing, D:\Projekte\Minecraft Mods\HKB Mod\HKB-Mod\src\main\resources]
-[23Sept.2025 20:51:53.939] [main/INFO] [cpw.mods.modlauncher.Launcher/MODLAUNCHER]: JVM identified as Eclipse Adoptium OpenJDK 64-Bit Server VM 21.0.7+6-LTS
-[23Sept.2025 20:51:53.939] [main/INFO] [cpw.mods.modlauncher.Launcher/MODLAUNCHER]: ModLauncher 10.2.4 starting: java version 21.0.7 by Eclipse Adoptium; OS Windows 11 arch amd64 version 10.0
-[23Sept.2025 20:51:54.053] [main/INFO] [net.minecraftforge.fml.loading.ImmediateWindowHandler/]: ImmediateWindowProvider not loading because launch target is forge_userdev_data
-[23Sept.2025 20:51:54.157] [main/INFO] [mixin/]: SpongePowered MIXIN Subsystem Version=0.8.7 Source=jar:file:///C:/Users/davdv/.gradle/caches/modules-2/files-2.1/org.spongepowered/mixin/0.8.7/8ab114ac385e6dbdad5efafe28aba4df8120915f/mixin-0.8.7.jar!/ Service=ModLauncher Env=UNKNOWN
-[23Sept.2025 20:51:55.198] [main/INFO] [net.minecraftforge.fml.loading.moddiscovery.JarInJarDependencyLocator/]: No dependencies to load found. Skipping!
-[23Sept.2025 20:51:55.936] [main/INFO] [cpw.mods.modlauncher.LaunchServiceHandler/MODLAUNCHER]: Launching target 'forge_userdev_data' with arguments [--gameDir, ., --assetsDir, C:\Users\davdv\.gradle\caches\forge_gradle\assets, --assetIndex, 26, --mod, hkbmod, --all, --output, D:\Projekte\Minecraft Mods\HKB Mod\HKB-Mod\src\generated\resources, --existing, D:\Projekte\Minecraft Mods\HKB Mod\HKB-Mod\src\main\resources]
-[23Sept.2025 20:52:01.272] [modloading-worker-0/INFO] [net.minecraftforge.common.ForgeMod/FORGEMOD]: Forge mod loading, version 57.0.3, for MC 1.21.7 with MCP 20250630.104312
-[23Sept.2025 20:52:01.272] [modloading-worker-0/INFO] [net.minecraftforge.common.MinecraftForge/FORGE]: MinecraftForge v57.0.3 Initialized
-[23Sept.2025 20:52:01.283] [modloading-worker-0/INFO] [net.minecraftforge.common.ForgeMod/FORGEMOD]: Opening jdk.naming.dns/com.sun.jndi.dns to java.naming
-[23Sept.2025 20:52:01.493] [main/INFO] [net.minecraftforge.data.loading.DatagenModLoader/]: Initializing Data Gatherer for mods [hkbmod]
-[23Sept.2025 20:52:01.554] [main/WARN] [net.minecraft.server.packs.VanillaPackResourcesBuilder/]: Assets URL 'union:/C:/Users/davdv/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.21.7-57.0.3_mapped_parchment_2025.07.18-1.21.7/forge-1.21.7-57.0.3_mapped_parchment_2025.07.18-1.21.7-recomp.jar%230!/assets/.mcassetsroot' uses unexpected schema
-[23Sept.2025 20:52:01.558] [main/WARN] [net.minecraft.server.packs.VanillaPackResourcesBuilder/]: Assets URL 'union:/C:/Users/davdv/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.21.7-57.0.3_mapped_parchment_2025.07.18-1.21.7/forge-1.21.7-57.0.3_mapped_parchment_2025.07.18-1.21.7-recomp.jar%230!/data/.mcassetsroot' uses unexpected schema
-[23Sept.2025 20:52:01.679] [main/INFO] [net.minecraft.data.DataGenerator/]: Starting provider: Loot Tables
-[23Sept.2025 20:52:01.893] [main/INFO] [net.minecraft.data.DataGenerator/]: Loot Tables finished after 218 ms
-[23Sept.2025 20:52:01.893] [main/INFO] [net.minecraft.data.DataGenerator/]: Starting provider: 
-[23Sept.2025 20:52:01.934] [main/INFO] [net.minecraft.data.DataGenerator/]:  finished after 37 ms
-[23Sept.2025 20:52:01.934] [main/INFO] [net.minecraft.data.DataGenerator/]: Starting provider: Tags for minecraft:block mod id hkbmod
-[23Sept.2025 20:52:01.944] [main/INFO] [net.minecraft.data.DataGenerator/]: Tags for minecraft:block mod id hkbmod finished after 8 ms
-[23Sept.2025 20:52:01.944] [main/INFO] [net.minecraft.data.DataGenerator/]: Starting provider: HkbMod Item Tags
-[23Sept.2025 20:52:01.944] [main/INFO] [net.minecraft.data.DataGenerator/]: HkbMod Item Tags finished after 1 ms
-[23Sept.2025 20:52:01.944] [main/INFO] [net.minecraft.data.DataGenerator/]: Starting provider: Model Definitions
-[23Sept.2025 20:52:01.996] [main/INFO] [net.minecraft.data.DataGenerator/]: Model Definitions finished after 51 ms
-[23Sept.2025 20:52:01.996] [main/INFO] [net.minecraft.data.DataGenerator/]: Starting provider: Languages: en_us
-[23Sept.2025 20:52:01.996] [main/INFO] [net.minecraft.data.DataGenerator/]: Languages: en_us finished after 0 ms
-[23Sept.2025 20:52:01.996] [main/INFO] [net.minecraft.data.DataGenerator/]: All providers took: 322 ms
-[23Sept.2025 20:52:02.006] [main/INFO] [net.minecraft.data.HashCache/]: Caching: total files: 77, old count: 77, new count: 78, removed stale: 0, written: 0
+[25Sept.2025 13:50:45.023] [main/INFO] [cpw.mods.modlauncher.Launcher/MODLAUNCHER]: ModLauncher running: args [--launchTarget, forge_userdev_data, --assetIndex, 26, --assetsDir, C:\Users\davdv\.gradle\caches\forge_gradle\assets, --gameDir, ., --mod, hkbmod, --all, --output, D:\Projekte\Minecraft Mods\HKB Mod\HKB-Mod\src\generated\resources, --existing, D:\Projekte\Minecraft Mods\HKB Mod\HKB-Mod\src\main\resources]
+[25Sept.2025 13:50:45.068] [main/INFO] [cpw.mods.modlauncher.Launcher/MODLAUNCHER]: JVM identified as Eclipse Adoptium OpenJDK 64-Bit Server VM 21.0.7+6-LTS
+[25Sept.2025 13:50:45.069] [main/INFO] [cpw.mods.modlauncher.Launcher/MODLAUNCHER]: ModLauncher 10.2.4 starting: java version 21.0.7 by Eclipse Adoptium; OS Windows 11 arch amd64 version 10.0
+[25Sept.2025 13:50:45.203] [main/INFO] [net.minecraftforge.fml.loading.ImmediateWindowHandler/]: ImmediateWindowProvider not loading because launch target is forge_userdev_data
+[25Sept.2025 13:50:45.323] [main/INFO] [mixin/]: SpongePowered MIXIN Subsystem Version=0.8.7 Source=jar:file:///C:/Users/davdv/.gradle/caches/modules-2/files-2.1/org.spongepowered/mixin/0.8.7/8ab114ac385e6dbdad5efafe28aba4df8120915f/mixin-0.8.7.jar!/ Service=ModLauncher Env=UNKNOWN
+[25Sept.2025 13:50:46.530] [main/INFO] [net.minecraftforge.fml.loading.moddiscovery.JarInJarDependencyLocator/]: No dependencies to load found. Skipping!
+[25Sept.2025 13:50:47.360] [main/INFO] [cpw.mods.modlauncher.LaunchServiceHandler/MODLAUNCHER]: Launching target 'forge_userdev_data' with arguments [--gameDir, ., --assetsDir, C:\Users\davdv\.gradle\caches\forge_gradle\assets, --assetIndex, 26, --mod, hkbmod, --all, --output, D:\Projekte\Minecraft Mods\HKB Mod\HKB-Mod\src\generated\resources, --existing, D:\Projekte\Minecraft Mods\HKB Mod\HKB-Mod\src\main\resources]
+[25Sept.2025 13:50:53.332] [modloading-worker-0/INFO] [net.minecraftforge.common.ForgeMod/FORGEMOD]: Forge mod loading, version 57.0.3, for MC 1.21.7 with MCP 20250630.104312
+[25Sept.2025 13:50:53.334] [modloading-worker-0/INFO] [net.minecraftforge.common.MinecraftForge/FORGE]: MinecraftForge v57.0.3 Initialized
+[25Sept.2025 13:50:53.344] [modloading-worker-0/INFO] [net.minecraftforge.common.ForgeMod/FORGEMOD]: Opening jdk.naming.dns/com.sun.jndi.dns to java.naming
+[25Sept.2025 13:50:53.584] [main/INFO] [net.minecraftforge.data.loading.DatagenModLoader/]: Initializing Data Gatherer for mods [hkbmod]
+[25Sept.2025 13:50:53.655] [main/WARN] [net.minecraft.server.packs.VanillaPackResourcesBuilder/]: Assets URL 'union:/C:/Users/davdv/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.21.7-57.0.3_mapped_parchment_2025.07.18-1.21.7/forge-1.21.7-57.0.3_mapped_parchment_2025.07.18-1.21.7-recomp.jar%230!/assets/.mcassetsroot' uses unexpected schema
+[25Sept.2025 13:50:53.657] [main/WARN] [net.minecraft.server.packs.VanillaPackResourcesBuilder/]: Assets URL 'union:/C:/Users/davdv/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.21.7-57.0.3_mapped_parchment_2025.07.18-1.21.7/forge-1.21.7-57.0.3_mapped_parchment_2025.07.18-1.21.7-recomp.jar%230!/data/.mcassetsroot' uses unexpected schema
+[25Sept.2025 13:50:53.841] [main/INFO] [net.minecraft.data.DataGenerator/]: Starting provider: Loot Tables
+[25Sept.2025 13:50:54.072] [main/INFO] [net.minecraft.data.DataGenerator/]: Loot Tables finished after 231 ms
+[25Sept.2025 13:50:54.073] [main/INFO] [net.minecraft.data.DataGenerator/]: Starting provider: 
+[25Sept.2025 13:50:54.126] [main/INFO] [net.minecraft.data.DataGenerator/]:  finished after 52 ms
+[25Sept.2025 13:50:54.126] [main/INFO] [net.minecraft.data.DataGenerator/]: Starting provider: Tags for minecraft:block mod id hkbmod
+[25Sept.2025 13:50:54.136] [main/INFO] [net.minecraft.data.DataGenerator/]: Tags for minecraft:block mod id hkbmod finished after 10 ms
+[25Sept.2025 13:50:54.137] [main/INFO] [net.minecraft.data.DataGenerator/]: Starting provider: HkbMod Item Tags
+[25Sept.2025 13:50:54.138] [main/INFO] [net.minecraft.data.DataGenerator/]: HkbMod Item Tags finished after 1 ms
+[25Sept.2025 13:50:54.138] [main/INFO] [net.minecraft.data.DataGenerator/]: Starting provider: Model Definitions
+[25Sept.2025 13:50:54.197] [main/INFO] [net.minecraft.data.DataGenerator/]: Model Definitions finished after 57 ms
+[25Sept.2025 13:50:54.197] [main/INFO] [net.minecraft.data.DataGenerator/]: Starting provider: Languages: en_us
+[25Sept.2025 13:50:54.198] [main/INFO] [net.minecraft.data.DataGenerator/]: Languages: en_us finished after 0 ms
+[25Sept.2025 13:50:54.198] [main/INFO] [net.minecraft.data.DataGenerator/]: All providers took: 357 ms
+[25Sept.2025 13:50:54.206] [main/INFO] [net.minecraft.data.HashCache/]: Caching: total files: 83, old count: 83, new count: 84, removed stale: 0, written: 0

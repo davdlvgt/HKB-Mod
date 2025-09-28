@@ -1,0 +1,25 @@
+{
+  "id": "hkbmod:magician_elemental",
+  "name": "Elemental Magic",
+  "description": "Harness the power of elements",
+  "player_class": "MAGICIAN",
+  "tier": 2,
+  "type": "MAGIC",
+  "prerequisites": [
+    "hkbmod:magician_basic"
+  ],
+  "costs": [
+    {
+      "item": "minecraft:blaze_powder",
+      "count": 4
+    },
+    {
+      "item": "minecraft:ice",
+      "count": 8
+    },
+    {
+      "item": "minecraft:redstone",
+      "count": 16
+    }
+  ]
+}

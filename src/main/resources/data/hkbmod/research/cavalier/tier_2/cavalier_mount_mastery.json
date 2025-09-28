@@ -1,0 +1,21 @@
+{
+  "id": "hkbmod:cavalier_mount_mastery",
+  "name": "Mount Mastery",
+  "description": "Improve mounted combat abilities",
+  "player_class": "CAVALIER",
+  "tier": 2,
+  "type": "COMBAT",
+  "prerequisites": [
+    "hkbmod:cavalier_basic"
+  ],
+  "costs": [
+    {
+      "item": "minecraft:iron_horse_armor",
+      "count": 1
+    },
+    {
+      "item": "minecraft:wheat",
+      "count": 16
+    }
+  ]
+}

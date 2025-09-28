@@ -1,0 +1,25 @@
+{
+  "id": "hkbmod:magician_basic",
+  "name": "Basic Mysticism",
+  "description": "Learn the fundamentals of magic",
+  "player_class": "MAGICIAN",
+  "tier": 1,
+  "type": "PASSIVE",
+  "prerequisites": [
+    "hkbmod:magician_foundation"
+  ],
+  "costs": [
+    {
+      "item": "minecraft:book",
+      "count": 3
+    },
+    {
+      "item": "minecraft:lapis_lazuli",
+      "count": 8
+    },
+    {
+      "item": "minecraft:glowstone_dust",
+      "count": 4
+    }
+  ]
+}

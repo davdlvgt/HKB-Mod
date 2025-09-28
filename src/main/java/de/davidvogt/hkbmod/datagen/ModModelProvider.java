@@ -47,6 +47,7 @@ public class ModModelProvider extends ModelProvider {
                 basicItem(ModItems.THROWING_KNIFE_EXPLOSIVE.get());
                 basicItem(ModItems.THROWING_KNIFE_SLOWNESS.get());
                 basicItem(ModItems.THROWING_KNIFE_INSTANT_DAMAGE.get());
+                basicItem(ModItems.MAGNETIC_BAR.get());
 
                 // Handheld items (tools/weapons)
                 handheldItem(ModItems.LIGHTNING_AXE.get());
@@ -78,6 +79,7 @@ public class ModModelProvider extends ModelProvider {
                 cubeAll(ModBlocks.JUMP_BLOCK.get());
                 cubeAll(ModBlocks.STRING_BLOCK.get());
                 cubeAll(ModBlocks.FEATHER_BLOCK.get());
+                cubeAll(ModBlocks.RESEARCH_TABLE.get());
             }
 
             private void cubeAll(Block block) {
@@ -102,6 +104,7 @@ public class ModModelProvider extends ModelProvider {
                 ModItems.THROWING_KNIFE_EXPLOSIVE.get(),
                 ModItems.THROWING_KNIFE_SLOWNESS.get(),
                 ModItems.THROWING_KNIFE_INSTANT_DAMAGE.get(),
+                ModItems.MAGNETIC_BAR.get(),
                 ModItems.LIGHTNING_AXE.get(),
                 ModItems.LIGHTNING_WAND.get()
         );
@@ -117,7 +120,8 @@ public class ModModelProvider extends ModelProvider {
                 ModBlocks.MAGIC_BLOCK.get(),
                 ModBlocks.JUMP_BLOCK.get(),
                 ModBlocks.STRING_BLOCK.get(),
-                ModBlocks.FEATHER_BLOCK.get()
+                ModBlocks.FEATHER_BLOCK.get(),
+                ModBlocks.RESEARCH_TABLE.get()
         );
     }
 }

@@ -2,6 +2,8 @@ package de.davidvogt.hkbmod;
 
 import com.mojang.logging.LogUtils;
 import de.davidvogt.hkbmod.block.ModBlocks;
+import de.davidvogt.hkbmod.block.entity.ModBlockEntities;
+import de.davidvogt.hkbmod.client.gui.ResearchTableScreen;
 import de.davidvogt.hkbmod.entities.ModEntityTypes;
 import de.davidvogt.hkbmod.entity.client.DeerModel;
 import de.davidvogt.hkbmod.entity.client.DeerRenderer;
@@ -9,9 +11,9 @@ import de.davidvogt.hkbmod.entity.client.ModModelLayers;
 import de.davidvogt.hkbmod.entity.custom.DeerEntity;
 import de.davidvogt.hkbmod.item.ModCreativeModeTabs;
 import de.davidvogt.hkbmod.item.ModItems;
-import net.minecraft.client.model.geom.EntityModelSet;
-import net.minecraft.client.renderer.entity.EntityRenderers;
-import net.minecraft.resources.ResourceLocation;
+import de.davidvogt.hkbmod.menu.ModMenuTypes;
+import de.davidvogt.hkbmod.network.ModNetworking;
+import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
@@ -39,6 +41,8 @@ public final class HkbMod {
 
         ModItems.register(modBusGroup);
         ModBlocks.register(modBusGroup);
+        ModBlockEntities.register(modBusGroup);
+        ModMenuTypes.register(modBusGroup);
         ModEntityTypes.register(modBusGroup);
         ModCreativeModeTabs.register(modBusGroup);
 
@@ -47,7 +51,8 @@ public final class HkbMod {
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {
-
+        // Register network packets
+        ModNetworking.register();
     }
 
     private void clientSetup(final FMLClientSetupEvent event) {
@@ -81,6 +86,10 @@ public final class HkbMod {
             event.accept(ModBlocks.ALEXANDRITE_ORE);
             event.accept(ModBlocks.ALEXANDRITE_DEEPSLATE_ORE);
         }
+
+        if (event.getTabKey() == CreativeModeTabs.FUNCTIONAL_BLOCKS) {
+            event.accept(ModBlocks.RESEARCH_TABLE);
+        }
     }
 
     // You can use EventBusSubscriber to automatically register all static methods in the class annotated with @SubscribeEvent
@@ -88,7 +97,9 @@ public final class HkbMod {
     public static class ClientModEvents {
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event) {
-
+            event.enqueueWork(() -> {
+                MenuScreens.register(ModMenuTypes.RESEARCH_TABLE.get(), ResearchTableScreen::new);
+            });
         }
 
         @SubscribeEvent

@@ -1,0 +1,19 @@
+{
+  "id": "hkbmod:knight_basic",
+  "name": "Basic Knight Training",
+  "description": "Learn the fundamentals of knighthood",
+  "player_class": "KNIGHT",
+  "tier": 1,
+  "type": "PASSIVE",
+  "prerequisites": ["hkbmod:knight_foundation"],
+  "costs": [
+    {
+      "item": "minecraft:iron_ingot",
+      "count": 4
+    },
+    {
+      "item": "minecraft:leather",
+      "count": 2
+    }
+  ]
+}
